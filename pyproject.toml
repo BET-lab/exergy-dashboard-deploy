@@ -1,0 +1,26 @@
+[project]
+name = "exergy-dashboard"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Sangwon91", email = "lsw91.main@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "dartwork-mpl",
+    "streamlit>=1.41.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "notebook>=7.3.1",
+    "pyinstaller>=6.11.1",
+]
+
+[tool.uv.sources]
+dartwork-mpl = { git = "https://github.com/dartwork-repo/dartwork-mpl.git", rev = "039e1ca" }
