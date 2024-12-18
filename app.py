@@ -411,4 +411,4 @@ with col2:
 
 
 # st.write(sss)
-st.write(st.get_option('theme.backgroundColor'))
+# st.write(st.get_option('theme.backgroundColor'))
