@@ -2,5 +2,5 @@ build
 dist
 pages-backup
 __pycache__
-notebooks
+# notebooks
 node_modules
