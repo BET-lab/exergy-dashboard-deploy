@@ -8,8 +8,10 @@ authors = [
 ]
 requires-python = ">=3.11"
 dependencies = [
+    "altair>=5.5.0",
     "dartwork-mpl",
     "streamlit>=1.41.1",
+    "vl-convert-python>=1.7.0",
 ]
 
 [build-system]
@@ -18,8 +20,8 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
+    "anywidget>=0.9.13",
     "notebook>=7.3.1",
-    "pyinstaller>=6.11.1",
 ]
 
 [tool.uv.sources]
