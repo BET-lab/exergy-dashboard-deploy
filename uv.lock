@@ -462,6 +462,7 @@ source = { editable = "." }
 dependencies = [
     { name = "altair" },
     { name = "dartwork-mpl" },
+    { name = "pylatexenc" },
     { name = "streamlit" },
     { name = "vl-convert-python" },
 ]
@@ -476,6 +477,7 @@ dev = [
 requires-dist = [
     { name = "altair", specifier = ">=5.5.0" },
     { name = "dartwork-mpl", git = "https://github.com/dartwork-repo/dartwork-mpl.git?rev=039e1ca" },
+    { name = "pylatexenc", specifier = ">=2.10" },
     { name = "streamlit", specifier = ">=1.41.1" },
     { name = "vl-convert-python", specifier = ">=1.7.0" },
 ]
@@ -1545,6 +1547,12 @@ sdist = { url = "https://files.pythonhosted.org/packages/8e/62/8336eff65bcbc8e4c
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f7/3f/01c8b82017c199075f8f788d0d906b9ffbbc5a47dc9918a945e13d5a2bda/pygments-2.18.0-py3-none-any.whl", hash = "sha256:b8e6aca0523f3ab76fee51799c488e38782ac06eafcf95e7ba832985c8e7b13a", size = 1205513 },
 ]
+
+[[package]]
+name = "pylatexenc"
+version = "2.10"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/5d/ab/34ec41718af73c00119d0351b7a2531d2ebddb51833a36448fc7b862be60/pylatexenc-2.10.tar.gz", hash = "sha256:3dd8fd84eb46dc30bee1e23eaab8d8fb5a7f507347b23e5f38ad9675c84f40d3", size = 162597 }
 
 [[package]]
 name = "pyparsing"
