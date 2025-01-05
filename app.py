@@ -10,6 +10,7 @@ from exergy_dashboard.evaluation import evaluate_parameters_cooling
 from exergy_dashboard.chart import (
     plot_waterfall_cooling_ashp,
     plot_waterfall_cooling_gshp,
+    plot_waterfall_multi,
 )
 
 LANG = 'EN'
@@ -340,75 +341,89 @@ with col2:
 
         st.subheader('2. Exergy Consumption Process')
 
-        figs = []
-        count = 0
+        sources = []
         for key in options:
             sv = sss.systems[key]['variables']
             if sss.systems[key]['type'] == 'ASHP':
                 print('new fig')
-                fig = plot_waterfall_cooling_ashp(
-                    Xin_A=sv['Xin_A'],
-                    Xc_int_A=sv['Xc_int_A'],
-                    Xc_r_A=sv['Xc_r_A'],
-                    Xc_ext_A=sv['Xc_ext_A'],
-                    X_a_ext_out_A=sv['X_a_ext_out_A'],
-                    Xout_A=sv['Xout_A'],
-                    n=count,
-                    name=key,
-                )
+
+                labels = ['Input', r'X_{c,int}', r'X_{c,ref}', r'X_{c,ext}', r'X_{ext,out}', 'Output']
+                amounts = [sv['Xin_A'], -sv['Xc_int_A'], -sv['Xc_r_A'], -sv['Xc_ext_A'], -sv['X_a_ext_out_A'], 0]
+                source = pd.DataFrame({
+                    'label': labels,
+                    'amount': amounts,
+                    'group': [key] * len(labels),
+                })
+
+                sources.append(source)
+                # })
+                # fig = plot_waterfall_cooling_ashp(
+                #     Xin_A=sv['Xin_A'],
+                #     Xc_int_A=sv['Xc_int_A'],
+                #     Xc_r_A=sv['Xc_r_A'],
+                #     Xc_ext_A=sv['Xc_ext_A'],
+                #     X_a_ext_out_A=sv['X_a_ext_out_A'],
+                #     Xout_A=sv['Xout_A'],
+                #     n=count,
+                #     name=key,
+                # )
                 count += 1
             if sss.systems[key]['type'] == 'GSHP':
-                fig = plot_waterfall_cooling_gshp(
-                    Xin_G=sv['Xin_G'],
-                    X_g=sv['X_g'],
-                    Xc_int_G=sv['Xc_int_G'],
-                    Xc_r_G=sv['Xc_r_G'],
-                    Xc_GHE=sv['Xc_GHE'],
-                    Xout_G=sv['Xout_G'],
-                    n=count,
-                    name=key,
-                )
-                count += 1                
+                labels = ['Input', r'X_{c,int}', r'X_{c,ref}', r'X_{c,GHE}', 'Output']
+                amounts = [sv['Xin_G'], -sv['Xc_int_G'], -sv['Xc_r_G'], -sv['Xc_GHE'], 0]
+                source = pd.DataFrame({
+                    'label': labels,
+                    'amount': amounts,
+                    'group': [key] * len(labels),
+                })
+ 
+                sources.append(source)
+                count += 1      
 
-            figs.append(fig)
+        source = pd.concat(sources)
+        c = plot_waterfall_multi(source, 'Input', 'Output')
+        # figs = []
+        # count = 0
+        # for key in options:
+        #     sv = sss.systems[key]['variables']
+        #     if sss.systems[key]['type'] == 'ASHP':
+        #         print('new fig')
+        #         fig = plot_waterfall_cooling_ashp(
+        #             Xin_A=sv['Xin_A'],
+        #             Xc_int_A=sv['Xc_int_A'],
+        #             Xc_r_A=sv['Xc_r_A'],
+        #             Xc_ext_A=sv['Xc_ext_A'],
+        #             X_a_ext_out_A=sv['X_a_ext_out_A'],
+        #             Xout_A=sv['Xout_A'],
+        #             n=count,
+        #             name=key,
+        #         )
+        #         count += 1
+        #     if sss.systems[key]['type'] == 'GSHP':
+        #         fig = plot_waterfall_cooling_gshp(
+        #             Xin_G=sv['Xin_G'],
+        #             X_g=sv['X_g'],
+        #             Xc_int_G=sv['Xc_int_G'],
+        #             Xc_r_G=sv['Xc_r_G'],
+        #             Xc_GHE=sv['Xc_GHE'],
+        #             Xout_G=sv['Xout_G'],
+        #             n=count,
+        #             name=key,
+        #         )
+        #         count += 1                
 
-        n = len(figs)
-        iter_ = iter(figs)
-        with st.spinner('Loading...'):
-            for i, fig in enumerate(range((n + 1) // 2)):
-                if i % 2 == 0:
-                    cols = st.columns(2)
+        #     figs.append(fig)
 
-                for col in cols:
-                    try:
-                        col.write(next(iter_))
-                    except StopIteration:
-                        break
+        # n = len(figs)
+        # iter_ = iter(figs)
+        # with st.spinner('Loading...'):
+        #     for i, fig in enumerate(range((n + 1) // 2)):
+        #         if i % 2 == 0:
+        #             cols = st.columns(2)
 
-        # Draw random altair chart. but use options.
-        # chart_data = pd.DataFrame(
-        #     data={
-        #         'a': np.random.randn(100),
-        #         'b': np.random.randn(100),
-        #         'c': np.random.randn(100),
-        #         'system': np.random.choice(options, 100),
-        #     },
-        # )
-
-        # dataframes = [
-        #     chart_data[chart_data['system'] == option]
-        #     for option in options
-        # ]
-
-        # c = create_dynamic_multiview(dataframes, cols=3)
-
-        # # c = alt.Chart(chart_data).mark_circle().encode(
-        # #     x='a', y='b', size='c', column='system', tooltip=['a', 'b', 'c']
-        # # ).interactive()
-
-        # st.altair_chart(c)
-
-
-
-# st.write(sss)
-# st.write(st.get_option('theme.backgroundColor'))
+        #         for col in cols:
+        #             try:
+        #                 col.write(next(iter_))
+        #             except StopIteration:
+        #                 break
+        st.altair_chart(c)

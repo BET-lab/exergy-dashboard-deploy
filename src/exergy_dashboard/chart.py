@@ -200,26 +200,93 @@ def plot_waterfall_cooling_gshp(
     return fig
 
 
+def plot_waterfall_multi(source, start_label, end_label):
+    # # Define frequently referenced fields
+    # amount = alt.datum.amount
+    # label = alt.datum.label
+    # window_lead_label = alt.datum.window_lead_label
+    # window_sum_amount = alt.datum.window_sum_amount
 
+    # # Define frequently referenced/long expressions
+    # calc_prev_sum = alt.expr.if_(label == end_label, 0, window_sum_amount - amount)
+    # calc_amount = alt.expr.if_(label == end_label, window_sum_amount, amount)
+    # calc_text_amount = (
+    #     alt.expr.if_((label != start_label) & (label != end_label) & calc_amount > 0, "+", "")
+    #     + calc_amount
+    # )
 
-def plot_waterfall_cooling_ashp_altair(
-    Xin_A,
-    Xc_int_A,
-    Xc_r_A,
-    Xc_ext_A,
-    X_a_ext_out_A,
-    Xout_A
-):
-    # values_ashp = [Xin_A, -Xc_int_A, -Xc_r_A, -Xc_ext_A, -X_a_ext_out_A, Xout_A]
-    data = [
-        {"label": "Begin", "amount": Xin_A},
-        {"label": "Jan", "amount": -Xc_int_A},
-        {"label": "Feb", "amount": -Xc_r_A},
-        {"label": "Mar", "amount": -Xc_ext_A},
-        {"label": "Apr", "amount": -X_a_ext_out_A},
-        {"label": "End", "amount": Xout_A},
-    ]
-    source = pd.DataFrame(data)
+    # # The "base_chart" defines the transform_window, transform_calculate, and X axis
+    # base_chart = alt.Chart(source).encode(
+    #     x=alt.X("label:O", axis=alt.Axis(title="", labelAngle=0), sort=None)
+    # )
+
+    # color_coding = (
+    #     alt.when((label == start_label) | (label == end_label))
+    #     .then(alt.value("#878d96"))
+    #     .when(calc_amount < 0)
+    #     .then(alt.value("#24a148"))
+    #     .otherwise(alt.value("#fa4d56"))
+    # )
+
+    # bar_size = 35
+
+    # bar = base_chart.mark_bar(size=bar_size).encode(
+    #     y=alt.Y("calc_prev_sum:Q", title="Amount"),
+    #     y2=alt.Y2("window_sum_amount:Q"),
+    #     # color=color_coding,
+    #     color=alt.Color('group:N').legend(None),
+    #     tooltip=[alt.Tooltip("label:N", title="Month"), alt.Tooltip("amount:Q", title="Amount")],
+    # )
+
+    # # The "rule" chart is for the horizontal lines that connect the bars
+    # rule = base_chart.mark_rule(xOffset=-bar_size / 2, x2Offset=bar_size / 2).encode(
+    #     y="window_sum_amount:Q",
+    #     x2="calc_lead",
+    # )
+
+    # # Add values as text
+    # text_pos_values_top_of_bar = base_chart.mark_text(baseline="bottom", dy=-4).encode(
+    #     text=alt.Text("calc_sum_inc:N").format("+.2f"),
+    #     y="calc_sum_inc:Q",
+    # )
+    # text_neg_values_bot_of_bar = base_chart.mark_text(baseline="top", dy=4).encode(
+    #     text=alt.Text("calc_sum_dec:N").format("+.2f"),
+    #     y="calc_sum_dec:Q",
+    # )
+    # text_bar_values_mid_of_bar = base_chart.mark_text(baseline="middle", fontSize=bar_size / 3).encode(
+    #     text=alt.Text("calc_text_amount:N").format("+.2f"),
+    #     y="calc_center:Q",
+    #     color=alt.value("white"),
+    # )
+
+    # chart = alt.layer(
+    #     bar,
+    #     rule,
+    #     text_pos_values_top_of_bar,
+    #     text_neg_values_bot_of_bar,
+    #     text_bar_values_mid_of_bar
+    # ).properties(
+    #     width=alt.Step(bar_size + 20),
+    #     # width='container',
+    #     height=150
+    # ).facet(
+    #     facet="group",
+    #     columns=2,
+    # ).transform_window(
+    #     window_sum_amount="sum(amount)",
+    #     window_lead_label="lead(label)",
+    #     groupby=["group"],
+    # ).transform_calculate(
+    #     calc_lead=alt.expr.if_((window_lead_label == None), label, window_lead_label),
+    #     calc_prev_sum=calc_prev_sum,
+    #     calc_amount=calc_amount,
+    #     calc_text_amount=calc_text_amount,
+    #     calc_center=(window_sum_amount + calc_prev_sum) / 2,
+    #     calc_sum_dec=alt.expr.if_(window_sum_amount < calc_prev_sum, window_sum_amount, ""),
+    #     calc_sum_inc=alt.expr.if_(window_sum_amount > calc_prev_sum, window_sum_amount, ""),
+    # ).resolve_scale(
+    #     x="independent"
+    # )
 
     # Define frequently referenced fields
     amount = alt.datum.amount
@@ -228,71 +295,91 @@ def plot_waterfall_cooling_ashp_altair(
     window_sum_amount = alt.datum.window_sum_amount
 
     # Define frequently referenced/long expressions
-    calc_prev_sum = alt.expr.if_(label == "End", 0, window_sum_amount - amount)
-    calc_amount = alt.expr.if_(label == "End", window_sum_amount, amount)
+    calc_prev_sum = alt.expr.if_(label == end_label, 0, window_sum_amount - amount)
+    calc_amount = alt.expr.if_(label == end_label, window_sum_amount, amount)
     calc_text_amount = (
-        alt.expr.if_((label != "Begin") & (label != "End") & calc_amount > 0, "+", "")
+        alt.expr.if_((label != start_label) & (label != end_label) & calc_amount > 0, "+", "")
         + calc_amount
     )
 
     # The "base_chart" defines the transform_window, transform_calculate, and X axis
-    base_chart = alt.Chart(source).transform_window(
-        window_sum_amount="sum(amount)",
-        window_lead_label="lead(label)",
-    ).transform_calculate(
-        calc_lead=alt.expr.if_((window_lead_label == None), label, window_lead_label),
-        calc_prev_sum=calc_prev_sum,
-        calc_amount=calc_amount,
-        calc_text_amount=calc_text_amount,
-        calc_center=(window_sum_amount + calc_prev_sum) / 2,
-        calc_sum_dec=alt.expr.if_(window_sum_amount < calc_prev_sum, window_sum_amount, ""),
-        calc_sum_inc=alt.expr.if_(window_sum_amount > calc_prev_sum, window_sum_amount, ""),
-    ).encode(
-        x=alt.X("label:O", axis=alt.Axis(title="Months", labelAngle=0), sort=None)
+    base_chart = alt.Chart(source).encode(
+        x=alt.X("label:O", axis=alt.Axis(title="", labelAngle=0), sort=None)
     )
 
     color_coding = (
-        alt.when((label == "Begin") | (label == "End"))
+        alt.when((label == start_label) | (label == end_label))
         .then(alt.value("#878d96"))
         .when(calc_amount < 0)
         .then(alt.value("#24a148"))
         .otherwise(alt.value("#fa4d56"))
     )
 
-    bar = base_chart.mark_bar(size=45).encode(
+    bar_size = 35
+
+    bar = base_chart.mark_bar(size=bar_size, tooltip=None).encode(
         y=alt.Y("calc_prev_sum:Q", title="Amount"),
         y2=alt.Y2("window_sum_amount:Q"),
-        color=color_coding,
+        # color=color_coding,
+        color=alt.Color('group:N').legend(None).sort(None),
+        # tooltip=[alt.Tooltip("label:N", title="Month"), alt.Tooltip("amount:Q", title="Amount")],
     )
 
     # The "rule" chart is for the horizontal lines that connect the bars
-    rule = base_chart.mark_rule(xOffset=-22.5, x2Offset=22.5).encode(
+    rule = base_chart.mark_rule(xOffset=-bar_size / 2, x2Offset=bar_size / 2, strokeWidth=0.5, tooltip=None).encode(
         y="window_sum_amount:Q",
         x2="calc_lead",
     )
 
+    fs = bar_size / 3.5
     # Add values as text
-    text_pos_values_top_of_bar = base_chart.mark_text(baseline="bottom", dy=-4).encode(
+    text_pos_values_top_of_bar = base_chart.mark_text(baseline="bottom", dy=-4, fontSize=fs, tooltip=None).encode(
         text=alt.Text("calc_sum_inc:N"),
         y="calc_sum_inc:Q",
     )
-    text_neg_values_bot_of_bar = base_chart.mark_text(baseline="top", dy=4).encode(
+    text_neg_values_bot_of_bar = base_chart.mark_text(baseline="top", dy=4, fontSize=fs, tooltip=None).encode(
         text=alt.Text("calc_sum_dec:N"),
         y="calc_sum_dec:Q",
     )
-    text_bar_values_mid_of_bar = base_chart.mark_text(baseline="middle").encode(
+    text_bar_values_mid_of_bar = base_chart.mark_text(baseline="middle", fontSize=fs, tooltip=None).encode(
         text=alt.Text("calc_text_amount:N"),
         y="calc_center:Q",
         color=alt.value("white"),
     )
 
-    return alt.layer(
+    chart = alt.layer(
         bar,
         rule,
         text_pos_values_top_of_bar,
         text_neg_values_bot_of_bar,
         text_bar_values_mid_of_bar
     ).properties(
-        width=600,
-        height=450
+        width=alt.Step(bar_size + 20),
+        # width='container',
+        height=190
+    ).facet(
+        facet=alt.Facet("group").title('').sort([]),
+        columns=2,
+    ).transform_window(
+        window_sum_amount="sum(amount)",
+        window_lead_label="lead(label)",
+        groupby=["group"],
+    ).transform_calculate(
+        calc_lead=alt.expr.if_((window_lead_label == None), label, window_lead_label),
+        calc_prev_sum=calc_prev_sum,
+        calc_amount=calc_amount,
+        calc_text_amount=alt.expr.format(calc_text_amount, ".2f"),
+        calc_center=(window_sum_amount + calc_prev_sum) / 2,
+        calc_sum_dec=alt.expr.if_(window_sum_amount < calc_prev_sum, alt.expr.format(window_sum_amount, ".2f"), None),
+        calc_sum_inc=alt.expr.if_(
+            window_sum_amount > calc_prev_sum
+            | (alt.datum.index != alt.datum.length - 1)  # 마지막 데이터 포인트 체크
+            ,
+            alt.expr.format(window_sum_amount, ".2f"),
+            None
+        ),  
+    ).resolve_scale(
+        x="independent"
     )
+
+    return chart
