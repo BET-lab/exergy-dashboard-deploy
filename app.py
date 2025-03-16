@@ -6,7 +6,7 @@ import pandas as pd
 import altair as alt
 import streamlit as st
 from exergy_dashboard.system import SYSTEM_CASE
-from exergy_dashboard.evaluation import evaluate_parameters_cooling
+from exergy_dashboard.evaluation import evaluate_parameters
 from exergy_dashboard.chart import (
     plot_waterfall_multi,
 )
@@ -101,6 +101,10 @@ st.set_page_config(
     initial_sidebar_state='expanded'
 )
 
+# Streamlit의 session_state를 더 짧은 변수명으로 할당
+# session_state는 앱의 상태를 저장하는 객체로, 페이지 새로고침 간에 데이터를 유지함
+# 사용자 상호작용, 시스템 상태, 계산 결과 등을 저장하는 데 사용됨
+# 이 변수를 통해 모드, 시스템 구성, 카운터 등의 상태를 관리
 sss = st.session_state
 
 if 'mode' not in sss:
@@ -244,7 +248,7 @@ with col1:
 
 
 for key in sss.systems.keys():
-    evaluate_parameters_cooling(sss, key)
+    evaluate_parameters(sss, key)
 
 
 with col2:
