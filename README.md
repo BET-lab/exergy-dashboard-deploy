@@ -241,18 +241,19 @@ def plot_my_visualization(session_state: Any, selected_systems: List[str]) -> al
 
 1. 필요한 패키지 설치:
    ```bash
-   pip install -r requirements.txt
+   uv sync
    ```
 
-2. 커스텀 시스템 임포트하기:
+2. `app.py`에 커스텀 시스템 임포트하기:
    ```python
    # 시스템 파일 임포트 시 자동으로 등록됩니다
+   # 예시 파일로는 examples/custom_system.py 참고.
    import examples.my_custom_system
    ```
 
 3. Streamlit 앱 실행:
    ```bash
-   streamlit run app.py
+   uv run streamlit run app.py
    ```
 
 4. 웹 브라우저에서 애플리케이션 접속:
@@ -263,7 +264,7 @@ def plot_my_visualization(session_state: Any, selected_systems: List[str]) -> al
 ## 6. 예시 코드
 
 실제 구현 예시는 다음 파일을 참조하세요:
-- `examples/custom_system.py`: TEST 모드의 SHE(간단한 열교환기) 시스템 구현
+- `examples/custom_system.py`: TEST 모드의 TEST_SYSTEM 시스템 구현
 
 ## 주의사항
 
