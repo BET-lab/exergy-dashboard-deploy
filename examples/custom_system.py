@@ -5,7 +5,6 @@
 """
 
 from typing import List, Any
-import numpy as np
 import pandas as pd
 import altair as alt
 from exergy_dashboard.system import register_system
