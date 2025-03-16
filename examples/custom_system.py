@@ -42,11 +42,11 @@ she_system = {
 
 
 # SHE 시스템 등록
-register_system('TEST_MODE', 'SHE', she_system)
+register_system('TEST_MODE', 'TEST_SYSTEM', she_system)
     
 
 # 3. 간단한 엑서지 계산 함수
-@eval_registry.register('TEST_MODE', 'SHE')
+@eval_registry.register('TEST_MODE', 'TEST_SYSTEM')
 def evaluate_she(params):
     """간단한 열교환기의 엑서지 계산"""
     # 파라미터 추출
