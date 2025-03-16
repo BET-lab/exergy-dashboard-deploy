@@ -1,98 +1,13 @@
 import math
 import copy
 import functools
-import numpy as np
-import pandas as pd
-import altair as alt
 import streamlit as st
 from exergy_dashboard.system import SYSTEM_CASE
 from exergy_dashboard.evaluation import evaluate_parameters
 from exergy_dashboard.visualization import VisualizationManager
-from exergy_dashboard.chart import (
-    plot_waterfall_multi,
-)
+
 
 LANG = 'EN'
-
-
-def create_dynamic_multiview(dataframes, cols=2):
-    """
-    다양한 길이의 데이터프레임 리스트로부터 동적 다중 뷰 플롯 생성
-    
-    Parameters:
-    - dataframes: 차트로 만들 데이터프레임 리스트
-    - cols: 열의 개수 (기본값 2)
-    """
-    colors = [
-        '#4c95d9',
-        '#a8d9ff',
-        '#ff6a6a',
-        '#ffc4c4',
-        '#69c7ba',
-        '#a4f3bd',
-        '#ffab4c',
-        '#ffde96',
-        '#9878d2',
-        '#e1e5ec',
-    ] * 50
-    # 각 데이터프레임에 대한 기본 차트 생성 함수
-    def create_base_chart(df, title, n):
-        # 데이터프레임의 숫자형 컬럼 찾기
-        numeric_cols = df.select_dtypes(include=[np.number]).columns
-        
-        if len(numeric_cols) == 1:
-            # 단일 숫자 컬럼인 경우 히스토그램
-            chart = alt.Chart(df).mark_bar(color=colors[n]).encode(
-                alt.X(f'{numeric_cols[0]}:Q', bin=True),
-                alt.Y('count()', stack=None)
-            )
-        elif len(numeric_cols) >= 2:
-            # 두 개 이상의 숫자 컬럼인 경우 산점도
-            chart = alt.Chart(df).mark_circle(color=colors[n]).encode(
-                x=f'{numeric_cols[0]}:Q',
-                y=f'{numeric_cols[1]}:Q',
-                # color=alt.value('steelblue')
-            )
-        else:
-            # 숫자 컬럼이 없는 경우 막대 그래프
-            categorical_cols = df.select_dtypes(include=['object', 'category']).columns
-            if len(categorical_cols) > 0:
-                chart = alt.Chart(df).mark_bar(color=colors[n]).encode(
-                    x=f'{categorical_cols[0]}:N',
-                    y='count()'
-                )
-            else:
-                raise ValueError("플롯할 적절한 컬럼이 없습니다.")
-        
-        chart.configure_mark(
-            color=colors[n],
-        )
-
-        return chart.properties(
-            title=title, 
-            width=250, 
-            height=200
-        )
-    
-    # 동적으로 차트 리스트 생성
-    charts = [
-        create_base_chart(df, df['system'].iloc[0], i) 
-        for i, df in enumerate(dataframes)
-    ]
-    
-    # 열 수에 맞춰 동적으로 레이아웃 생성
-    def chunk_charts(lst, chunk_size):
-        for i in range(0, len(lst), chunk_size):
-            yield lst[i:i + chunk_size]
-    
-    # 차트들을 chunk로 나누어 수평/수직 결합
-    chart_rows = [
-        alt.hconcat(*row_charts) 
-        for row_charts in chunk_charts(charts, cols)
-    ]
-    
-    # 최종 수직 결합
-    return alt.vconcat(*chart_rows)
 
 
 st.set_page_config(
@@ -128,9 +43,22 @@ if 'system_count' not in sss:
 
 
 def create_system(mode, system_name):
-    """
-    mode: 'cooling' or 'heating' or 'hot_water' ?
-    system_name: 'ASHP' or 'GSHP' or 'Boiler' or 'Solar' or 'Battery' ?
+    """시스템 생성 함수
+    
+    주어진 모드와 시스템 이름에 따라 새로운 시스템을 생성합니다.
+    시스템 카운터를 증가시키고 시스템 케이스에서 기본 설정을 복사하여 새 시스템을 구성합니다.
+    
+    Parameters
+    ----------
+    mode : str
+        시스템 모드 ('COOLING', 'HEATING', 'HOT WATER')
+    system_name : str
+        시스템 유형 ('ASHP', 'GSHP' 등)
+        
+    Returns
+    -------
+    dict
+        생성된 시스템 정보를 담은 딕셔너리
     """
     mode = mode.upper()
     system_name = system_name.upper()
@@ -190,6 +118,20 @@ with title_col:
 
 
 def remove_system(name):
+    """
+    시스템을 제거하는 함수
+    
+    Parameters
+    ----------
+    name : str
+        제거할 시스템의 이름
+        
+    Notes
+    -----
+    - 시스템 딕셔너리에서 해당 시스템을 제거합니다.
+    - 해당 시스템과 관련된 세션 상태 변수들도 함께 제거합니다.
+    - 선택된 옵션 목록에서도 해당 시스템을 제거합니다.
+    """
     sss.systems.pop(name)
     to_be_removed = []
     for k, v in sss.items():
@@ -214,10 +156,9 @@ with col1:
         system_tabs = st.tabs(sss.systems.keys())
         for tab, system in zip(system_tabs, sss.systems.values()):
             with tab:
-                if system['type'] == 'ASHP':
-                    st.write('### Air Source Heat Pump :snowflake:')
-                elif system['type'] == 'GSHP':
-                    st.write('### Ground Source Heat Pump :earth_americas:')
+                # 시스템 타입에 따른 제목 표시
+                system_info = SYSTEM_CASE[sss.mode.upper()][system['type']]
+                st.write(f"### {system_info['display']['title']} {system_info['display']['icon']}")
 
                 # 파라미터를 카테고리별로 그룹화
                 params_by_category = {}

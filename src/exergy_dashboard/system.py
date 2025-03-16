@@ -1,5 +1,9 @@
 # 각 시스템의 파라미터를 설정하세요.
 COOLING_ASGP = {
+    'display': {
+        'title': 'Air Source Heat Pump',
+        'icon': ':snowflake:',
+    },
     'parameters':{
         'T_0': {
             'explanation': {'EN': 'Environment Temperature', 'KR': '환경온도'},
@@ -96,6 +100,10 @@ COOLING_ASGP = {
 
 
 COOLING_GSHP = {
+    'display': {
+        'title': 'Ground Source Heat Pump',
+        'icon': ':earth_americas:',
+    },
     'parameters':{
         'T_0': {
             'explanation': {'EN': 'Environment Temperature', 'KR': '환경온도'},
