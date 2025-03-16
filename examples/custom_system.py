@@ -70,12 +70,9 @@ def evaluate_she(params):
 @registry.register('TEST_MODE', 'Temperature difference')
 def plot_diff_temperature(session_state: Any, selected_systems: List[str]) -> alt.Chart:
     """선택된 열교환기 시스템들의 온도 프로필 시각화"""
-    print(session_state.systems)
-
     # 데이터 준비
     data = []
     for system in selected_systems:
-        print(session_state.systems[system]['variables'])
         data.append({
             'system': system,
             'diff_T': session_state.systems[system]['variables']['diff_T']
