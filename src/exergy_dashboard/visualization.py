@@ -7,9 +7,9 @@ Examples
 --------
 1. 새로운 시각화 함수 등록하기:
     ```python
-    from exergy_dashboard.visualization import viz_registry
+    from exergy_dashboard.visualization import registry
     
-    @viz_registry.register('Performance', 'COP Distribution')
+    @registry.register('COP Distribution')
     def plot_cop_distribution(session_state, selected_systems):
         import altair as alt
         import pandas as pd
@@ -40,35 +40,40 @@ Examples
     ```python
     import streamlit as st
     from exergy_dashboard.visualization import VisualizationManager
+    from exergy_dashboard.visualization import registry
     
-    viz_manager = VisualizationManager()
+    viz_manager = VisualizationManager(registry)
     viz_manager.render_tabs(st.session_state, selected_systems)
     ```
 """
 
-from typing import Callable, Dict, List, Any, Optional
+from typing import Callable, Dict, List, Any
 import pandas as pd
 import altair as alt
 import streamlit as st
 from .chart import plot_waterfall_multi
+from dataclasses import dataclass
 
 
+@dataclass
 class VisualizationRegistry:
-    """시각화 함수를 등록하고 관리하는 레지스트리"""
+    """시각화 도구 레지스트리
     
-    def __init__(self):
-        self._visualizers: Dict[str, Dict[str, Callable]] = {}
+    새로운 시각화 도구를 등록하고 관리하는 레지스트리 클래스입니다.
+    """
+    _visualizers: Dict[str, Callable] = None
     
-    def register(self, tab: str, name: str) -> Callable:
+    def __post_init__(self):
+        self._visualizers = {}
+    
+    def register(self, name: str) -> Callable:
         """
-        데코레이터: 특정 탭과 이름으로 시각화 함수를 등록
+        데코레이터: 새로운 시각화 도구를 등록
 
         Parameters
         ----------
-        tab : str
-            시각화가 표시될 탭 이름
         name : str
-            시각화의 이름
+            시각화 도구의 이름
 
         Returns
         -------
@@ -76,26 +81,44 @@ class VisualizationRegistry:
             데코레이터 함수
         """
         def decorator(func: Callable) -> Callable:
-            if tab not in self._visualizers:
-                self._visualizers[tab] = {}
-            self._visualizers[tab][name] = func
+            self._visualizers[name] = func
             return func
         return decorator
     
-    def get_tabs(self) -> List[str]:
-        """등록된 모든 탭 이름을 반환"""
-        return list(self._visualizers.keys())
+    def get_visualizer(self, name: str) -> Callable:
+        """
+        시각화 도구 함수를 반환
+
+        Parameters
+        ----------
+        name : str
+            시각화 도구의 이름
+
+        Returns
+        -------
+        Callable
+            시각화 함수
+        """
+        return self._visualizers.get(name)
     
-    def get_visualizers(self, tab: str) -> Dict[str, Callable]:
-        """특정 탭의 모든 시각화 함수를 반환"""
-        return self._visualizers.get(tab, {})
+    def get_available_visualizers(self) -> Dict[str, Callable]:
+        """등록된 모든 시각화 도구를 반환"""
+        return self._visualizers.copy()
 
 
 class VisualizationManager:
     """시각화 관리 및 렌더링을 담당하는 클래스"""
     
-    def __init__(self, registry: Optional[VisualizationRegistry] = None):
-        self.registry = registry or viz_registry
+    def __init__(self, registry: VisualizationRegistry):
+        """
+        시각화 관리자 초기화
+        
+        Parameters
+        ----------
+        registry : VisualizationRegistry
+            사용할 시각화 레지스트리
+        """
+        self.registry = registry
     
     def render_tabs(self, session_state: Any, selected_systems: List[str]) -> None:
         """
@@ -111,22 +134,21 @@ class VisualizationManager:
         if not selected_systems:
             return
             
-        tabs = st.tabs(self.registry.get_tabs())
+        tabs = st.tabs(self.registry.get_available_visualizers().keys())
         
-        for tab, tab_name in zip(tabs, self.registry.get_tabs()):
+        for tab, tab_name in zip(tabs, self.registry.get_available_visualizers().keys()):
             with tab:
-                visualizers = self.registry.get_visualizers(tab_name)
-                for name, func in visualizers.items():
-                    st.subheader(name)
-                    chart = func(session_state, selected_systems)
-                    st.altair_chart(chart, use_container_width=True)
+                func = self.registry.get_visualizer(tab_name)
+                st.subheader(tab_name)
+                chart = func(session_state, selected_systems)
+                st.altair_chart(chart, use_container_width=True)
 
 
 # 전역 레지스트리 인스턴스 생성
-viz_registry = VisualizationRegistry()
+registry = VisualizationRegistry()
 
 
-@viz_registry.register('Efficiency', 'Exergy Efficiency')
+@registry.register('Exergy Efficiency')
 def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> alt.Chart:
     """엑서지 효율 차트 생성"""
     efficiencies = []
@@ -186,7 +208,7 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
     return c + text
 
 
-@viz_registry.register('Process', 'Exergy Consumption Process')
+@registry.register('Exergy Consumption Process')
 def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> alt.Chart:
     """엑서지 소비 과정 차트 생성"""
     sources = []

@@ -211,18 +211,16 @@ class SystemRegistry:
     
     새로운 시스템을 등록하고 관리하는 레지스트리 클래스입니다.
     기본 시스템(ASHP, GSHP)이 미리 등록되어 있으며,
-    사용자는 새로운 시스템을 추가로 등록할 수 있습니다.
+    사용자는 새로운 시스템과 모드를 자유롭게 추가할 수 있습니다.
     """
     _systems: Dict[str, Dict[str, Any]] = None
     
     def __post_init__(self):
-        self._systems = {
-            'COOLING': {
-                'ASHP': COOLING_ASGP,
-                'GSHP': COOLING_GSHP,
-            },
-            'HEATING': {},
-            'HOT WATER': {},
+        self._systems = {}
+        # 기본 시스템 등록
+        self._systems['COOLING'] = {
+            'ASHP': COOLING_ASGP,
+            'GSHP': COOLING_GSHP,
         }
     
     def register_system(self, mode: str, system_type: str, system_config: dict) -> None:
@@ -231,7 +229,7 @@ class SystemRegistry:
         Parameters
         ----------
         mode : str
-            시스템 모드 ('COOLING', 'HEATING', 'HOT WATER')
+            시스템 모드 (예: 'COOLING', 'HEATING', 'TEST' 등 임의의 모드)
         system_type : str
             시스템 유형 (예: 'ASHP', 'GSHP')
         system_config : dict
@@ -259,17 +257,18 @@ class SystemRegistry:
         ... }
         >>> # ... 더 많은 파라미터 추가 ...
         >>> 
-        >>> # 시스템 등록
-        >>> register_system('COOLING', 'NEW_SYSTEM', new_system)
+        >>> # 시스템 등록 (임의의 모드 사용 가능)
+        >>> register_system('MY_MODE', 'NEW_SYSTEM', new_system)
         """
         mode = mode.upper()
         system_type = system_type.upper()
         
-        if mode not in self._systems:
-            raise ValueError(f"Invalid mode: {mode}")
-            
         # 시스템 설정 검증
         self._validate_system_config(system_config)
+        
+        # 새로운 모드인 경우 딕셔너리 초기화
+        if mode not in self._systems:
+            self._systems[mode] = {}
         
         # 시스템 등록
         self._systems[mode][system_type] = deepcopy(system_config)
@@ -344,7 +343,13 @@ class SystemRegistry:
                 raise ValueError(f"Parameter missing required fields: {required_param_fields}")
     
     def get_systems(self) -> Dict[str, Dict[str, Any]]:
-        """등록된 모든 시스템을 반환합니다."""
+        """등록된 모든 시스템을 반환합니다.
+        
+        Returns
+        -------
+        Dict[str, Dict[str, Any]]
+            모든 등록된 시스템의 딕셔너리
+        """
         return deepcopy(self._systems)
 
 
@@ -388,3 +393,7 @@ def register_system(mode: str, system_type: str, system_config: dict) -> None:
 def get_system_template() -> dict:
     """새로운 시스템 설정을 위한 템플릿을 반환하는 편의 함수"""
     return system_registry.get_system_template()
+
+def get_systems() -> Dict[str, Dict[str, Any]]:
+    """전역 레지스트리에 등록된 모든 시스템을 반환합니다."""
+    return system_registry.get_systems()

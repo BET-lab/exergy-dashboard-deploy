@@ -2,13 +2,33 @@ import math
 import copy
 import functools
 import streamlit as st
-from exergy_dashboard.system import SYSTEM_CASE
-from exergy_dashboard.evaluation import evaluate_parameters
-from exergy_dashboard.visualization import VisualizationManager
 
+# 예제 시스템을 먼저 로드하고 등록
+try:
+    from examples.custom_system import register_test_systems
+    # 테스트 시스템 등록
+    register_test_systems()
+    print("Test systems registered successfully")
+except ImportError as e:
+    print(f"Failed to import test systems: {e}")
+except Exception as e:
+    print(f"Error registering test systems: {e}")
+
+# 시스템 관련 모듈을 나중에 import
+from exergy_dashboard.system import get_systems
+from exergy_dashboard.evaluation import evaluate_parameters
+from exergy_dashboard.visualization import VisualizationManager, registry
+
+# 시스템 상태 확인
+systems = get_systems()
+print("Available modes:", list(systems.keys()))
+if 'TEST' in systems:
+    print("Available systems in TEST mode:", list(systems['TEST'].keys()))
 
 LANG = 'EN'
 
+# SYSTEM_CASE 내용 디버깅을 위한 로그
+print("Available modes in SYSTEM_CASE:", list(systems.keys()))
 
 st.set_page_config(
     page_title='Exergy Analysis',
@@ -23,24 +43,39 @@ st.set_page_config(
 # 이 변수를 통해 모드, 시스템 구성, 카운터 등의 상태를 관리
 sss = st.session_state
 
+# 사용 가능한 모드 목록 가져오기
+systems = get_systems()  # 최신 상태 가져오기
+available_modes = list(systems.keys())
+st.write(available_modes)
+default_mode = available_modes[0] if available_modes else 'COOLING'
+
 if 'mode' not in sss:
-    sss.mode = 'Cooling'
+    sss.mode = default_mode.title()
 
 def reset_systems():
+    """시스템 상태를 초기화합니다."""
     sss.systems = {}
+    systems = get_systems()  # 최신 상태 가져오기
     sss.system_count = {
-        k: 0 for k in SYSTEM_CASE[sss.mode.upper()].keys()
+        k: 0 for k in systems[sss.mode.upper()].keys()
     }
-
 
 if 'systems' not in sss:
     sss.systems = {}
 
 if 'system_count' not in sss:
+    systems = get_systems()  # 최신 상태 가져오기
     sss.system_count = {
-        k: 0 for k in SYSTEM_CASE[sss.mode.upper()].keys()
+        k: 0 for k in systems[sss.mode.upper()].keys()
     }
 
+def update_system_count():
+    """현재 모드에 맞게 system_count를 업데이트합니다."""
+    systems = get_systems()
+    current_counts = sss.system_count if 'system_count' in sss else {}
+    sss.system_count = {
+        k: current_counts.get(k, 0) for k in systems[sss.mode.upper()].keys()
+    }
 
 def create_system(mode, system_name):
     """시스템 생성 함수
@@ -63,9 +98,14 @@ def create_system(mode, system_name):
     mode = mode.upper()
     system_name = system_name.upper()
 
+    # system_count가 현재 모드의 시스템들을 포함하도록 업데이트
+    if system_name not in sss.system_count:
+        update_system_count()
+
     sss.system_count[system_name] += 1
 
-    system = copy.deepcopy(SYSTEM_CASE[mode][system_name])
+    systems = get_systems()  # 최신 상태 가져오기
+    system = copy.deepcopy(systems[mode][system_name])
     system['name'] = f"{system_name} {sss.system_count[system_name]}"
     system['type'] = system_name
 
@@ -81,22 +121,35 @@ with st.sidebar:
     st.title('Options')
     st.divider()
     st.header('시스템 모드')
-    st.segmented_control(
-        'Mode',
-        default='Cooling',
-        options=['Cooling', 'Heating', 'Hot Water'],
-        key='mode',
-        selection_mode='single',
-        label_visibility='collapsed',
-
-    )
+    systems = get_systems()  # 최신 상태 가져오기
+    available_modes = list(systems.keys())
+    if not available_modes:
+        st.write('No modes available.')
+        st.stop()
+    else:
+        previous_mode = sss.mode if 'mode' in sss else None
+        st.segmented_control(
+            'Mode',
+            default=default_mode.title(),
+            options=[mode.title() for mode in available_modes],
+            key='mode',
+            selection_mode='single',
+            label_visibility='collapsed',
+        )
+        # 모드가 변경되면 시스템 리셋
+        if previous_mode != sss.mode:
+            reset_systems()  # 시스템 상태 초기화
+            if 'selected_options' in sss:
+                sss.selected_options = []  # 선택된 옵션도 초기화
+            st.rerun()  # 페이지 새로고침
     st.header('시스템 추가')
-    if len(SYSTEM_CASE[sss.mode.upper()]) == 0:
+    systems = get_systems()  # 최신 상태 가져오기
+    if len(systems[sss.mode.upper()]) == 0:
         st.write('No system available for the selected mode.')
         st.stop()
     else:
         selected = st.selectbox(
-            'System type', SYSTEM_CASE[sss.mode.upper()].keys()
+            'System type', systems[sss.mode.upper()].keys()
         )
         st.button(
             'Add system',
@@ -153,68 +206,102 @@ with col1:
     else:
         st.write(' ')
         st.write(' ')
-        system_tabs = st.tabs(sss.systems.keys())
-        for tab, system in zip(system_tabs, sss.systems.values()):
-            with tab:
-                # 시스템 타입에 따른 제목 표시
-                system_info = SYSTEM_CASE[sss.mode.upper()][system['type']]
-                st.write(f"### {system_info['display']['title']} {system_info['display']['icon']}")
+        
+        # 현재 모드에 유효한 시스템만 필터링
+        mode_upper = sss.mode.upper()
+        systems = get_systems()  # 최신 상태 가져오기
+        valid_systems = {}
+        
+        for sys_name, system in sss.systems.items():
+            sys_type = system['type']
+            # 현재 모드에 해당 시스템 타입이 존재하는지 확인
+            if sys_type in systems[mode_upper]:
+                valid_systems[sys_name] = system
+        
+        if not valid_systems:
+            st.write('No valid systems for the current mode.')
+        else:
+            system_tabs = st.tabs(valid_systems.keys())
+            for tab, system in zip(system_tabs, valid_systems.values()):
+                with tab:
+                    # 시스템 타입에 따른 제목 표시
+                    system_info = systems[mode_upper][system['type']]
+                    st.write(f"### {system_info['display']['title']} {system_info['display']['icon']}")
+                    
+                    # 파라미터를 카테고리별로 그룹화
+                    params_by_category = {}
+                    for k, v in system['parameters'].items():
+                        category = v.get('category', 'General')  # category가 없으면 'General'로 분류
+                        if category not in params_by_category:
+                            params_by_category[category] = []
+                        params_by_category[category].append((k, v))
 
-                # 파라미터를 카테고리별로 그룹화
-                params_by_category = {}
-                for k, v in system['parameters'].items():
-                    category = v.get('category', 'General')  # category가 없으면 'General'로 분류
-                    if category not in params_by_category:
-                        params_by_category[category] = []
-                    params_by_category[category].append((k, v))
+                    # 카테고리별 하위 탭 생성
+                    category_tabs = st.tabs([category.title() for category in params_by_category.keys()])
+                    for cat_tab, category in zip(category_tabs, params_by_category.keys()):
+                        with cat_tab:
+                            params = params_by_category[category]
+                            n = len(params)
+                            col11, col12 = st.columns(2)
+                            
+                            for i, (k, v) in enumerate(params):
+                                if i < (n + 1) // 2:
+                                    col = col11
+                                else:
+                                    col = col12
 
-                # 카테고리별 하위 탭 생성
-                category_tabs = st.tabs([category.title() for category in params_by_category.keys()])
-                for cat_tab, category in zip(category_tabs, params_by_category.keys()):
-                    with cat_tab:
-                        params = params_by_category[category]
-                        n = len(params)
-                        col11, col12 = st.columns(2)
-                        
-                        for i, (k, v) in enumerate(params):
-                            if i < (n + 1) // 2:
-                                col = col11
-                            else:
-                                col = col12
+                                with col:
+                                    system['parameters'][k]['value'] = st.number_input(
+                                        f"{v['explanation'][LANG]}, {v['latex']} [{v['unit']}]",
+                                        value=v['default'],
+                                        step=v['step'],
+                                        format=f"%.{max(0, -math.floor(math.log10(v['step'])))}f",
+                                        key=f"{system['name']}:{k}",
+                                    )
 
-                            with col:
-                                system['parameters'][k]['value'] = st.number_input(
-                                    f"{v['explanation'][LANG]}, {v['latex']} [{v['unit']}]",
-                                    value=v['default'],
-                                    step=v['step'],
-                                    format=f"%.{-math.floor(math.log10(v['step']))}f",
-                                    key=f"{system['name']}:{k}",
-                                )
-
-                st.button(
-                    'Remove system',
-                    use_container_width=True,
-                    key=system['name'],
-                    on_click=functools.partial(remove_system, name=system['name']),
-                )
+                    st.button(
+                        'Remove system',
+                        use_container_width=True,
+                        key=system['name'],
+                        on_click=functools.partial(remove_system, name=system['name']),
+                    )
 
     # [system['name'] for system in sss.systems.values()]
 
-
+# 현재 모드에 유효한 시스템만 평가
+mode_upper = sss.mode.upper()
+systems = get_systems()
 for key in sss.systems.keys():
-    evaluate_parameters(sss, key)
-
+    try:
+        system = sss.systems[key]
+        # 현재 모드에 해당 시스템 타입이 존재하는지 확인
+        if system['type'] in systems[mode_upper]:
+            evaluate_parameters(sss, key)
+    except Exception as e:
+        print(f"Error evaluating parameters for {key}: {e}")
 
 with col2:
     st.subheader('Output Data :chart_with_upwards_trend:')
+    
+    # 현재 모드에 유효한 시스템만 필터링
+    mode_upper = sss.mode.upper()
+    systems = get_systems()  # 최신 상태 가져오기
+    valid_system_names = []
+    
+    for sys_name, system in sss.systems.items():
+        sys_type = system['type']
+        # 현재 모드에 해당 시스템 타입이 존재하는지 확인
+        if sys_type in systems[mode_upper]:
+            valid_system_names.append(sys_name)
+    
     options = st.multiselect(
         'Select systems to display',
-        [system['name'] for system in sss.systems.values()],
-        default=sss.selected_options if 'selected_options' in sss else None,
+        valid_system_names,
+        default=[opt for opt in (sss.selected_options if 'selected_options' in sss else []) if opt in valid_system_names],
         key='selected_options',
     )
 
     if len(options) != 0:
-        # Initialize visualization manager and render all registered visualizations
-        viz_manager = VisualizationManager()
+        # Initialize visualization manager with the registry
+        viz_manager = VisualizationManager(registry)
         viz_manager.render_tabs(sss, options)
