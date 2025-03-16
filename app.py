@@ -46,7 +46,6 @@ sss = st.session_state
 # 사용 가능한 모드 목록 가져오기
 systems = get_systems()  # 최신 상태 가져오기
 available_modes = list(systems.keys())
-st.write(available_modes)
 default_mode = available_modes[0] if available_modes else 'COOLING'
 
 if 'mode' not in sss:
