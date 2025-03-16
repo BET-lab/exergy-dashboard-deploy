@@ -5,7 +5,7 @@ import streamlit as st
 
 # 예제 시스템을 먼저 로드하고 등록
 try:
-    import examples.custom_system
+    import examples.custom_system  # noqa: F401 - Import used for side effects
     print("Test systems registered successfully")
 except ImportError as e:
     print(f"Failed to import test systems: {e}")
