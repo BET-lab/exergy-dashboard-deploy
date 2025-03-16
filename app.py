@@ -5,9 +5,7 @@ import streamlit as st
 
 # 예제 시스템을 먼저 로드하고 등록
 try:
-    from examples.custom_system import register_test_systems
-    # 테스트 시스템 등록
-    register_test_systems()
+    import examples.custom_system
     print("Test systems registered successfully")
 except ImportError as e:
     print(f"Failed to import test systems: {e}")

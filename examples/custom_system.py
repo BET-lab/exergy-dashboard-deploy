@@ -41,14 +41,9 @@ she_system = {
 }
 
 
-# 2. 시스템 등록 함수
-def register_test_systems():
-    """테스트 시스템 등록"""
-    # SHE 시스템 등록
-    register_system('TEST_MODE', 'SHE', she_system)
+# SHE 시스템 등록
+register_system('TEST_MODE', 'SHE', she_system)
     
-    print("TEST_MODE 모드에 시스템 등록 완료: SHE")
-
 
 # 3. 간단한 엑서지 계산 함수
 @eval_registry.register('TEST_MODE', 'SHE')
@@ -86,8 +81,3 @@ def plot_diff_temperature(session_state: Any, selected_systems: List[str]) -> al
     )
     
     return chart
-
-
-# 시스템 등록 실행
-if __name__ == "__main__":
-    register_test_systems() 

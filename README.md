@@ -2,15 +2,6 @@
 
 엑서지 분석을 위한 대시보드 애플리케이션입니다.
 
-## 시스템 모드
-
-대시보드는 다양한 모드를 지원합니다:
-
-1. **COOLING**: 냉방 시스템 (ASHP, GSHP 등)
-2. **TEST**: 테스트 및 교육용 간단한 시스템 (SHE - 간단한 열교환기 등)
-3. **사용자 정의 모드**: 사용자가 추가한 커스텀 모드
-
-각 모드는 독립적인 시스템과 시각화 세트를 가집니다.
 
 ## 1. 새로운 시스템 등록하기
 
@@ -48,11 +39,10 @@ my_system = {
     }
 }
 
-# 시스템 등록 함수
-def register_my_systems():
-    # 시스템 등록 (모드, 시스템명, 시스템 정의)
-    register_system('MY_MODE', 'MY_SYS', my_system)
-    print("MY_MODE 모드에 시스템 등록 완료: MY_SYS")
+# 모듈 레벨에서 시스템 직접 등록
+# 이 코드는 임포트 시점에 자동으로 실행됩니다
+register_system('MY_MODE', 'MY_SYS', my_system)
+print("MY_MODE 모드에 시스템 등록 완료: MY_SYS")
 ```
 
 ### 시스템 템플릿 필수 필드
@@ -169,7 +159,7 @@ def plot_my_visualization(session_state: Any, selected_systems: List[str]) -> al
 
 ## 4. 시스템 등록 및 시각화 추가를 위한 파일 구성
 
-시스템 등록과 시각화 추가는 별도의 모듈에서 수행할 수 있습니다:
+시스템 등록과 시각화 추가는 별도의 모듈에서 수행할 수 있습니다. 모듈이 임포트될 때 자동으로 시스템이 등록됩니다:
 
 ```
 examples/
@@ -206,11 +196,9 @@ my_system = {
     }
 }
 
-# 2. 시스템 등록 함수
-def register_my_systems():
-    """커스텀 시스템 등록"""
-    register_system('MY_MODE', 'MY_SYS', my_system)
-    print("MY_MODE 모드에 시스템 등록 완료: MY_SYS")
+# 2. 시스템 직접 등록 (모듈 임포트 시 자동 실행)
+register_system('MY_MODE', 'MY_SYS', my_system)
+print("MY_MODE 모드에 시스템 등록 완료: MY_SYS")
 
 # 3. 평가 함수 등록
 @eval_registry.register('MY_MODE', 'MY_SYS')
@@ -247,25 +235,27 @@ def plot_my_visualization(session_state: Any, selected_systems: List[str]) -> al
     )
     
     return chart
-
-# 5. 모듈 직접 실행 시 시스템 등록
-if __name__ == "__main__":
-    register_my_systems()
 ```
 
-## 5. 애플리케이션 실행하기
+## 5. 애플리케이션 임포트 및 실행하기
 
 1. 필요한 패키지 설치:
    ```bash
    pip install -r requirements.txt
    ```
 
-2. Streamlit 앱 실행:
+2. 커스텀 시스템 임포트하기:
+   ```python
+   # 시스템 파일 임포트 시 자동으로 등록됩니다
+   import examples.my_custom_system
+   ```
+
+3. Streamlit 앱 실행:
    ```bash
    streamlit run app.py
    ```
 
-3. 웹 브라우저에서 애플리케이션 접속:
+4. 웹 브라우저에서 애플리케이션 접속:
    ```
    http://localhost:8501
    ```
@@ -281,6 +271,7 @@ if __name__ == "__main__":
    - 모든 필수 필드가 포함되어 있는지 확인
    - 파라미터 구조가 표준 양식을 따르는지 확인
    - 시스템 이름이 기존 시스템과 중복되지 않도록 주의
+   - 모듈 레벨에서 직접 등록하면 임포트만으로 시스템이 등록됩니다
 
 2. 평가 함수 작성 시 고려사항:
    - 올바른 모드와 시스템명으로 데코레이터 등록
