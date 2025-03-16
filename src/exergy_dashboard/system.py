@@ -1,3 +1,4 @@
+# 각 시스템의 파라미터를 설정하세요.
 COOLING_ASGP = {
     'parameters':{
         'T_0': {
@@ -189,7 +190,9 @@ COOLING_GSHP = {
     }
 }
 
-
+# 정의된 시스템 케이스를 딕셔너리로 정의하세요.
+# 1단계 계층은 시스템 종류(COOLING, HEATING, HOT WATER).
+# 2단계 계층은 시스템 종류별 시스템 케이스.
 SYSTEM_CASE = {
     'COOLING': {
         'ASHP': COOLING_ASGP,
