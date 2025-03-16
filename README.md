@@ -2,129 +2,293 @@
 
 엑서지 분석을 위한 대시보드 애플리케이션입니다.
 
+## 시스템 모드
+
+대시보드는 다양한 모드를 지원합니다:
+
+1. **COOLING**: 냉방 시스템 (ASHP, GSHP 등)
+2. **TEST**: 테스트 및 교육용 간단한 시스템 (SHE - 간단한 열교환기 등)
+3. **사용자 정의 모드**: 사용자가 추가한 커스텀 모드
+
+각 모드는 독립적인 시스템과 시각화 세트를 가집니다.
+
 ## 1. 새로운 시스템 등록하기
 
-시스템 등록은 `register_system` 함수를 사용하여 수행할 수 있습니다.
+새로운 시스템은 `register_system` 함수를 사용하여 등록할 수 있습니다. 각 시스템은 특정 모드에 등록됩니다.
 
 ```python
-from exergy_dashboard.system import register_system, get_system_template
+from exergy_dashboard.system import register_system
 
-# 템플릿 가져오기
-template = get_system_template()
-
-# 템플릿을 수정하여 새로운 시스템 설정
-new_system = template.copy()
-new_system['display'] = {
-    'title': 'My New System',
-    'icon': ':star:'
-}
-new_system['parameters'] = {
-    'T_0': {
-        'explanation': {'EN': 'Environment Temperature', 'KR': '환경온도'},
-        'latex': r'$T_0$',
-        'default': 32.0,
-        'range': [-50, 50],
-        'unit': '℃',
-        'step': 0.5,
-        'category': 'environment',
+# 새로운 시스템 정의
+my_system = {
+    'display': {
+        'title': '나의 시스템',
+        'icon': ':gear:',
+    },
+    'parameters': {
+        'param1': {
+            'explanation': {'EN': 'Parameter 1', 'KR': '파라미터 1'},
+            'latex': r'$param_{1}$',
+            'default': 80,
+            'range': [50, 100],
+            'unit': '°C',
+            'step': 1,
+            'category': 'temperature'
+        },
+        'param2': {
+            'explanation': {'EN': 'Parameter 2', 'KR': '파라미터 2'},
+            'latex': r'$param_{2}$',
+            'default': 20,
+            'range': [10, 30],
+            'unit': 'kg/s',
+            'step': 0.1,
+            'category': 'flow'
+        },
+        # 더 많은 파라미터 추가
     }
-    # ... 더 많은 파라미터 추가 ...
 }
 
-# 시스템 등록
-register_system('COOLING', 'NEW_SYSTEM', new_system)
+# 시스템 등록 함수
+def register_my_systems():
+    # 시스템 등록 (모드, 시스템명, 시스템 정의)
+    register_system('MY_MODE', 'MY_SYS', my_system)
+    print("MY_MODE 모드에 시스템 등록 완료: MY_SYS")
 ```
 
-### 필수 필드
+### 시스템 템플릿 필수 필드
 - `display`: 시스템 표시 정보
-  - `title`: 시스템 이름
-  - `icon`: 시스템 아이콘 (Streamlit 이모지 코드)
+  - `title`: 시스템 제목
+  - `icon`: 시스템 아이콘 (이모지 형식)
 - `parameters`: 시스템 파라미터 정보
-  - 각 파라미터는 `explanation`, `latex`, `default`, `range`, `unit`, `step` 필드 필요
-  - `category`는 선택사항 (기본값: 'General')
+  - 각 파라미터는 다음 필드를 포함할 수 있습니다:
+    - `explanation`: 다국어 파라미터 설명 (`EN`, `KR` 등)
+    - `latex`: LaTeX 형식의 수식 표현
+    - `default`: 기본값
+    - `range`: 최소값과 최대값의 리스트 `[min, max]`
+    - `unit`: 단위
+    - `step`: 입력 스텝 크기
+    - `category`: 파라미터 분류
 
-## 2. 엑서지 계산 모듈 추가하기
+## 2. 시스템 평가 함수 구현하기
 
-엑서지 계산 모듈은 `evaluation.py`의 `registry`를 사용하여 등록합니다.
+각 시스템에 대한 평가 함수는 데코레이터를 사용하여 등록합니다. 이 함수는 파라미터를 받아 계산 결과를 반환합니다.
 
 ```python
-from exergy_dashboard.evaluation import registry
-from typing import Dict
+from exergy_dashboard.evaluation import registry as eval_registry
 
-@registry.register('MODE_NAME', 'SYSTEM_TYPE')
-def evaluate_new_system(params: Dict[str, float]) -> Dict[str, float]:
-    """새로운 시스템의 엑서지 계산 함수
+@eval_registry.register('MY_MODE', 'MY_SYS')
+def evaluate_my_system(params):
+    """
+    시스템 계산 함수
     
     Parameters
     ----------
-    params : Dict[str, float]
-        시스템 파라미터 (온도는 자동으로 켈빈으로 변환됨)
+    params : dict
+        사용자가 설정한 파라미터 값 딕셔너리
         
     Returns
     -------
-    Dict[str, float]
-        계산된 모든 변수를 포함하는 딕셔너리
+    dict
+        계산 결과를 담은 딕셔너리
     """
     # 파라미터 추출
-    T_0 = params['T_0']  # 이미 켈빈으로 변환됨
+    param1 = params['param1']
+    param2 = params['param2']
     
     # 계산 수행
-    result = some_calculation(T_0)
+    result1 = param1 * 2
+    result2 = param2 / 10
     
-    # 모든 로컬 변수 반환 (params 제외)
-    return {k: v for k, v in locals().items() if k != 'params'}
+    # 계산 결과 반환
+    return {
+        'result1': result1,
+        'result2': result2,
+        # 다른 계산 결과들
+    }
 ```
 
 ### 주의사항
-- 시스템 등록 시 반드시 해당하는 엑서지 계산 모듈도 등록해야 합니다
-- 미등록 시 런타임 에러가 발생할 수 있습니다
+- 평가 함수는 `@eval_registry.register('모드', '시스템명')` 데코레이터를 사용하여 등록합니다
+- 함수는 파라미터 딕셔너리를 입력으로 받아 계산 결과 딕셔너리를 반환합니다
+- 계산 오류 시 대시보드에서 예외 처리되지만, 가능한 자체 오류 검사를 구현하세요
 
-## 3. 시각화 도구 추가하기
+## 3. 모드별 시각화 추가하기
 
-시각화 도구는 `visualization.py`의 `registry`를 사용하여 등록합니다.
+시각화 함수는 특정 모드에 등록되며, 해당 모드가 활성화되었을 때만 표시됩니다.
 
 ```python
 from exergy_dashboard.visualization import registry
-import streamlit as st
-from typing import Dict, Any
+import altair as alt
+import pandas as pd
+from typing import Any, List
 
-@registry.register('VISUALIZATION_NAME')
-def plot_new_visualization(variables: Dict[str, float], params: Dict[str, Any]) -> None:
-    """새로운 시각화 함수
+@registry.register('MY_MODE', 'My Visualization')
+def plot_my_visualization(session_state: Any, selected_systems: List[str]) -> alt.Chart:
+    """커스텀 시각화 함수
     
     Parameters
     ----------
-    variables : Dict[str, float]
-        계산된 변수들
-    params : Dict[str, Any]
-        시스템 파라미터
+    session_state : Any
+        Streamlit 세션 상태 객체
+    selected_systems : List[str]
+        시각화할 시스템 이름 목록
+        
+    Returns
+    -------
+    alt.Chart
+        Altair 차트 객체
     """
-    st.write("### My New Visualization")
-    # 시각화 로직 구현
+    # 데이터 준비
+    data = []
+    for system in selected_systems:
+        data.append({
+            'system': system,
+            'result1': session_state.systems[system]['variables']['result1'],
+            'result2': session_state.systems[system]['variables']['result2']
+        })
+    
+    # 데이터프레임 생성
+    df = pd.DataFrame(data)
+    
+    # Altair 차트 생성 및 반환
+    chart = alt.Chart(df).mark_bar().encode(
+        x='system:N',
+        y='result1:Q',
+        color='system'
+    )
+    
+    return chart
 ```
 
-## 4. 예시 코드
+### 시각화 함수 규칙
+- 모든 시각화 함수는 `@registry.register('모드', '시각화이름')` 데코레이터로 등록합니다
+- 함수 형식은 `(session_state, selected_systems) -> alt.Chart` 형식을 따라야 합니다
+- 반환값은 Altair 차트 혹시 Streamlit이 시각화 가능한 객체여야 합니다
+- 선택된 모든 시스템을 처리할 수 있어야 합니다
+- 데이터가 없는 경우 빈 차트를 반환해야 합니다
 
-전체 예시는 `examples/custom_system.py`를 참조하세요. 이 예시는:
-- 테스트용 시스템 2개 추가
-- 엑서지 계산 모듈 구현
-- 간단한 시각화 도구 추가
+## 4. 시스템 등록 및 시각화 추가를 위한 파일 구성
 
-를 보여줍니다.
+시스템 등록과 시각화 추가는 별도의 모듈에서 수행할 수 있습니다:
+
+```
+examples/
+  my_custom_system.py  # 사용자 정의 시스템, 계산 함수, 시각화 등록
+```
+
+`my_custom_system.py` 예시:
+
+```python
+from exergy_dashboard.system import register_system
+from exergy_dashboard.evaluation import registry as eval_registry
+from exergy_dashboard.visualization import registry
+import pandas as pd
+import altair as alt
+from typing import List, Any
+
+# 1. 시스템 정의
+my_system = {
+    'display': {
+        'title': '나의 시스템',
+        'icon': ':gear:',
+    },
+    'parameters': {
+        'param1': {
+            'explanation': {'EN': 'Parameter 1', 'KR': '파라미터 1'},
+            'latex': r'$param_{1}$',
+            'default': 80,
+            'range': [50, 100],
+            'unit': '°C',
+            'step': 1,
+            'category': 'temperature'
+        },
+        # 더 많은 파라미터 추가
+    }
+}
+
+# 2. 시스템 등록 함수
+def register_my_systems():
+    """커스텀 시스템 등록"""
+    register_system('MY_MODE', 'MY_SYS', my_system)
+    print("MY_MODE 모드에 시스템 등록 완료: MY_SYS")
+
+# 3. 평가 함수 등록
+@eval_registry.register('MY_MODE', 'MY_SYS')
+def evaluate_my_system(params):
+    """나의 시스템 평가 함수"""
+    # 파라미터 추출
+    param1 = params['param1']
+   
+    # 계산 수행
+    result = param1 * 2
+    
+    # 결과 반환
+    return {
+        'result': result,
+    }
+
+# 4. 시각화 함수 등록
+@registry.register('MY_MODE', 'My Visualization')
+def plot_my_visualization(session_state: Any, selected_systems: List[str]) -> alt.Chart:
+    """선택된 시스템의 결과값 시각화"""
+    # 데이터 준비
+    data = []
+    for system in selected_systems:
+        data.append({
+            'system': system,
+            'result': session_state.systems[system]['variables']['result']
+        })
+
+    # 시각화 생성
+    chart = alt.Chart(pd.DataFrame(data)).mark_bar().encode(
+        x='system',
+        y='result',
+        color='system'
+    )
+    
+    return chart
+
+# 5. 모듈 직접 실행 시 시스템 등록
+if __name__ == "__main__":
+    register_my_systems()
+```
+
+## 5. 애플리케이션 실행하기
+
+1. 필요한 패키지 설치:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. Streamlit 앱 실행:
+   ```bash
+   streamlit run app.py
+   ```
+
+3. 웹 브라우저에서 애플리케이션 접속:
+   ```
+   http://localhost:8501
+   ```
+
+## 6. 예시 코드
+
+실제 구현 예시는 다음 파일을 참조하세요:
+- `examples/custom_system.py`: TEST 모드의 SHE(간단한 열교환기) 시스템 구현
 
 ## 주의사항
 
 1. 시스템 등록 시 고려사항:
    - 모든 필수 필드가 포함되어 있는지 확인
-   - 파라미터 이름이 기존 시스템과 중복되지 않도록 주의
-   - 범위와 기본값이 적절한지 검토
+   - 파라미터 구조가 표준 양식을 따르는지 확인
+   - 시스템 이름이 기존 시스템과 중복되지 않도록 주의
 
-2. 엑서지 계산 모듈 작성 시 고려사항:
-   - 모든 입력 파라미터가 사용되는지 확인
-   - 온도 단위 변환 주의 (섭씨 → 켈빈)
-   - 중간 계산 결과도 모두 반환
+2. 평가 함수 작성 시 고려사항:
+   - 올바른 모드와 시스템명으로 데코레이터 등록
+   - 모든 파라미터를 올바르게 처리하는지 확인
+   - 오류 상황에 대한 적절한 예외 처리 포함
 
-3. 시각화 도구 작성 시 고려사항:
-   - Streamlit 위젯 사용법 숙지
-   - 적절한 차트 타입 선택
-   - 사용자 상호작용 고려
+3. 시각화 함수 작성 시 고려사항:
+   - 항상 Altair 차트 객체를 반환하도록 구현
+   - 선택된 모든 시스템을 지원하도록 개발
+   - 데이터가 없는 경우의 예외 처리 포함
+   - 필요한 모든 데이터가 session_state에서 추출되는지 확인
