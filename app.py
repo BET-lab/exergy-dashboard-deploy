@@ -8,8 +8,6 @@ import streamlit as st
 from exergy_dashboard.system import SYSTEM_CASE
 from exergy_dashboard.evaluation import evaluate_parameters_cooling
 from exergy_dashboard.chart import (
-    plot_waterfall_cooling_ashp,
-    plot_waterfall_cooling_gshp,
     plot_waterfall_multi,
 )
 
