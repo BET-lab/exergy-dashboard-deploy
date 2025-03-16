@@ -304,4 +304,5 @@ with col2:
     if len(options) != 0:
         # Initialize visualization manager with the registry
         viz_manager = VisualizationManager(registry)
-        viz_manager.render_tabs(sss, options)
+        # 현재 모드에 맞는 시각화만 표시
+        viz_manager.render_tabs(sss, options, mode=sss.mode.upper())

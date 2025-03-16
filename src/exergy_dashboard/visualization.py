@@ -61,17 +61,19 @@ class VisualizationRegistry:
     
     새로운 시각화 도구를 등록하고 관리하는 레지스트리 클래스입니다.
     """
-    _visualizers: Dict[str, Callable] = None
+    _visualizers: Dict[str, Dict[str, Callable]] = None
     
     def __post_init__(self):
         self._visualizers = {}
     
-    def register(self, name: str) -> Callable:
+    def register(self, mode: str = None, name: str = None) -> Callable:
         """
         데코레이터: 새로운 시각화 도구를 등록
 
         Parameters
         ----------
+        mode : str, optional
+            시각화 도구가 사용될 모드, None이면 모든 모드에서 사용 가능
         name : str
             시각화 도구의 이름
 
@@ -80,12 +82,19 @@ class VisualizationRegistry:
         Callable
             데코레이터 함수
         """
+        # 호환성을 위해 모드와 이름 파라미터 순서를 바꿔서도 동작하도록 함
+        if mode is not None and name is None:
+            name = mode
+            mode = None
+            
         def decorator(func: Callable) -> Callable:
-            self._visualizers[name] = func
+            if mode not in self._visualizers:
+                self._visualizers[mode] = {}
+            self._visualizers[mode][name] = func
             return func
         return decorator
     
-    def get_visualizer(self, name: str) -> Callable:
+    def get_visualizer(self, name: str, mode: str = None) -> Callable:
         """
         시각화 도구 함수를 반환
 
@@ -93,17 +102,49 @@ class VisualizationRegistry:
         ----------
         name : str
             시각화 도구의 이름
+        mode : str, optional
+            시각화 도구가 사용될 모드, None이면 모드 무관 시각화 검색
 
         Returns
         -------
         Callable
             시각화 함수
         """
-        return self._visualizers.get(name)
+        # 특정 모드의 시각화가 있으면 반환
+        if mode in self._visualizers and name in self._visualizers[mode]:
+            return self._visualizers[mode][name]
+        
+        # 모드 무관 시각화가 있으면 반환
+        if None in self._visualizers and name in self._visualizers[None]:
+            return self._visualizers[None][name]
+            
+        return None
     
-    def get_available_visualizers(self) -> Dict[str, Callable]:
-        """등록된 모든 시각화 도구를 반환"""
-        return self._visualizers.copy()
+    def get_available_visualizers(self, mode: str = None) -> Dict[str, Callable]:
+        """
+        등록된 모든 시각화 도구를 반환
+        
+        Parameters
+        ----------
+        mode : str, optional
+            특정 모드의 시각화만 반환할 경우 지정
+            
+        Returns
+        -------
+        Dict[str, Callable]
+            시각화 이름과 함수의 딕셔너리
+        """
+        result = {}
+        
+        # 모드 무관 시각화 추가
+        if None in self._visualizers:
+            result.update(self._visualizers[None])
+            
+        # 특정 모드 시각화 추가 (모드가 지정된 경우)
+        if mode in self._visualizers:
+            result.update(self._visualizers[mode])
+            
+        return result
 
 
 class VisualizationManager:
@@ -120,7 +161,7 @@ class VisualizationManager:
         """
         self.registry = registry
     
-    def render_tabs(self, session_state: Any, selected_systems: List[str]) -> None:
+    def render_tabs(self, session_state: Any, selected_systems: List[str], mode: str = None) -> None:
         """
         등록된 모든 시각화를 탭으로 구성하여 렌더링
 
@@ -130,25 +171,63 @@ class VisualizationManager:
             Streamlit session state
         selected_systems : List[str]
             선택된 시스템 이름 목록
+        mode : str, optional
+            시각화할 특정 모드
         """
         if not selected_systems:
             return
             
-        tabs = st.tabs(self.registry.get_available_visualizers().keys())
+        # 현재 모드에 해당하는 시각화 도구 가져오기
+        available_visualizers = self.registry.get_available_visualizers(mode)
         
-        for tab, tab_name in zip(tabs, self.registry.get_available_visualizers().keys()):
+        if not available_visualizers:
+            st.write("No visualizations available for this mode.")
+            return
+            
+        tabs = st.tabs(available_visualizers.keys())
+        
+        for tab, tab_name in zip(tabs, available_visualizers.keys()):
             with tab:
-                func = self.registry.get_visualizer(tab_name)
+                func = available_visualizers[tab_name]
                 st.subheader(tab_name)
-                chart = func(session_state, selected_systems)
-                st.altair_chart(chart, use_container_width=True)
+                try:
+                    # 새로운 시각화 함수 형식 (variables와 params를 직접 받는 형식)
+                    if hasattr(func, '_is_new_format') and func._is_new_format:
+                        # 새로운 형식용 데이터 준비
+                        systems_data = {}
+                        for system_name in selected_systems:
+                            system = session_state.systems[system_name]
+                            if 'variables' in system:
+                                variables = system['variables']
+                                params = {k: v['value'] for k, v in system['parameters'].items()}
+                                systems_data[system_name] = {'variables': variables, 'params': params}
+                        
+                        # 새로운 형식의 함수 호출
+                        func(systems_data, selected_systems)
+                    else:
+                        # 기존 형식의 함수 호출
+                        chart = func(session_state, selected_systems)
+                        if chart is not None:  # 차트를 반환하는 경우에만 표시
+                            st.altair_chart(chart, use_container_width=True)
+                except Exception as e:
+                    st.error(f"Error rendering visualization: {str(e)}")
+                    # 디버깅을 위한 추가 정보
+                    import traceback
+                    st.error(f"상세 오류: {traceback.format_exc()}")
+
+
+# 새로운 형식의 시각화 함수를 위한 데코레이터
+def new_viz_format(func):
+    """새로운 형식의 시각화 함수임을 표시하는 데코레이터"""
+    func._is_new_format = True
+    return func
 
 
 # 전역 레지스트리 인스턴스 생성
 registry = VisualizationRegistry()
 
 
-@registry.register('Exergy Efficiency')
+@registry.register(name='Exergy Efficiency')
 def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> alt.Chart:
     """엑서지 효율 차트 생성"""
     efficiencies = []
@@ -208,7 +287,7 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
     return c + text
 
 
-@registry.register('Exergy Consumption Process')
+@registry.register(name='Exergy Consumption Process')
 def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> alt.Chart:
     """엑서지 소비 과정 차트 생성"""
     sources = []
