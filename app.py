@@ -3,14 +3,9 @@ import copy
 import functools
 import streamlit as st
 
-# 예제 시스템을 먼저 로드하고 등록
-try:
-    import examples.custom_system  # noqa: F401 - Import used for side effects
-    print("Test systems registered successfully")
-except ImportError as e:
-    print(f"Failed to import test systems: {e}")
-except Exception as e:
-    print(f"Error registering test systems: {e}")
+# 예제 시스템을 등록하기 위해서는 반드시 임포트 해야 함.
+import examples.cooling_system  # noqa: F401 - Import used for side effects
+import examples.custom_system  # noqa: F401 - Import used for side effects
 
 # 시스템 관련 모듈을 나중에 import
 from exergy_dashboard.system import get_systems
