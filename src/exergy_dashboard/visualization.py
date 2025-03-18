@@ -48,10 +48,7 @@ Examples
 """
 
 from typing import Callable, Dict, List, Any
-import pandas as pd
-import altair as alt
 import streamlit as st
-from .chart import plot_waterfall_multi
 from dataclasses import dataclass
 
 
