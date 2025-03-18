@@ -5,6 +5,7 @@ import streamlit as st
 
 # 예제 시스템을 등록하기 위해서는 반드시 임포트 해야 함.
 import examples.cooling_system  # noqa: F401 - Import used for side effects
+import examples.heating_system  # noqa: F401 - Import used for side effects
 import examples.custom_system  # noqa: F401 - Import used for side effects
 
 # 시스템 관련 모듈을 나중에 import
@@ -28,6 +29,19 @@ st.set_page_config(
     page_icon=':fire:',
     layout='wide',
     initial_sidebar_state='expanded'
+)
+
+# 사이드바 너비 조절을 위한 CSS 추가
+st.markdown(
+    """
+    <style>
+    [data-testid="stSidebar"][aria-expanded="true"]{
+        min-width: 200px;
+        max-width: 200px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
 )
 
 # Streamlit의 session_state를 더 짧은 변수명으로 할당
