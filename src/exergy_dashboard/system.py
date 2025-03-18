@@ -5,7 +5,7 @@ from copy import deepcopy
 
 
 # 기본 시스템 정의
-COOLING_ASGP = {
+COOLING_ASHP = {
     'display': {
         'title': 'Air Source Heat Pump',
         'icon': ':snowflake:',
@@ -219,7 +219,7 @@ class SystemRegistry:
         self._systems = {}
         # 기본 시스템 등록
         self._systems['COOLING'] = {
-            'ASHP': COOLING_ASGP,
+            'ASHP': COOLING_ASHP,
             'GSHP': COOLING_GSHP,
         }
     
