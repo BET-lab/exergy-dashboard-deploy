@@ -12,8 +12,8 @@ from exergy_dashboard.evaluation import registry as eval_registry
 from exergy_dashboard.visualization import registry
 
 
-# 1. 간단한 열교환기 시스템 정의
-she_system = {
+# 1. Heating System
+heating_system = {
     'display': {
         'title': '간단한 열교환기 시스템',
         'icon': ':earth_americas:',
@@ -42,14 +42,14 @@ she_system = {
 
 
 # Heating 스템 등록
-register_system('Heating', 'ASHP', she_system)
-register_system('Heating', 'GSHP', she_system)
-register_system('Heating', 'GSHP+Solar', she_system)
+register_system('Heating', 'ASHP', heating_system)
+register_system('Heating', 'GSHP', heating_system)
+register_system('Heating', 'GSHP+Solar', heating_system)
          
 
 # 3. 간단한 엑서지 계산 함수
 @eval_registry.register('Heating', 'ASHP')
-def evaluate_she(params):
+def evaluate_heating_ashp(params):
     """간단한 열교환기의 엑서지 계산"""
     # 파라미터 추출
     T_in_h = params['T_in_h']

@@ -13,7 +13,7 @@ rho_a =	1.2
 
 
 # 기본 시스템 정의
-COOLING_ASGP = {
+COOLING_ASHP = {
     'display': {
         'title': 'Air Source Heat Pump',
         'icon': ':snowflake:',
@@ -213,7 +213,7 @@ COOLING_GSHP = {
 }
 
 # 시스템 등록
-register_system('COOLING', 'ASHP', COOLING_ASGP)
+register_system('COOLING', 'ASHP', COOLING_ASHP)
 register_system('COOLING', 'GSHP', COOLING_GSHP)
 
 

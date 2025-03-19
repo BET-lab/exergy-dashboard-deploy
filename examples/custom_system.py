@@ -41,7 +41,7 @@ she_system = {
 }
 
 
-# SHE 시스템 등록
+# Simple Heat Exchanger(SHE) 시스템 등록
 register_system('TEST_MODE', 'TEST_SYSTEM', she_system)
     
 
@@ -55,7 +55,7 @@ def evaluate_she(params):
    
     diff_T = T_in_h - T_out_h
 
-    # 결과 반환
+    # 결과 반환 (plot에 사용할 변수수)
     return {
         'diff_T': diff_T,  # 온도차 (℃)
     }
