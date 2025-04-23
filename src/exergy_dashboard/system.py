@@ -195,4 +195,8 @@ def get_system_template() -> dict:
 
 def get_systems() -> Dict[str, Dict[str, Any]]:
     """전역 레지스트리에 등록된 모든 시스템을 반환합니다."""
+    systems = system_registry.get_systems()
+    # UI에 표시되는 이름 임시로 바꾸기: 'TEST' → 'HOT WATER'
+    if 'TEST' in systems:
+        systems['HOT WATER'] = systems.pop('TEST')
     return system_registry.get_systems()
