@@ -126,7 +126,7 @@ def add_system(type_):
 with st.sidebar:
     st.title('Options')
     st.divider()
-    st.header('시스템 모드asdf')
+    st.header('시스템 모드')
     systems = get_systems()  # 최신 상태 가져오기
     available_modes = list(systems.keys())
     if not available_modes:
