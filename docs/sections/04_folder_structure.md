@@ -15,7 +15,7 @@ exergy-dashboard-deploy/
 │       ├── system.py           # 시스템 등록/관리 모듈
 │       ├── evaluation.py       # 평가 함수 등록/관리 모듈
 │       └── visualization.py    # 시각화 함수 등록/관리 모듈
-├── examples/               # 사용자 정의 시스템/평가/시각화 예시 코드
+├── systems/                # 사용자 정의 시스템/평가/시각화 코드 (자동 임포트)
 ├── notebooks/              # 실험/테스트/분석용 Jupyter 노트북
 └── .gitignore              # Git 버전관리 제외 파일 목록
 ```
@@ -51,13 +51,28 @@ exergy-dashboard-deploy/
             # ...
             pass
         ```
-- **examples/**: 새로운 시스템/평가/시각화 함수 예시 및 템플릿 제공
-    - 예시: 사용자 정의 시스템 등록 예제
+- **systems/**: 사용자 정의 시스템/평가/시각화 코드 저장 위치 (파일명: *_system.py, 자동 임포트)
+    - 예시: 커스텀 시스템 등록 예제
     ```python
-    # examples/custom_system.py
+    # systems/my_system.py
     from exergy_dashboard.system import register_system
-    # ...
+    my_system = {
+        'display': {'title': '나만의 시스템', 'icon': ':star:'},
+        'parameters': {
+            'T_in': {
+                'explanation': {'EN': 'Inlet Temp', 'KR': '입구 온도'},
+                'latex': r'$T_{in}$',
+                'default': 60,
+                'range': [0, 100],
+                'unit': '℃',
+                'step': 1,
+                'category': 'temperature',
+            },
+        }
+    }
+    register_system('COOLING', 'MY_SYSTEM', my_system)
     ```
+    - systems/ 폴더에 *_system.py 파일을 추가하면 별도 import 없이 자동으로 대시보드에 반영됨
 - **notebooks/**: 분석, 실험, 테스트용 Jupyter 노트북 저장
     - 예시: 노트북 파일 생성
     ```bash

@@ -6,7 +6,7 @@
 
 ## 9.1 예제 시스템 등록 코드
 
-`examples/custom_system.py` 파일 예시:
+`systems/custom_system.py` 파일 예시:
 
 ```python
 from exergy_dashboard.system import register_system
@@ -84,16 +84,16 @@ def plot_diff_T(session_state: Any, selected_systems: List[str]):
 
 - 여러 시스템 등록 및 각기 다른 파라미터로 평가/시각화 가능
 - 예시 파일 복사/수정 시 새로운 시스템/평가/시각화 함수 손쉽게 추가 가능
-- `examples/` 폴더 내 파일을 `app.py`에서 import해야 자동 대시보드 반영됨
+- `systems/` 폴더에 *_system.py 파일을 추가하면 자동으로 대시보드에 반영됨
 - 파라미터 이름, 단위, 범위 등 일관성 있게 관리 권장
-- 함수가 대시보드에 보이지 않을 경우, 예시 파일 import 여부 및 함수 등록 데코레이터 확인 필요
+- 함수가 대시보드에 보이지 않을 경우, systems/ 폴더에 파일이 정상적으로 추가되었는지, 파일명/코드 오류가 없는지, 함수 등록 데코레이터가 올바른지 확인 필요
 
 ---
 
 ## 9.5 실제 예시 파일 경로 안내
 
-- `examples/custom_system.py` : 커스텀 시스템/평가/시각화 예시
-- `examples/heating_system.py` : 난방 시스템 예시
-- `examples/cooling_system.py` : 냉방 시스템 예시
+- `systems/custom_system.py` : 커스텀 시스템/평가/시각화 예시
+- `systems/heating_system.py` : 난방 시스템 예시
+- `systems/cooling_system.py` : 냉방 시스템 예시
 
 > 예시 코드는 신규 사용자와 확장 개발자 모두에게 좋은 출발점이 됨. 실제 파일 참고 후 자신만의 시스템과 함수 작성 필요 
