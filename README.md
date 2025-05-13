@@ -162,7 +162,7 @@ def plot_my_visualization(session_state: Any, selected_systems: List[str]) -> al
 시스템 등록과 시각화 추가는 별도의 모듈에서 수행할 수 있습니다. 모듈이 임포트될 때 자동으로 시스템이 등록됩니다:
 
 ```
-examples/
+systems/
   my_custom_system.py  # 사용자 정의 시스템, 계산 함수, 시각화 등록
 ```
 
@@ -244,12 +244,10 @@ def plot_my_visualization(session_state: Any, selected_systems: List[str]) -> al
    uv sync
    ```
 
-2. `app.py`에 커스텀 시스템 임포트하기:
-   ```python
-   # 시스템 파일 임포트 시 자동으로 등록됩니다
-   # 예시 파일로는 examples/custom_system.py 참고.
-   import examples.my_custom_system
-   ```
+2. 시스템 파일 자동 임포트:
+   - `systems/` 폴더에 `*_system.py` 파일을 추가하면, `app.py`가 자동으로 모든 시스템 파일을 임포트합니다.
+   - 별도의 임포트 코드를 작성할 필요가 없습니다.
+   - 예시 파일로는 `systems/custom_system.py` 참고.
 
 3. Streamlit 앱 실행:
    ```bash
@@ -264,7 +262,7 @@ def plot_my_visualization(session_state: Any, selected_systems: List[str]) -> al
 ## 6. 예시 코드
 
 실제 구현 예시는 다음 파일을 참조하세요:
-- `examples/custom_system.py`: TEST 모드의 TEST_SYSTEM 시스템 구현
+- `systems/custom_system.py`: TEST 모드의 TEST_SYSTEM 시스템 구현
 
 ## 주의사항
 

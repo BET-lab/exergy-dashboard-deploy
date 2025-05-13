@@ -2,11 +2,16 @@ import math
 import copy
 import functools
 import streamlit as st
+import importlib
+import os
+import glob
 
-# 예제 시스템을 등록하기 위해서는 반드시 임포트 해야 함.
-import examples.cooling_system  # noqa: F401 - Import used for side effects
-import examples.heating_system  # noqa: F401 - Import used for side effects
-import examples.custom_system  # noqa: F401 - Import used for side effects
+# systems 폴더의 *_system.py 파일을 모두 동적으로 임포트
+systems_dir = os.path.join(os.path.dirname(__file__), 'systems')
+system_files = glob.glob(os.path.join(systems_dir, '*_system.py'))
+for file_path in system_files:
+    module_name = os.path.splitext(os.path.basename(file_path))[0]
+    importlib.import_module(f'systems.{module_name}')
 
 # 시스템 관련 모듈을 나중에 import
 from exergy_dashboard.system import get_systems
