@@ -70,20 +70,20 @@ streamlit run app.py
 ```
 
 ### 3) 웹 브라우저에서 접속
-- 기본적으로 `http://localhost:8501`에서 대시보드 접속 가능
+- 기본적으로 `http://localhost:8501`에서 대시보드에 접속할 수 있다.
 
 ---
 
 ## 6.4 개발/운영 환경 팁
 
-- **자동 새로고침**: Streamlit은 코드 변경 시 자동 새로고침 지원, 필요시 수동 새로고침(`R` 키) 가능
-- **포트 변경**: 여러 인스턴스 실행 또는 포트 충돌 시 `--server.port` 옵션 사용
+- **자동 새로고침**: Streamlit은 코드 변경 시 자동으로 앱을 새로고침한다. 필요시 수동으로 새로고침(`R` 키)도 가능하다.
+- **포트 변경**: 여러 인스턴스를 띄우거나 포트 충돌 시 `--server.port` 옵션을 사용한다.
   ```bash
   streamlit run app.py --server.port 8502
   ```
-- **환경 변수**: Streamlit 설정, 디버깅, 로깅 등 환경 변수로 제어 가능
-- **패키지 추가**: 새로운 패키지 설치 후 `uv sync` 또는 `pip install` 실행, 필요시 `pyproject.toml`/`requirements.txt` 반영
-- **Jupyter 노트북 활용**: `notebooks/` 폴더에서 실험/테스트/분석 수행 가능
+- **환경 변수**: Streamlit 설정, 디버깅, 로깅 등은 환경 변수로 제어할 수 있다.
+- **패키지 추가**: 새로운 패키지 설치 후 `uv sync` 또는 `pip install`을 실행하고, 필요시 `pyproject.toml`/`requirements.txt`에 반영한다.
+- **Jupyter 노트북 활용**: `notebooks/` 폴더에서 실험/테스트/분석을 수행할 수 있다.
 
 ### 오류 발생 시 대처 예시
 - 의존성 설치 오류: `pip install --upgrade pip setuptools`로 pip 최신화 후 재시도
