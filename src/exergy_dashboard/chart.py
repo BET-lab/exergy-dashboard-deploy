@@ -29,7 +29,6 @@ def plot_waterfall_multi(source):
     # 기존 source에 merge
     source = source.merge(group_starts, on="group")
     source = source.merge(group_ends, on="group")
-    print(source)
 
     # Define frequently referenced/long expressions
     calc_prev_sum = alt.expr.if_(label == alt.datum.end_label, 0, window_sum_amount - amount)
@@ -48,7 +47,7 @@ def plot_waterfall_multi(source):
         x=alt.X("label:O", axis=alt.Axis(title="", labelAngle=0), sort=None)
     )
 
-    bar_size = 35
+    bar_size = 50
 
     bar = base_chart.mark_bar(size=bar_size, tooltip=None).encode(
         y=alt.Y("calc_prev_sum:Q", title="Amount"),
@@ -66,14 +65,20 @@ def plot_waterfall_multi(source):
 
     fs = bar_size / 3.5
     # Add values as text
-    text_pos_values_top_of_bar = base_chart.mark_text(baseline="bottom", dy=-4, fontSize=fs, tooltip=None).encode(
-        text=alt.Text("calc_sum_inc:N"),
-        y="calc_sum_inc:Q",
+    text_values_top = base_chart.mark_text(
+        baseline="bottom", dy=-4, fontSize=fs, tooltip=None
+    ).encode(
+        text=alt.Text("calc_amount:Q", format=".2f"),
+        y="calc_top:Q"
     )
-    text_neg_values_bot_of_bar = base_chart.mark_text(baseline="top", dy=4, fontSize=fs, tooltip=None).encode(
-        text=alt.Text("calc_sum_dec:N"),
-        y="calc_sum_dec:Q",
-    )
+    # text_pos_values_top_of_bar = base_chart.mark_text(baseline="bottom", dy=-4, fontSize=fs, tooltip=None).encode(
+    #     text=alt.Text("calc_sum_inc:N"),
+    #     y="calc_sum_inc:Q",
+    # )
+    # text_neg_values_bot_of_bar = base_chart.mark_text(baseline="top", dy=4, fontSize=fs, tooltip=None).encode(
+    #     text=alt.Text("calc_sum_dec:N"),
+    #     y="calc_sum_dec:Q",
+    # )
     # text_bar_values_mid_of_bar = base_chart.mark_text(baseline="middle", fontSize=fs, tooltip=None).encode(
     #     text=alt.Text("calc_text_amount:N"),
     #     y="calc_center:Q",
@@ -83,16 +88,17 @@ def plot_waterfall_multi(source):
     chart = alt.layer(
         bar,
         rule,
-        text_pos_values_top_of_bar,
-        text_neg_values_bot_of_bar,
+        text_values_top,
+        # text_pos_values_top_of_bar,
+        # text_neg_values_bot_of_bar,
         # text_bar_values_mid_of_bar
     ).properties(
-        width=alt.Step(bar_size + 20),
+        width=alt.Step(bar_size + 100),
         # width='container',
         height=190
     ).facet(
         facet=alt.Facet("group").title('').sort([]),
-        columns=2,
+        columns=1,
     ).transform_window(
         window_sum_amount="sum(amount)",
         window_lead_label="lead(label)",
@@ -103,11 +109,11 @@ def plot_waterfall_multi(source):
         calc_amount=calc_amount,
         calc_text_amount=alt.expr.format(calc_text_amount, ".2f"),
         calc_center=(window_sum_amount + calc_prev_sum) / 2,
+        calc_top=alt.expr.if_(calc_amount > 0, window_sum_amount, calc_prev_sum),  # 새 필드 추가
         calc_sum_dec=alt.expr.if_(window_sum_amount < calc_prev_sum, alt.expr.format(window_sum_amount, ".2f"), None),
         calc_sum_inc=alt.expr.if_(
             window_sum_amount > calc_prev_sum
-            | (alt.datum.index != alt.datum.length - 1)  # 마지막 데이터 포인트 체크
-            ,
+            | (alt.datum.index != alt.datum.length - 1),
             alt.expr.format(window_sum_amount, ".2f"),
             None
         ),  
