@@ -15,19 +15,32 @@ COLORS = [
 ] * 50
 
 
-def plot_waterfall_multi(source, start_label, end_label):
+def plot_waterfall_multi(source):
     # Define frequently referenced fields
     amount = alt.datum.amount
     label = alt.datum.label
     window_lead_label = alt.datum.window_lead_label
     window_sum_amount = alt.datum.window_sum_amount
 
+    # Define start and end labels
+    group_starts = source.groupby("group").first().reset_index()[["group", "label"]].rename(columns={"label": "start_label"})
+    group_ends = source.groupby("group").last().reset_index()[["group", "label"]].rename(columns={"label": "end_label"})
+    
+    # 기존 source에 merge
+    source = source.merge(group_starts, on="group")
+    source = source.merge(group_ends, on="group")
+    print(source)
+
     # Define frequently referenced/long expressions
-    calc_prev_sum = alt.expr.if_(label == end_label, 0, window_sum_amount - amount)
-    calc_amount = alt.expr.if_(label == end_label, window_sum_amount, amount)
+    calc_prev_sum = alt.expr.if_(label == alt.datum.end_label, 0, window_sum_amount - amount)
+    calc_amount = alt.expr.if_(label == alt.datum.end_label, window_sum_amount, amount)
+
     calc_text_amount = (
-        alt.expr.if_((label != start_label) & (label != end_label) & calc_amount > 0, "+", "")
-        + calc_amount
+        alt.expr.if_(
+            (label != alt.datum.start_label) & (label != alt.datum.end_label) & (calc_amount > 0),
+            "+",
+            ""
+        ) + calc_amount
     )
 
     # The "base_chart" defines the transform_window, transform_calculate, and X axis
@@ -61,18 +74,18 @@ def plot_waterfall_multi(source, start_label, end_label):
         text=alt.Text("calc_sum_dec:N"),
         y="calc_sum_dec:Q",
     )
-    text_bar_values_mid_of_bar = base_chart.mark_text(baseline="middle", fontSize=fs, tooltip=None).encode(
-        text=alt.Text("calc_text_amount:N"),
-        y="calc_center:Q",
-        color=alt.value("white"),
-    )
+    # text_bar_values_mid_of_bar = base_chart.mark_text(baseline="middle", fontSize=fs, tooltip=None).encode(
+    #     text=alt.Text("calc_text_amount:N"),
+    #     y="calc_center:Q",
+    #     color=alt.value("white"),
+    # )
 
     chart = alt.layer(
         bar,
         rule,
         text_pos_values_top_of_bar,
         text_neg_values_bot_of_bar,
-        text_bar_values_mid_of_bar
+        # text_bar_values_mid_of_bar
     ).properties(
         width=alt.Step(bar_size + 20),
         # width='container',
