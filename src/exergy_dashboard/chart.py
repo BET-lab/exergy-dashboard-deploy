@@ -2,13 +2,13 @@ import altair as alt
 
 # Colors from streamlit theme.
 COLORS = [
-    '#4c95d9',
-    '#a8d9ff',
-    '#ff6a6a',
-    '#ffc4c4',
     '#69c7ba',
     '#a4f3bd',
+    '#ff6a6a',
     '#ffab4c',
+    '#a8d9ff',
+    '#ffc4c4',
+    '#4c95d9',
     '#ffde96',
     '#9878d2',
     '#e1e5ec',
@@ -68,8 +68,20 @@ def plot_waterfall_multi(source):
     text_values_top = base_chart.mark_text(
         baseline="bottom", dy=-4, fontSize=fs, tooltip=None
     ).encode(
-        text=alt.Text("calc_amount:Q", format=".2f"),
+        text=alt.Text(
+            "calc_amount:Q",
+            format="~s",
+        ),
         y="calc_top:Q"
+    ).transform_calculate(
+        calc_amount_abs="abs(datum.calc_amount)",
+        calc_amount_fmt="""
+            datum.calc_amount_abs >= 100 ? format(datum.calc_amount_abs, ".0f") :
+            datum.calc_amount_abs >= 10 ? format(datum.calc_amount_abs, ".1f") :
+            format(datum.calc_amount_abs, ".2f")
+        """
+    ).encode(
+        text=alt.Text("calc_amount_fmt:N")
     )
     # text_pos_values_top_of_bar = base_chart.mark_text(baseline="bottom", dy=-4, fontSize=fs, tooltip=None).encode(
     #     text=alt.Text("calc_sum_inc:N"),
