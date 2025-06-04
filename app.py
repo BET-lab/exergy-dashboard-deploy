@@ -41,8 +41,8 @@ st.markdown(
     """
     <style>
     [data-testid="stSidebar"][aria-expanded="true"]{
-        min-width: 200px;
-        max-width: 200px;
+        min-width: 400px;
+        max-width: 400px;
     }
     </style>
     """,
@@ -252,23 +252,14 @@ with col1:
                     for cat_tab, category in zip(category_tabs, params_by_category.keys()):
                         with cat_tab:
                             params = params_by_category[category]
-                            n = len(params)
-                            col11, col12 = st.columns(2)
-                            
-                            for i, (k, v) in enumerate(params):
-                                if i < (n + 1) // 2:
-                                    col = col11
-                                else:
-                                    col = col12
-
-                                with col:
-                                    system['parameters'][k]['value'] = st.number_input(
-                                        f"{v['explanation'][LANG]}, {v['latex']} [{v['unit']}]",
-                                        value=v['default'],
-                                        step=v['step'],
-                                        format=f"%.{max(0, -math.floor(math.log10(v['step'])))}f",
-                                        key=f"{system['name']}:{k}",
-                                    )
+                            for k, v in params:
+                                system['parameters'][k]['value'] = st.number_input(
+                                    f"{v['explanation'][LANG]}, {v['latex']} [{v['unit']}]",
+                                    value=v['default'],
+                                    step=v['step'],
+                                    format=f"%.{max(0, -math.floor(math.log10(v['step'])))}f",
+                                    key=f"{system['name']}:{k}",
+                                )
 
                     st.button(
                         'Remove system',
