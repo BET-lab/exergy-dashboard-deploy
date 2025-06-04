@@ -173,8 +173,8 @@ ml, mr = 0.0001, 0.0001
 pad = 0.2
 col_border = False
 _, title_col, title_right_col = st.columns([ml, 4 + pad + 5, mr], border=col_border)
-_, title_col1, _, title_col2, _ = st.columns([ml, 4, pad, 5, mr], border=col_border)
-_, col1, _, col2, _ = st.columns([ml, 4, pad, 5, mr], border=col_border)
+_, title_col1, _, title_col2, _ = st.columns([ml, 2.5, pad, 7.5, mr], border=col_border)
+_, col1, _, col2, _ = st.columns([ml, 2.5, pad, 7.5, mr], border=col_border)
 
 
 with title_col:
