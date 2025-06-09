@@ -107,7 +107,7 @@ def create_system(mode, system_name):
         생성된 시스템 정보를 담은 딕셔너리
     """
     mode = mode.upper()
-    system_name = system_name.upper()
+    # system_name = system_name.upper()
 
     # system_count가 현재 모드의 시스템들을 포함하도록 업데이트
     if system_name not in sss.system_count:
@@ -129,7 +129,7 @@ def add_system(type_):
 
 
 with st.sidebar:
-    st.title('Options')
+    st.title('Exergy Analyzer')
     st.divider()
     st.header('시스템 모드')
     systems = get_systems()  # 최신 상태 가져오기
@@ -137,22 +137,25 @@ with st.sidebar:
     if not available_modes:
         st.write('No modes available.')
         st.stop()
-    else:
-        previous_mode = sss.mode if 'mode' in sss else None
-        st.segmented_control(
-            'Mode',
-            default=default_mode.title(),
-            options=[mode.title() for mode in available_modes],
-            key='mode',
-            selection_mode='single',
-            label_visibility='collapsed',
-        )
-        # 모드가 변경되면 시스템 리셋
-        if previous_mode != sss.mode:
-            reset_systems()  # 시스템 상태 초기화
-            if 'selected_options' in sss:
-                sss.selected_options = []  # 선택된 옵션도 초기화
-            st.rerun()  # 페이지 새로고침
+    previous_mode = sss.mode if 'mode' in sss else None
+
+    for mode in available_modes:
+        button_label = f"{mode.title()}" if sss.mode == mode.title() else mode.title()
+        if st.button(button_label, use_container_width=True, key=f"mode_button_{mode}"):
+            sss.mode = mode.title()
+
+    if previous_mode != sss.mode:
+        reset_systems()
+        if 'selected_options' in sss:
+            sss.selected_options = []
+        st.rerun()
+
+    if previous_mode != sss.mode:
+        reset_systems()
+        if 'selected_options' in sss:
+            sss.selected_options = []
+        st.rerun()
+        
     st.header('시스템 추가')
     systems = get_systems()  # 최신 상태 가져오기
     if len(systems[sss.mode.upper()]) == 0:
@@ -170,15 +173,15 @@ with st.sidebar:
 
 # st.get_option('layout')
 ml, mr = 0.0001, 0.0001
-pad = 0.2
+pad = 0.4
 col_border = False
 _, title_col, title_right_col = st.columns([ml, 4 + pad + 5, mr], border=col_border)
 _, title_col1, _, title_col2, _ = st.columns([ml, 2.5, pad, 7.5, mr], border=col_border)
 _, col1, _, col2, _ = st.columns([ml, 2.5, pad, 7.5, mr], border=col_border)
 
 
-with title_col:
-    st.header('Exergy Analyzer  ', help='This is a help message.')
+# with title_col:
+#     st.header('Exergy Analyzer  ', help='This is a help message.')
 
 
 def remove_system(name):
