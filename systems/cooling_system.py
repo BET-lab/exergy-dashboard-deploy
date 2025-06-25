@@ -8,9 +8,6 @@ from exergy_dashboard.visualization import registry as viz_registry
 from exergy_dashboard.chart import plot_waterfall_multi
 import en_system_ex_analysis as enex
 
-c_a	 = 1.005
-rho_a =	1.2
-
 
 # 기본 시스템 정의
 COOLING_ASHP = {
@@ -32,7 +29,7 @@ COOLING_ASHP = {
             'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
             'latex': r'$T_{a,room}$',
             'default': 20.0,
-            'range': [-50, 50],
+            'range': [-50, 'T_0 - 1.0'],
             'unit': '℃',
             'step': 1.0,
             'category': 'condition',
@@ -42,7 +39,7 @@ COOLING_ASHP = {
             'explanation': {'EN': 'Internal Unit Air Outlet Temperature', 'KR': '실내기 공기 토출 온도'},
             'latex': r'$T_{a,int,out}$',
             'default': 10.0,
-            'range': [-60, 'T_a_room - 0.5'],
+            'range': [-60, 'T_a_room - 1.0'],
             'unit': '℃',
             'step': 0.5,
             'category': 'internal unit',
