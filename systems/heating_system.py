@@ -94,11 +94,9 @@ HEATING_ASHP = {
         
     }
 }
-
-
 HEATING_GSHP = {
     'display': {
-        'title': 'Ground Source Heat Pump(temporary)',
+        'title': 'Ground Source Heat Pump',
         'icon': ':earth_americas:',
     },
     'parameters': {
@@ -211,7 +209,7 @@ HEATING_GSHP = {
         
         # Ground Heat Exchanger ----------------------------------------------------------------------------
         'V_f': {
-            'explanation': {'EN': 'Fluid Velocity', 'KR': '유체 속도'},
+            'explanation': {'EN': 'Fluid volumetric flow rate', 'KR': '유체 체적 유량'},
             'latex': r'$V_f$',
             'default': 24.0,
             'range': [1.0, 50.0],
@@ -252,7 +250,7 @@ HEATING_GSHP = {
             'explanation': {'EN': 'Ground Density', 'KR': '토양 밀도'},
             'latex': r'$\rho_g$',
             'default': 2000.0,
-            'range': [1000, 3000],
+            'range': [500, 5000],
             'unit': 'kg/m³',
             'step': 100.0,
             'category': 'ground',
