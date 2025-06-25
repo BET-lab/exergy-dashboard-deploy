@@ -1,85 +1,599 @@
-"""예시: 커스텀 시스템, 평가 함수, 시각화 추가
-
-이 스크립트는 새로운 시스템과 시각화를 등록하는 간단한 예시입니다.
-'TEST' 모드에 간단한 열교환기 시스템을 추가합니다.
-"""
-
-from typing import List, Any
+import math
+from typing import Any, List, Dict
 import pandas as pd
 import altair as alt
 from exergy_dashboard.system import register_system
 from exergy_dashboard.evaluation import registry as eval_registry
-from exergy_dashboard.visualization import registry
+from exergy_dashboard.visualization import registry as viz_registry
+from exergy_dashboard.chart import plot_waterfall_multi
+import en_system_ex_analysis as enex
 
 
-# 1. Heating System
-heating_system = {
+# 기본 시스템 정의
+HEATING_ASHP = {
     'display': {
-        'title': '간단한 열교환기 시스템',
-        'icon': ':earth_americas:',
+        'title': 'Air Source Heat Pump',
+        'icon': ':snowflake:',
     },
-    'parameters': {
-        'T_in_h': {
-            'explanation': {'EN': 'Hot Side Inlet Temperature', 'KR': '고온측 입구 온도'},
-            'latex': r'$T_{in,h}$',
-            'default': 80,
-            'range': [50, 100],
-            'unit': '°C',
-            'step': 1,
-            'category': 'temperature'
+    'parameters':{
+        'T_0': {
+            'explanation': {'EN': 'Environment Temperature', 'KR': '환경온도'},
+            'latex': r'$T_0$',
+            'default': 30.0,
+            'range': [-50, 50],
+            'unit': '℃',
+            'step': 1.0,
+            'category': 'condition',
         },
-        'T_out_h': {
-            'explanation': {'EN': 'Hot Side Outlet Temperature', 'KR': '고온측 출구 온도'},
-            'latex': r'$T_{out,h}$',
-            'default': 70,
-            'range': [50, 100],
-            'unit': '°C',
-            'step': 1,
-            'category': 'temperature'
+        'T_a_room': {
+            'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
+            'latex': r'$T_{a,room}$',
+            'default': 20.0,
+            'range': [-50, 'T_0 - 1.0'],
+            'unit': '℃',
+            'step': 1.0,
+            'category': 'condition',
         },
+        
+        'T_a_int_out': {
+            'explanation': {'EN': 'Internal Unit Air Outlet Temperature', 'KR': '실내기 공기 토출 온도'},
+            'latex': r'$T_{a,int,out}$',
+            'default': 10.0,
+            'range': [-60, 'T_a_room - 0.5'],
+            'unit': '℃',
+            'step': 0.5,
+            'category': 'internal unit',
+        },
+        'Q_r_int': {
+            'explanation': {'EN': 'Internal Unit Heat Absorption', 'KR': '실내기 실내 흡열량'},
+            'latex': r'$Q_{r,int}$',
+            'default': 10000.0,
+            'range': [0, 20000],
+            'unit': 'W',
+            'step': 100.0,
+            'category': 'internal unit',
+        },
+        'Q_r_max': {
+            'explanation': {'EN': 'Maximum HEATING Capacity', 'KR': '최대 냉방 용량'},
+            'latex': r'$Q_{r,max}$',
+            'default': 10000.0,
+            'range': ['Q_r_int', 20000],
+            'unit': 'W',
+            'step': 100.0,
+            'category': 'internal unit',
+        },
+        
+        'T_r_int': {
+            'explanation': {'EN': 'Internal Unit Refrigerant Temperature', 'KR': '실내기 측 냉매 온도'},
+            'latex': r'$T_{r,int}$',
+            'default': 5.0,
+            'range': [-30, 'T_a_int_out - 1.0'],
+            'unit': '℃',
+            'step': 1.0,
+            'category': 'refrigerant',
+        },
+        'T_r_ext': {
+            'explanation': {'EN': 'External Unit Refrigerant Temperature', 'KR': '실외기 측 냉매 온도'},
+            'latex': r'$T_{r,ext}$',
+            'default': 45.0,
+            'range': ['T_r_int + 5', 100],
+            'unit': '℃',
+            'step': 1.0,
+            'category': 'refrigerant',
+        },
+        
+        'T_a_ext_out': {
+            'explanation': {'EN': 'External Unit Air Outlet Temperature', 'KR': '실외기 공기 토출 온도'},
+            'latex': r'$T_{a,ext,out}$',
+            'default': 40.0,
+            'range': ['T_0', 80],
+            'unit': '℃',
+            'step': 1.0,
+            'category': 'external unit',
+        },
+        
     }
 }
 
 
-# Heating 스템 등록
-register_system('Heating', 'ASHP', heating_system)
-register_system('Heating', 'GSHP', heating_system)
-register_system('Heating', 'GSHP+Solar', heating_system)
-         
-
-# 3. 간단한 엑서지 계산 함수
-@eval_registry.register('Heating', 'ASHP')
-def evaluate_heating_ashp(params):
-    """간단한 열교환기의 엑서지 계산"""
-    # 파라미터 추출
-    T_in_h = params['T_in_h']
-    T_out_h = params['T_out_h']
-   
-    diff_T = T_in_h - T_out_h
-
-    # 결과 반환 (plot에 사용할 변수수)
-    return {
-        'diff_T': diff_T,  # 온도차 (℃)
+HEATING_GSHP = {
+    'display': {
+        'title': 'Ground Source Heat Pump(temporary)',
+        'icon': ':earth_americas:',
+    },
+    'parameters': {
+        # Condition ----------------------------------------------------------------------------
+        'T_0': {
+            'explanation': {'EN': 'Environment Temperature', 'KR': '환경온도'},
+            'latex': r'$T_0$',
+            'default': 0.0,
+            'range': [-30, 30],
+            'unit': '℃',
+            'step': 1.0,
+            'category': 'condition',
+        },
+        'T_g': {
+            'explanation': {'EN': 'Ground Temperature', 'KR': '토양온도'},
+            'latex': r'$T_g$',
+            'default': 15.0,
+            'range': [0, 20],
+            'unit': '℃',
+            'step': 1.0,
+            'category': 'condition',
+        },
+        'T_a_room': {
+            'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
+            'latex': r'$T_{a,room}$',
+            'default': 20.0,
+            'range': ['T_0+1.0', 40],
+            'unit': '℃',
+            'step': 1.0,
+            'category': 'condition',
+        },
+        
+        # Internal Unit ----------------------------------------------------------------------------
+        'T_a_int_out': {
+            'explanation': {'EN': 'Internal Unit Outlet Air Temperature', 'KR': '실내기 토출 공기 온도'},
+            'latex': r'$T_{a,int,out}$',
+            'default': 30.0,
+            'range': ['T_a_room+1.0', 50],
+            'unit': '℃',
+            'step': 1.0,
+            'category': 'internal unit',
+        },
+        'Q_r_int': {
+            'explanation': {'EN': 'Internal Unit Heat Absorption', 'KR': '실내기 실내 흡열량'},
+            'latex': r'$Q_{r,int}$',
+            'default': 4000.0,
+            'range': [0, 30000],
+            'unit': 'W',
+            'step': 500.0,
+            'category': 'internal unit',
+        },
+        
+        # Refrigerant ----------------------------------------------------------------------------
+        'T_r_int': {
+            'explanation': {'EN': 'Internal Unit Refrigerant Temperature', 'KR': '실내기 측 냉매 온도'},
+            'latex': r'$T_{r,int}$',
+            'default': 35.0,
+            'range': ['T_a_room + 1.0', 60],
+            'unit': '℃',
+            'step': 1.0,
+            'category': 'refrigerant',
+        },
+        'T_r_exch': {
+            'explanation': {'EN': 'Heat Exchanger Refrigerant Temperature', 'KR': '열교환기 측 냉매 온도'},
+            'latex': r'$T_{r,exch}$',
+            'default': 5.0,
+            'range': [-30, 'T_g-1.0'],
+            'unit': '℃',
+            'step': 1.0,
+            'category': 'refrigerant',
+        },
+        
+        # borehole ----------------------------------------------------------------------------
+        'D': {
+            'explanation': {'EN': 'Borehole Depth', 'KR': '보어홀 시작 깊이'},
+            'latex': r'$D$',
+            'default': 0.0,
+            'range': [50, 300],
+            'unit': 'm',
+            'step': 10.0,
+            'category': 'borehole',
+        },
+        'H': {
+            'explanation': {'EN': 'Borehole Height', 'KR': '보어홀 길이'},
+            'latex': r'$H$',
+            'default': 200.0,
+            'range': [10, 300],
+            'unit': 'm',
+            'step': 1.0,
+            'category': 'borehole',
+        },
+        'r_b': {
+            'explanation': {'EN': 'Borehole Radius', 'KR': '보어홀 반지름'},
+            'latex': r'$r_b$',
+            'default': 0.08,
+            'range': [0.05, 0.2],
+            'unit': 'm',
+            'step': 0.001,
+            'category': 'borehole',
+        },
+        'R_b': {
+            'explanation': {'EN': 'Borehole Thermal Resistance', 'KR': '보어홀 유효 열저항'},
+            'latex': r'$R_b$',
+            'default': 0.108,
+            'range': [0.01, 0.5],
+            'unit': 'm·K/W',
+            'step': 0.01,
+            'category': 'borehole',
+        },
+        
+        # Ground Heat Exchanger ----------------------------------------------------------------------------
+        'V_f': {
+            'explanation': {'EN': 'Fluid Velocity', 'KR': '유체 속도'},
+            'latex': r'$V_f$',
+            'default': 24.0,
+            'range': [1.0, 50.0],
+            'unit': 'L/min',
+            'step': 1.0,
+            'category': 'ground heat exchanger',
+        },
+        'E_pmp': {
+            'explanation': {'EN': 'Ground Heat Exchanger Pump Power', 'KR': 'GHE 펌프 전력'},
+            'latex': r'$E_{pmp}$',
+            'default': 200,
+            'range': [0, 1000],
+            'unit': 'W',
+            'step': 50.0,
+            'category': 'ground heat exchanger',
+        },
+        
+        # Ground ----------------------------------------------------------------------------
+        'k_g': {
+            'explanation': {'EN': 'Ground Thermal Conductivity', 'KR': '토양 열전도도'},
+            'latex': r'$k_g$',
+            'default': 2.0,
+            'range': [0.5, 5.0],
+            'unit': 'W/m·K',
+            'step': 0.1,
+            'category': 'ground',
+        },
+        'c_g': {
+            'explanation': {'EN': 'Ground Specific Heat', 'KR': '토양 비열'},
+            'latex': r'$c_g$',
+            'default': 800.0,
+            'range': [500, 2000],
+            'unit': 'J/kg·K',
+            'step': 100.0,
+            'category': 'ground',
+        },
+        'rho_g': {
+            'explanation': {'EN': 'Ground Density', 'KR': '토양 밀도'},
+            'latex': r'$\rho_g$',
+            'default': 2000.0,
+            'range': [1000, 3000],
+            'unit': 'kg/m³',
+            'step': 100.0,
+            'category': 'ground',
+        },
     }
+}
+
+ELECTRIC_HEATER = {
+    'display': {
+        'title': 'Electric Heater',
+        'icon': ':electric_plug:',
+    },
+    'parameters': {
+        # Condition ----------------------------------------------------------------------------
+        'T_0': {
+            'explanation': {'EN': 'Environment Temperature', 'KR': '환경온도'},
+            'latex': r'$T_0$',
+            'default': 10.0,
+            'range': [-30, 30],
+            'unit': '℃',
+            'step': 1.0,
+            'category': 'condition',
+        },
+        'T_mr': {
+            'explanation': {'EN': 'Mean Radiant Temperature', 'KR': '평균 복사 온도'},
+            'latex': r'$T_{mr}$',
+            'default': 15.0,
+            'range': [0, 20],
+            'unit': '℃',
+            'step': 1.0,
+            'category': 'condition',
+        },
+        'T_a_room': {
+            'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
+            'latex': r'$T_{a,room}$',
+            'default': 20.0,
+            'range': ['T_0+1.0', 40],
+            'unit': '℃',
+            'step': 1.0,
+            'category': 'condition',
+        },
+            
+        # Heater material properties ------------------------------------------------------------
+        'c_heater': {
+            'explanation': {'EN': 'Heater Specific Heat', 'KR': '히터 비열'},
+            'latex': r'$c$',
+            'default': 500.0,
+            'range': [100, 1000],
+            'unit': 'J/kg·K',
+            'step': 10.0,
+            'category': 'heater material',
+        },
+        'rho_heater': {
+            'explanation': {'EN': 'Heater Density', 'KR': '히터 밀도'},
+            'latex': r'$\rho$',
+            'default': 7800.0,
+            'range': [1000, 9000],
+            'unit': 'kg/m³',
+            'step': 100.0,
+            'category': 'heater material',
+        },
+        'k_heater': {
+            'explanation': {'EN': 'Heater Thermal Conductivity', 'KR': '히터 열전도도'},
+            'latex': r'$k$',
+            'default': 50.0,
+            'range': [10, 100],
+            'unit': 'W/m·K',
+            'step': 1.0,
+            'category': 'heater material',
+        },
+        
+        # Heater geometry -----------------------------------------------------------------------
+        'D': {
+            'explanation': {'EN': 'Heater Thickness', 'KR': '히터 두께'},
+            'latex': r'$D$',
+            'default': 0.005,
+            'range': [0.001, 0.02],
+            'unit': 'm',
+            'step': 0.001,
+            'category': 'heater geometry',
+        },
+        'H': {
+            'explanation': {'EN': 'Heater Height', 'KR': '히터 높이'},
+            'latex': r'$H$',
+            'default': 0.5,
+            'range': [0.1, 2.0],
+            'unit': 'm',
+            'step': 0.01,
+            'category': 'heater geometry',
+        },
+        'W': {
+            'explanation': {'EN': 'Heater Width', 'KR': '히터 폭'},
+            'latex': r'$W$',
+            'default': 1.0,
+            'range': [0.1, 2.0],
+            'unit': 'm',
+            'step': 0.01,
+            'category': 'heater geometry',
+        },
+        'D': {
+            'explanation': {'EN': 'Heater Diameter', 'KR': '히터 직경'},
+            'latex': r'$D$',
+            'default': 0.005,
+            'range': [0.001, 0.02],
+            'unit': 'm',
+            'step': 0.001,
+            'category': 'heater geometry',
+        },
+    }
+}
+
+# 시스템 등록
+register_system('HEATING', 'ASHP', HEATING_ASHP)
+register_system('HEATING', 'GSHP', HEATING_GSHP)
+register_system('HEATING', 'EH', ELECTRIC_HEATER)
 
 
-# 4. 모드별 시각화 등록
-@registry.register('TEST_MODE', 'Temperature difference')
-def plot_diff_temperature(session_state: Any, selected_systems: List[str]) -> alt.Chart:
-    """선택된 열교환기 시스템들의 온도 프로필 시각화"""
-    # 데이터 준비
-    data = []
-    for system in selected_systems:
-        data.append({
-            'system': system,
-            'diff_T': session_state.systems[system]['variables']['diff_T']
-        })
-
-    # 시각화 생성
-    chart = alt.Chart(pd.DataFrame(data)).mark_bar().encode(
-        x='system',
-        y='diff_T',
-        color='system'
-    )
+# HEATING 모드 시각화 함수들
+@viz_registry.register('HEATING', 'Exergy Efficiency')
+def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> alt.Chart:
+    """엑서지 효율 차트 생성"""
+    # HEATING 모드 전용 시각화
+    efficiencies = []
     
-    return chart
+    for key in selected_systems:
+        sv = session_state.systems[key]['variables']
+        eff = sv['X_eff'] * 100
+        efficiencies.append(eff)
+
+    chart_data = pd.DataFrame({
+        'efficiency': efficiencies,
+        'system': selected_systems,
+    })
+
+    max_v = chart_data['efficiency'].max() if len(chart_data) > 0 else 100
+
+    c = alt.Chart(chart_data).mark_bar(size=30).encode(
+        y=alt.Y('system:N', title='System', sort=None)
+           .axis(title=None, labelFontSize=18, labelColor='black'),
+        x=alt.X('efficiency:Q', title='Exergy Efficiency [%]')
+           .axis(
+                labelFontSize=20,
+                labelColor='black',
+                titleFontSize=22,
+                titleColor='black',
+            )
+            .scale(domain=[0, max_v + 3]),
+        color=alt.Color('system:N', sort=None, legend=None),
+        tooltip=['system', 'efficiency'],
+    ).properties(
+        width='container',
+        height=len(selected_systems) * 60 + 50,
+    )
+
+    text = c.mark_text(
+        align='left',
+        baseline='middle',
+        dx=3,
+        fontSize=20,
+        fontWeight='normal',
+    ).encode(
+        text=alt.Text('efficiency:Q', format='.2f')
+    )
+
+    return c + text
+
+
+@viz_registry.register('HEATING', 'Exergy Consumption Process')
+def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> alt.Chart:
+    """엑서지 소비 과정 차트 생성"""
+    # HEATING 모드 전용 시각화
+    sources = []
+    for key in selected_systems:
+        sv = session_state.systems[key]['variables']
+        if session_state.systems[key]['type'] == 'ASHP':
+            labels = ['Input', r'X_{c,int}', r'X_{c,ref}', r'X_{c,ext}', r'X_{ext,out}', 'Output']
+            amounts = [sv['Xin_A'], -sv['Xc_int_A'], -sv['Xc_r_A'], -sv['Xc_ext_A'], -sv['X_a_ext_out_A'], 0]
+            source = pd.DataFrame({
+                'label': labels,
+                'amount': amounts,
+                'group': [key] * len(labels),
+            })
+            sources.append(source)
+            
+        if session_state.systems[key]['type'] == 'GSHP':
+            labels = ['Input', r'X_{c,int}', r'X_{c,ref}', r'X_{c,GHE}', 'Output']
+            amounts = [sv['Xin_G'], -sv['Xc_int_G'], -sv['Xc_r_G'], -sv['Xc_GHE'], 0]
+            source = pd.DataFrame({
+                'label': labels,
+                'amount': amounts,
+                'group': [key] * len(labels),
+            })
+            sources.append(source)
+            
+        if session_state.systems[key]['type'] == 'EH':
+            labels = ['Input', r'X_{c,int}', r'X_{c,ref}', r'X_{c,GHE}', 'Output']
+            amounts = [sv['Xin_G'], -sv['Xc_int_G'], -sv['Xc_r_G'], -sv['Xc_GHE'], 0]
+            source = pd.DataFrame({
+                'label': labels,
+                'amount': amounts,
+                'group': [key] * len(labels),
+            })
+            sources.append(source)
+
+    if sources:
+        source = pd.concat(sources)
+        return plot_waterfall_multi(source)
+    return alt.Chart(pd.DataFrame({'x': [0], 'y': [0]})).mark_point() 
+
+
+@eval_registry.register('HEATING', 'ASHP')
+def evaluate_HEATING_ashp(params: Dict[str, float]) -> Dict[str, float]:
+    """ASHP 냉방 모드 평가 함수"""
+    ASHP_H = enex.AirSourceHeatPump_heating()
+    ASHP_H.T0 = params['T_0']
+    ASHP_H.T_a_room = params['T_a_room']
+    ASHP_H.T_r_int = params['T_r_int']
+    ASHP_H.T_a_int_out = params['T_a_int_out']
+    ASHP_H.T_a_ext_out = params['T_a_ext_out']
+    ASHP_H.T_r_ext = params['T_r_ext']
+    ASHP_H.Q_r_int = params['Q_r_int']
+    ASHP_H.Q_r_max = params['Q_r_max']
+    ASHP_H.system_update()
+    
+    # fan power
+    E_fan_int = ASHP_H.E_fan_int
+    E_fan_ext = ASHP_H.E_fan_ext
+
+    X_a_int_in  = ASHP_H.X_a_int_in
+    X_a_int_out = ASHP_H.X_a_int_out
+    X_a_ext_in  = ASHP_H.X_a_ext_in
+    X_a_ext_out = ASHP_H.X_a_ext_out
+
+    X_r_int   = ASHP_H.X_r_int
+    X_r_ext   = ASHP_H.X_r_ext
+
+    Xin_int  = ASHP_H.Xin_int
+    Xout_int = ASHP_H.Xout_int
+    Xc_int   = ASHP_H.Xc_int
+
+    Xin_r  = ASHP_H.Xin_r
+    Xout_r = ASHP_H.Xout_r
+    Xc_r   = ASHP_H.Xc_r
+
+    Xin_ext  = ASHP_H.Xin_ext
+    Xout_ext = ASHP_H.Xout_ext
+    Xc_ext   = ASHP_H.Xc_ext
+
+    Xin  = ASHP_H.Xin
+    Xout = ASHP_H.Xout
+    Xc   = ASHP_H.Xc
+
+    X_eff = ASHP_H.X_eff
+
+    return {k: v for k, v in locals().items() if k not in ('params')}
+
+@eval_registry.register('HEATING', 'GSHP')
+def evaluate_HEATING_gshp(params: Dict[str, float]) -> Dict[str, float]:
+    """GSHP 냉방 모드 평가 함수"""
+    GSHP_H = enex.GroundSourceHeatPump_heating()
+    GSHP_H.T0 = params['T_0']
+    GSHP_H.T_g = params['T_g']
+    GSHP_H.T_a_room = params['T_a_room']
+    GSHP_H.T_a_int_out = params['T_a_int_out']
+    GSHP_H.T_r_int = params['T_r_int']
+    GSHP_H.T_r_exch = params['T_r_exch']
+
+    GSHP_H.depth = params['D']
+    GSHP_H.height = params['H']
+    GSHP_H.r_b = params['r_b']
+    GSHP_H.R_b = params['R_b']
+    m3s_to_Lmin = 1 / 60000 # 1 m³/s = 60000 L/min
+    GSHP_H.V_f = params['V_f'] * m3s_to_Lmin # Convert L/min to m³/s
+    
+    GSHP_H.k_g = params['k_g']
+    GSHP_H.c_g = params['c_g']
+    GSHP_H.rho_g = params['rho_g']
+    
+    GSHP_H.E_f_int = params['E_f_int']
+    GSHP_H.E_pmp = params['E_pmp']
+   
+    GSHP_H.Q_r_int = params['Q_r_int']
+    GSHP_H.system_update()
+
+    # Ground
+    Xin_g = GSHP_H.X_g
+    Xout_g = GSHP_H.X_b
+    Xc_g = Xin_g - Xout_g
+
+    # Ground heat exchanger
+    Xin_GHE = GSHP_H.E_pmp + Xout_g + GSHP_H.X_f_in
+    Xout_GHE = GSHP_H.X_f_out 
+    Xc_GHE = Xin_GHE - Xout_GHE
+
+    # Heat exchanger
+    Xin_exch = Xout_GHE 
+    Xout_exch = GSHP_H.X_r_exch + GSHP_H.X_f_in
+    Xc_exch = Xin_exch - Xout_exch
+
+    # Closed refrigerant loop system
+    Xin_r = GSHP_H.E_cmp + GSHP_H.X_r_exch
+    Xout_r = GSHP_H.X_r_int
+    Xc_r = Xin_r - Xout_r
+
+    # Internal unit
+    Xin_int = GSHP_H.E_fan_int + GSHP_H.X_r_int + GSHP_H.X_a_int_in
+    Xout_int = GSHP_H.X_a_int_out
+    Xc_int = Xin_int - Xout_int
+
+    # Exergy efficiency
+    X_eff = GSHP_H.X_eff
+
+    return {k: v for k, v in locals().items() if k not in ('params')}
+
+@eval_registry.register('HEATING', 'EH')
+def evaluate_Heating_EH(params: Dict[str, float]) -> Dict[str, float]:
+    """GSHP 냉방 모드 평가 함수"""
+    EH = enex.ElectricHeater_heating()
+    EH.T0 = params['T_0']
+    EH.T_mr = params['T_mr']
+    EH.T_a_room = params['T_a_room']
+    
+    EH.c_heater = params['c_heater']
+    EH.rho_heater = params['rho_heater']
+    EH.k_heater = params['k_heater']
+    
+    EH.D = params['D']
+    EH.H = params['H']
+    EH.W = params['W']
+    EH.system_update()
+
+    # Exergy input and output
+    X_heater = EH.X_heater
+    X_c_hb = EH.X_c_hb
+    X_cond = EH.X_cond
+    X_rad_rs = EH.X_rad_rs
+    X_c_hs = EH.X_c_hs
+    X_conv = EH.X_conv
+    X_rad_hs = EH.X_rad_hs
+
+    # Exergy efficiency
+    X_eff = EH.X_eff
+
+    return {k: v for k, v in locals().items() if k not in ('params')}
