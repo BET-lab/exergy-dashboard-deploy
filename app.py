@@ -242,6 +242,8 @@ with col1:
                         system['parameters'][k]['value'] = st.number_input(
                             f"{v['explanation'][LANG]}, {v['latex']} [{v['unit']}]",
                             value=v['default'],
+                            min_value=v['range'][0],
+                            max_value=v['range'][1],
                             step=v['step'],
                             format=f"%.{max(0, -math.floor(math.log10(v['step'])))}f",
                             key=f"{system['name']}:{k}",
