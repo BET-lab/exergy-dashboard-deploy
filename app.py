@@ -201,7 +201,7 @@ with st.sidebar:
         st.subheader(sys_name)
         categories = set(v.get('category', 'General') for v in system['parameters'].values())
         for category in sorted(categories):
-            if st.button(category, key=f"{sys_name}_{category}", use_container_width=True):
+            if st.button(category.capitalize(), key=f"{sys_name}_{category}", use_container_width=True):
                 sss.selected_category[sys_name] = category
 
 ml, mr = 0.0001, 0.0001
@@ -259,7 +259,7 @@ with col1:
                             continue
 
                         system['parameters'][k]['value'] = st.number_input(
-                            f"{v['explanation'][LANG]}, {v['latex']} [{v['unit']}]",
+                            f"{v['explanation'][LANG].capitalize()}, {v['latex']} [{v['unit']}]",
                             value=v['default'],
                             min_value=parse_range_value(v['range'][0], system['name'], sss),
                             max_value=parse_range_value(v['range'][1], system['name'], sss),
