@@ -168,8 +168,6 @@ def evaluate_parameters(sss: Any, system_name: str) -> Dict[str, float]:
             continue
         
         key = key.split(':')[1]
-        if key.startswith('T_'):
-            value = value + 273.15
         params[key] = value
 
     # Get system mode and type
