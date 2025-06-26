@@ -80,7 +80,7 @@ available_modes = list(systems.keys())
 default_mode = available_modes[0] if available_modes else 'COOLING'
 
 if 'mode' not in sss:
-    sss.mode = default_mode.title()
+    sss.mode = default_mode
 
 def reset_systems():
     """시스템 상태를 초기화합니다."""
@@ -162,9 +162,9 @@ with st.sidebar:
     previous_mode = sss.mode if 'mode' in sss else None
 
     for mode in available_modes:
-        button_label = f"{mode.title()}" if sss.mode == mode.title() else mode.title()
+        button_label = f"{mode}" if sss.mode == mode.capitalize() else mode.capitalize()
         if st.button(button_label, use_container_width=True, key=f"mode_button_{mode}"):
-            sss.mode = mode.title()
+            sss.mode = mode
 
     if previous_mode != sss.mode:
         reset_systems()
