@@ -6,6 +6,25 @@ import importlib
 import os
 import glob
 
+def parse_range_value(val, sys_name, sss):
+    # 숫자면 바로 float 변환
+    if isinstance(val, (int, float)):
+        return float(val)
+    # 문자열 수식이면 파싱
+    if isinstance(val, str):
+        try:
+            # 변수명 추출 (예: 'T_w_sup+1.0' → 'T_w_sup')
+            for param in sss.systems[sys_name]['parameters']:
+                if param in val:
+                    param_val = sss.get(f"{sys_name}:{param}", sss.systems[sys_name]['parameters'][param]['default'])
+                    expr = val.replace(param, str(param_val))
+                    return float(eval(expr))
+            # 그냥 숫자 문자열이면
+            return float(val)
+        except Exception:
+            return None  # 혹은 적절한 기본값
+    return None
+
 # systems 폴더의 *_system.py 파일을 모두 동적으로 임포트
 systems_dir = os.path.join(os.path.dirname(__file__), 'systems')
 system_files = glob.glob(os.path.join(systems_dir, '*_system.py'))
@@ -242,8 +261,8 @@ with col1:
                         system['parameters'][k]['value'] = st.number_input(
                             f"{v['explanation'][LANG]}, {v['latex']} [{v['unit']}]",
                             value=v['default'],
-                            min_value=v['range'][0],
-                            max_value=v['range'][1],
+                            min_value=parse_range_value(v['range'][0], system['name'], sss),
+                            max_value=parse_range_value(v['range'][1], system['name'], sss),
                             step=v['step'],
                             format=f"%.{max(0, -math.floor(math.log10(v['step'])))}f",
                             key=f"{system['name']}:{k}",
