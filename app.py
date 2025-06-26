@@ -126,6 +126,9 @@ def create_system(mode, system_name):
 def add_system(type_):
     data = create_system(mode=sss.mode, system_name=type_)
     sss.systems[data['name']] = data
+    # 모든 파라미터의 기본값을 session state에 미리 할당
+    for k, v in data['parameters'].items():
+        sss[f"{data['name']}:{k}"] = v['default']
 
 
 with st.sidebar:
