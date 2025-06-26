@@ -150,12 +150,6 @@ with st.sidebar:
             sss.selected_options = []
         st.rerun()
 
-    if previous_mode != sss.mode:
-        reset_systems()
-        if 'selected_options' in sss:
-            sss.selected_options = []
-        st.rerun()
-        
     st.header('시스템 추가')
     systems = get_systems()  # 최신 상태 가져오기
     if len(systems[sss.mode.upper()]) == 0:
@@ -171,7 +165,23 @@ with st.sidebar:
             on_click=functools.partial(add_system, type_=selected),
         )
 
-# st.get_option('layout')
+    # 시스템별 변수 카테고리 선택 버튼
+    st.header('입력 변수 카테고리')
+    if 'selected_category' not in sss:
+        sss.selected_category = {}
+
+    systems = get_systems()
+    mode_upper = sss.mode.upper()
+    for sys_name, system in sss.systems.items():
+        sys_type = system['type']
+        if sys_type not in systems[mode_upper]:
+            continue
+        st.subheader(sys_name)
+        categories = set(v.get('category', 'General') for v in system['parameters'].values())
+        for category in sorted(categories):
+            if st.button(category, key=f"{sys_name}_{category}", use_container_width=True):
+                sss.selected_category[sys_name] = category
+
 ml, mr = 0.0001, 0.0001
 pad = 0.4
 col_border = False
@@ -179,26 +189,7 @@ _, title_col, title_right_col = st.columns([ml, 4 + pad + 5, mr], border=col_bor
 _, title_col1, _, title_col2, _ = st.columns([ml, 2.5, pad, 7.5, mr], border=col_border)
 _, col1, _, col2, _ = st.columns([ml, 2.5, pad, 7.5, mr], border=col_border)
 
-
-# with title_col:
-#     st.header('Exergy Analyzer  ', help='This is a help message.')
-
-
 def remove_system(name):
-    """
-    시스템을 제거하는 함수
-    
-    Parameters
-    ----------
-    name : str
-        제거할 시스템의 이름
-        
-    Notes
-    -----
-    - 시스템 딕셔너리에서 해당 시스템을 제거합니다.
-    - 해당 시스템과 관련된 세션 상태 변수들도 함께 제거합니다.
-    - 선택된 옵션 목록에서도 해당 시스템을 제거합니다.
-    """
     sss.systems.pop(name)
     to_be_removed = []
     for k, v in sss.items():
@@ -212,7 +203,6 @@ def remove_system(name):
             option for option in sss.selected_options if option != name
         ]
 
-
 with col1:
     st.subheader('System Inputs :dart:')
     if len(sss.systems) == 0:
@@ -220,49 +210,39 @@ with col1:
     else:
         st.write(' ')
         st.write(' ')
-        
-        # 현재 모드에 유효한 시스템만 필터링
+
         mode_upper = sss.mode.upper()
-        systems = get_systems()  # 최신 상태 가져오기
-        valid_systems = {}
-        
-        for sys_name, system in sss.systems.items():
-            sys_type = system['type']
-            # 현재 모드에 해당 시스템 타입이 존재하는지 확인
-            if sys_type in systems[mode_upper]:
-                valid_systems[sys_name] = system
-        
+        systems = get_systems()
+        valid_systems = {
+            sys_name: system for sys_name, system in sss.systems.items()
+            if system['type'] in systems[mode_upper]
+        }
+
         if not valid_systems:
             st.write('No valid systems for the current mode.')
         else:
             system_tabs = st.tabs(valid_systems.keys())
             for tab, system in zip(system_tabs, valid_systems.values()):
                 with tab:
-                    # 시스템 타입에 따른 제목 표시
                     system_info = systems[mode_upper][system['type']]
                     st.write(f"### {system_info['display']['title']} {system_info['display']['icon']}")
-                    
-                    # 파라미터를 카테고리별로 그룹화
-                    params_by_category = {}
-                    for k, v in system['parameters'].items():
-                        category = v.get('category', 'General')  # category가 없으면 'General'로 분류
-                        if category not in params_by_category:
-                            params_by_category[category] = []
-                        params_by_category[category].append((k, v))
 
-                    # 카테고리별 하위 탭 생성
-                    category_tabs = st.tabs([category.title() for category in params_by_category.keys()])
-                    for cat_tab, category in zip(category_tabs, params_by_category.keys()):
-                        with cat_tab:
-                            params = params_by_category[category]
-                            for k, v in params:
-                                system['parameters'][k]['value'] = st.number_input(
-                                    f"{v['explanation'][LANG]}, {v['latex']} [{v['unit']}]",
-                                    value=v['default'],
-                                    step=v['step'],
-                                    format=f"%.{max(0, -math.floor(math.log10(v['step'])))}f",
-                                    key=f"{system['name']}:{k}",
-                                )
+                    selected_cat = sss.selected_category.get(system['name'])  
+                    if not selected_cat:
+                        st.info("사이드바에서 입력 변수 카테고리를 선택하세요.")
+                        continue
+
+                    for k, v in system['parameters'].items():
+                        if v.get('category', 'General') != selected_cat:
+                            continue
+
+                        system['parameters'][k]['value'] = st.number_input(
+                            f"{v['explanation'][LANG]}, {v['latex']} [{v['unit']}]",
+                            value=v['default'],
+                            step=v['step'],
+                            format=f"%.{max(0, -math.floor(math.log10(v['step'])))}f",
+                            key=f"{system['name']}:{k}",
+                        )
 
                     st.button(
                         'Remove system',
