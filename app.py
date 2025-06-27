@@ -232,41 +232,58 @@ with col1:
     else:
         st.write(' ')
         st.write(' ')
-
-        mode_upper = sss.mode.upper()
-        systems = get_systems()
-        valid_systems = {
-            sys_name: system for sys_name, system in sss.systems.items()
-            if system['type'] in systems[mode_upper]
-        }
-
+        
+        # 현재 모드에 유효한 시스템만 필터링
+        mode_upper = sss.mode
+        systems = get_systems()  # 최신 상태 가져오기
+        valid_systems = {}
+        
+        for sys_name, system in sss.systems.items():
+            sys_type = system['type']
+            # 현재 모드에 해당 시스템 타입이 존재하는지 확인
+            if sys_type in systems[mode_upper]:
+                valid_systems[sys_name] = system
+        
         if not valid_systems:
             st.write('No valid systems for the current mode.')
         else:
             system_tabs = st.tabs(valid_systems.keys())
             for tab, system in zip(system_tabs, valid_systems.values()):
                 with tab:
+                    # 시스템 타입에 따른 제목 표시
                     system_info = systems[mode_upper][system['type']]
                     st.write(f"### {system_info['display']['title']} {system_info['display']['icon']}")
-
-                    selected_cat = sss.selected_category.get(system['name'])  
-                    if not selected_cat:
-                        st.info("사이드바에서 입력 변수 카테고리를 선택하세요.")
-                        continue
-
+                    
+                    # 파라미터를 카테고리별로 그룹화
+                    params_by_category = {}
                     for k, v in system['parameters'].items():
-                        if v.get('category', 'General') != selected_cat:
-                            continue
+                        category = v.get('category', 'General')  # category가 없으면 'General'로 분류
+                        if category not in params_by_category:
+                            params_by_category[category] = []
+                        params_by_category[category].append((k, v))
 
-                        system['parameters'][k]['value'] = st.number_input(
-                            f"{v['explanation'][LANG].capitalize()}, {v['latex']} [{v['unit']}]",
-                            value=sss.get(f"{system['name']}:{k}", v['default']),
-                            min_value=parse_range_value(v['range'][0], system['name'], sss),
-                            max_value=parse_range_value(v['range'][1], system['name'], sss),
-                            step=v['step'],
-                            format=f"%.{max(0, -math.floor(math.log10(v['step'])))}f",
-                            key=f"{system['name']}:{k}",
-                        )
+                    # 카테고리별 하위 탭 생성
+                    category_tabs = st.tabs([category.capitalize() for category in params_by_category.keys()])
+                    for cat_tab, category in zip(category_tabs, params_by_category.keys()):
+                        with cat_tab:
+                            params = params_by_category[category]
+                            n = len(params)
+                            col11, col12 = st.columns(2)
+                            
+                            for i, (k, v) in enumerate(params):
+                                if i < (n + 1) // 2:
+                                    col = col11
+                                else:
+                                    col = col12
+
+                                with col:
+                                    system['parameters'][k]['value'] = st.number_input(
+                                        f"{v['explanation'][LANG]}, {v['latex']} [{v['unit']}]",
+                                        value=v['default'],
+                                        step=v['step'],
+                                        format=f"%.{max(0, -math.floor(math.log10(v['step'])))}f",
+                                        key=f"{system['name']}:{k}",
+                                    )
 
                     st.button(
                         'Remove system',
