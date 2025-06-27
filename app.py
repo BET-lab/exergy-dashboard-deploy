@@ -260,7 +260,7 @@ with col1:
 
                         system['parameters'][k]['value'] = st.number_input(
                             f"{v['explanation'][LANG].capitalize()}, {v['latex']} [{v['unit']}]",
-                            value=v['default'],
+                            value=sss.get(f"{system['name']}:{k}", v['default']),
                             min_value=parse_range_value(v['range'][0], system['name'], sss),
                             max_value=parse_range_value(v['range'][1], system['name'], sss),
                             step=v['step'],
