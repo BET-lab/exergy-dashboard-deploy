@@ -17,15 +17,15 @@ ELECTRIC_BOILER = {
         'icon': ':zap:',
     },
     'parameters': {
-        # condition ------------------------------------------------------------
+        # Condition ------------------------------------------------------------
         'T_0': {
-            'explanation': {'EN': 'Reference temperature', 'KR': '기준 온도'},
+            'explanation': {'EN': 'environment temperature', 'KR': '기준 온도'},
             'latex': r'$T_0$',
             'default': 0.0,
             'range': [-50.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'dV_w_serv': {
             'explanation': {'EN': 'Tank water use', 'KR': '탱크 온수 사용량'},
@@ -34,7 +34,7 @@ ELECTRIC_BOILER = {
             'range': [0.0, 10.0],
             'unit': 'L/min',
             'step': 0.1,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'T_w_sup': {
             'explanation': {'EN': 'Supply water temperature', 'KR': '상수도 온도'},
@@ -43,16 +43,25 @@ ELECTRIC_BOILER = {
             'range': [0.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
+        },
+        'T_w_tank': {
+            'explanation': {'EN': 'Tank water temperature', 'KR': '탱크 내 온수 온도'},
+            'latex': r'$T_{w,tank}$',
+            'default': 60.0,
+            'range': [0.0, 100.0],
+            'unit': '℃',
+            'step': 1.0,
+            'category': 'Hot water tank',
         },
         'T_w_serv': {
             'explanation': {'EN': 'Service water temperature', 'KR': '공급 온수 온도'},
             'latex': r'$T_{w,serv}$',
             'default': 45.0,
-            'range': ['T_w_sup + 1.0', 'T_w_tank - 1.0'],
+            'range': ['T_w_sup+1.0', 'T_w_tank-1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'h_o': {
             'explanation': {'EN': 'Overall heat transfer coefficient', 'KR': '종합 열전달계수'},
@@ -61,18 +70,9 @@ ELECTRIC_BOILER = {
             'range': [1, 50],
             'unit': 'W/m²·K',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
         # Hot water tank ------------------------------------------------------------
-        'T_w_tank': {
-            'explanation': {'EN': 'Tank water temperature', 'KR': '탱크 내 온수 온도'},
-            'latex': r'$T_{w,tank}$',
-            'default': 60.0,
-            'range': [0.0, 100.0],
-            'unit': '℃',
-            'step': 1.0,
-            'category': 'hot water tank',
-        },
         'r0': {
             'explanation': {'EN': 'Tank radius', 'KR': '탱크 반지름'},
             'latex': r'$r_0$',
@@ -80,7 +80,7 @@ ELECTRIC_BOILER = {
             'range': [0.1, 1.0],
             'unit': 'm',
             'step': 0.01,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'H': {
             'explanation': {'EN': 'Tank height', 'KR': '탱크 높이'},
@@ -89,7 +89,7 @@ ELECTRIC_BOILER = {
             'range': [0.1, 2.0],
             'unit': 'm',
             'step': 0.05,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'x_shell': {
             'explanation': {'EN': 'Tank shell thickness', 'KR': '탱크 외피 두께'},
@@ -98,7 +98,7 @@ ELECTRIC_BOILER = {
             'range': [0.005, 0.05],
             'unit': 'm',
             'step': 0.005,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'x_ins': {
             'explanation': {'EN': 'Tank insulation thickness', 'KR': '탱크 단열 두께'},
@@ -107,7 +107,7 @@ ELECTRIC_BOILER = {
             'range': [0.01, 0.2],
             'unit': 'm',
             'step': 0.01,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'k_shell': {
             'explanation': {'EN': 'Shell thermal conductivity', 'KR': '외피 열전도율'},
@@ -116,7 +116,7 @@ ELECTRIC_BOILER = {
             'range': [1, 100],
             'unit': 'W/m·K',
             'step': 1.0,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'k_ins': {
             'explanation': {'EN': 'Insulation thermal conductivity', 'KR': '단열재 열전도율'},
@@ -125,7 +125,7 @@ ELECTRIC_BOILER = {
             'range': [0.001, 0.1],
             'unit': 'W/m·K',
             'step': 0.001,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
     }
 }
@@ -133,18 +133,18 @@ ELECTRIC_BOILER = {
 GAS_BOILER = {
     'display': {
         'title': 'Gas boiler',
-        'icon': ':droplet:',
+        'icon': ':fire:',
     },
     'parameters': {
-        # condition ------------------------------------------------------------
+        # Condition ------------------------------------------------------------
         'T_0': {
-            'explanation': {'EN': 'Reference temperature', 'KR': '기준 온도'},
+            'explanation': {'EN': 'environment temperature', 'KR': '기준 온도'},
             'latex': r'$T_0$',
             'default': 0.0,
             'range': [-50.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'dV_w_serv': {
             'explanation': {'EN': 'Tank water use', 'KR': '탱크 온수 사용량'},
@@ -153,7 +153,7 @@ GAS_BOILER = {
             'range': [0.0, 10.0],
             'unit': 'L/min',
             'step': 0.1,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'T_w_sup': {
             'explanation': {'EN': 'Supply water temperature', 'KR': '상수도 온도'},
@@ -162,7 +162,7 @@ GAS_BOILER = {
             'range': [0.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'T_w_serv': {
             'explanation': {'EN': 'Service water temperature', 'KR': '공급 온수 온도'},
@@ -171,7 +171,7 @@ GAS_BOILER = {
             'range': ['T_w_sup + 1.0', 'T_w_tank - 1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'h_o': {
             'explanation': {'EN': 'Overall heat transfer coefficient', 'KR': '종합 열전달계수'},
@@ -180,7 +180,7 @@ GAS_BOILER = {
             'range': [1, 50],
             'unit': 'W/m²·K',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
         
         # combustion chamber ------------------------------------------------------------
@@ -211,7 +211,7 @@ GAS_BOILER = {
             'range': [0.0, 100.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'r0': {
             'explanation': {'EN': 'Tank radius', 'KR': '탱크 반지름'},
@@ -220,7 +220,7 @@ GAS_BOILER = {
             'range': [0.1, 1.0],
             'unit': 'm',
             'step': 0.01,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'H': {
             'explanation': {'EN': 'Tank height', 'KR': '탱크 높이'},
@@ -229,7 +229,7 @@ GAS_BOILER = {
             'range': [0.1, 2.0],
             'unit': 'm',
             'step': 0.05,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'x_shell': {
             'explanation': {'EN': 'Tank shell thickness', 'KR': '탱크 외피 두께'},
@@ -238,7 +238,7 @@ GAS_BOILER = {
             'range': [0.005, 0.05],
             'unit': 'm',
             'step': 0.005,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'x_ins': {
             'explanation': {'EN': 'Tank insulation thickness', 'KR': '탱크 단열 두께'},
@@ -247,7 +247,7 @@ GAS_BOILER = {
             'range': [0.01, 0.2],
             'unit': 'm',
             'step': 0.01,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'k_shell': {
             'explanation': {'EN': 'Shell thermal conductivity', 'KR': '외피 열전도율'},
@@ -256,7 +256,7 @@ GAS_BOILER = {
             'range': [1, 100],
             'unit': 'W/m·K',
             'step': 1.0,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'k_ins': {
             'explanation': {'EN': 'Insulation thermal conductivity', 'KR': '단열재 열전도율'},
@@ -265,26 +265,25 @@ GAS_BOILER = {
             'range': [0.001, 0.1],
             'unit': 'W/m·K',
             'step': 0.001,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
     }
 }
-
 HEAT_PUMP_BOILER = {
     'display': {
         'title': 'Heat pump boiler',
-        'icon': ':droplet:',
+        'icon': ':gear:',
     },
     'parameters': {
-        # condition ------------------------------------------------------------
+        # Condition ------------------------------------------------------------
             'T_0': {
-            'explanation': {'EN': 'Reference temperature', 'KR': '기준 온도'},
+            'explanation': {'EN': 'environment temperature', 'KR': '기준 온도'},
             'latex': r'$T_0$',
             'default': 0.0,
             'range': [-50.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'dV_w_serv': {
             'explanation': {'EN': 'Tank water use', 'KR': '탱크 온수 사용량'},
@@ -293,7 +292,7 @@ HEAT_PUMP_BOILER = {
             'range': [0.0, 10.0],
             'unit': 'L/min',
             'step': 0.1,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'T_w_sup': {
             'explanation': {'EN': 'Supply water temperature', 'KR': '상수도 온도'},
@@ -302,7 +301,7 @@ HEAT_PUMP_BOILER = {
             'range': [0.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'T_w_serv': {
             'explanation': {'EN': 'Service water temperature', 'KR': '공급 온수 온도'},
@@ -311,7 +310,7 @@ HEAT_PUMP_BOILER = {
             'range': ['T_w_sup + 1.0', 'T_w_tank - 1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'h_o': {
             'explanation': {'EN': 'Overall heat transfer coefficient', 'KR': '종합 열전달계수'},
@@ -320,7 +319,7 @@ HEAT_PUMP_BOILER = {
             'range': [1, 50],
             'unit': 'W/m²·K',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'COP_hp': {
             'explanation': {'EN': 'Heat Pump COP', 'KR': '히트펌프 COP'},
@@ -398,7 +397,7 @@ HEAT_PUMP_BOILER = {
             'range': [0.0, 100.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'r0': {
             'explanation': {'EN': 'Tank radius', 'KR': '탱크 반지름'},
@@ -407,7 +406,7 @@ HEAT_PUMP_BOILER = {
             'range': [0.1, 1.0],
             'unit': 'm',
             'step': 0.01,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'H': {
             'explanation': {'EN': 'Tank height', 'KR': '탱크 높이'},
@@ -416,7 +415,7 @@ HEAT_PUMP_BOILER = {
             'range': [0.1, 2.0],
             'unit': 'm',
             'step': 0.05,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'x_shell': {
             'explanation': {'EN': 'Tank shell thickness', 'KR': '탱크 외피 두께'},
@@ -425,7 +424,7 @@ HEAT_PUMP_BOILER = {
             'range': [0.005, 0.05],
             'unit': 'm',
             'step': 0.005,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'x_ins': {
             'explanation': {'EN': 'Tank insulation thickness', 'KR': '탱크 단열 두께'},
@@ -434,7 +433,7 @@ HEAT_PUMP_BOILER = {
             'range': [0.01, 0.2],
             'unit': 'm',
             'step': 0.01,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'k_shell': {
             'explanation': {'EN': 'Shell thermal conductivity', 'KR': '외피 열전도율'},
@@ -443,7 +442,7 @@ HEAT_PUMP_BOILER = {
             'range': [1, 100],
             'unit': 'W/m·K',
             'step': 1.0,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'k_ins': {
             'explanation': {'EN': 'Insulation thermal conductivity', 'KR': '단열재 열전도율'},
@@ -452,26 +451,25 @@ HEAT_PUMP_BOILER = {
             'range': [0.001, 0.1],
             'unit': 'W/m·K',
             'step': 0.001,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
     }
 }
-
 SOLAR_HOT_WATER = {
     'display': {
         'title': 'Solar hot water',
         'icon': ':sun:',
     },
     'parameters': {
-        # condition ------------------------------------------------------------
+        # Condition ------------------------------------------------------------
         'T_0': {
-            'explanation': {'EN': 'Reference temperature', 'KR': '기준 온도'},
+            'explanation': {'EN': 'environment temperature', 'KR': '기준 온도'},
             'latex': r'$T_0$',
             'default': 0.0,
             'range': [-50.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'dV_w_serv': {
             'explanation': {'EN': 'Tank water use', 'KR': '탱크 온수 사용량'},
@@ -480,7 +478,7 @@ SOLAR_HOT_WATER = {
             'range': [0.0, 10.0],
             'unit': 'L/min',
             'step': 0.1,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'T_w_sup': {
             'explanation': {'EN': 'Supply water temperature', 'KR': '상수도 온도'},
@@ -489,7 +487,7 @@ SOLAR_HOT_WATER = {
             'range': [0.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'T_w_serv': {
             'explanation': {'EN': 'Service water temperature', 'KR': '공급 온수 온도'},
@@ -498,7 +496,7 @@ SOLAR_HOT_WATER = {
             'range': ['T_w_sup + 1.0', 'T_w_tank - 1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'h_o': {
             'explanation': {'EN': 'Overall heat transfer coefficient', 'KR': '종합 열전달계수'},
@@ -507,7 +505,7 @@ SOLAR_HOT_WATER = {
             'range': [1, 50],
             'unit': 'W/m²·K',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
         
         
@@ -546,6 +544,15 @@ SOLAR_HOT_WATER = {
             'range': [0.01, 0.2],
             'unit': 'm',
             'step': 0.01,
+            'category': 'solar collector',
+        },
+        'k_ins': {
+            'explanation': {'EN': 'Insulation thermal conductivity', 'KR': '단열재 열전도율'},
+            'latex': r'$k_{ins}$',
+            'default': 0.03,
+            'range': [0.001, 0.1],
+            'unit': 'W/m·K',
+            'step': 0.001,
             'category': 'solar collector',
         },
         'alpha': {
@@ -595,24 +602,32 @@ SOLAR_HOT_WATER = {
             'step': 1.0,
             'category': 'combustion chamber',
         },
+        'T_exh': {
+            'explanation': {'EN': 'Exhaust gas temperature', 'KR': '배기 가스 온도'},
+            'latex': r'$T_{exh}$',
+            'default': 70.0,
+            'range': ['T_w_sup + 1.0', 200.0],
+            'unit': '℃',
+            'step': 5.0,
+            'category': 'Condition',
+        },
     }
 }
-
 GSHP_BOILER = {
     'display': {
         'title': 'Ground source heat pump boiler',
-        'icon': ':earth_americas:',
+        'icon': ':ground:',  # 흙/땅 느낌의 아이콘으로 변경
     },
     'parameters': {
         # Condition ----------------------------------------------------------------------------
         'T_0': {
-            'explanation': {'EN': 'Reference temperature', 'KR': '기준 온도'},
+            'explanation': {'EN': 'environment temperature', 'KR': '기준 온도'},
             'latex': r'$T_0$',
             'default': 0.0,
             'range': [-50.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'dV_w_serv': {
             'explanation': {'EN': 'Tank water use', 'KR': '탱크 온수 사용량'},
@@ -621,7 +636,7 @@ GSHP_BOILER = {
             'range': [0.0, 10.0],
             'unit': 'L/min',
             'step': 0.1,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'T_w_sup': {
             'explanation': {'EN': 'Supply water temperature', 'KR': '상수도 온도'},
@@ -630,16 +645,25 @@ GSHP_BOILER = {
             'range': [0.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
+        },
+        'T_w_tank': {
+            'explanation': {'EN': 'Tank water temperature', 'KR': '탱크 내 온수 온도'},
+            'latex': r'$T_{w,tank}$',
+            'default': 60.0,
+            'range': [0.0, 100.0],
+            'unit': '℃',
+            'step': 1.0,
+            'category': 'Hot water tank',
         },
         'T_w_serv': {
             'explanation': {'EN': 'Service water temperature', 'KR': '공급 온수 온도'},
             'latex': r'$T_{w,serv}$',
             'default': 45.0,
-            'range': ['T_w_sup + 1.0', 'T_w_tank - 1.0'],
+            'range': ['T_w_sup+1.0', 'T_w_tank-1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
         'h_o': {
             'explanation': {'EN': 'Overall heat transfer coefficient', 'KR': '종합 열전달계수'},
@@ -648,19 +672,18 @@ GSHP_BOILER = {
             'range': [1, 50],
             'unit': 'W/m²·K',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
-        
+        'COP_hp': {
+            'explanation': {'EN': 'Heat Pump COP', 'KR': '히트펌프 COP'},
+            'latex': r'$\mathrm{COP}_{hp}$',
+            'default': 4.0,
+            'range': [1.0, 6.0],
+            'unit': '-',
+            'step': 0.1,
+            'category': 'Condition',
+        },
         # Hot water tank ------------------------------------------------------------
-        'T_w_tank': {
-            'explanation': {'EN': 'Tank water temperature', 'KR': '탱크 내 온수 온도'},
-            'latex': r'$T_{w,tank}$',
-            'default': 60.0,
-            'range': [0.0, 100.0],
-            'unit': '℃',
-            'step': 1.0,
-            'category': 'hot water tank',
-        },
         'r0': {
             'explanation': {'EN': 'Tank radius', 'KR': '탱크 반지름'},
             'latex': r'$r_0$',
@@ -668,7 +691,7 @@ GSHP_BOILER = {
             'range': [0.1, 1.0],
             'unit': 'm',
             'step': 0.01,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'H': {
             'explanation': {'EN': 'Tank height', 'KR': '탱크 높이'},
@@ -677,7 +700,7 @@ GSHP_BOILER = {
             'range': [0.1, 2.0],
             'unit': 'm',
             'step': 0.05,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'x_shell': {
             'explanation': {'EN': 'Tank shell thickness', 'KR': '탱크 외피 두께'},
@@ -686,7 +709,7 @@ GSHP_BOILER = {
             'range': [0.005, 0.05],
             'unit': 'm',
             'step': 0.005,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'x_ins': {
             'explanation': {'EN': 'Tank insulation thickness', 'KR': '탱크 단열 두께'},
@@ -695,7 +718,7 @@ GSHP_BOILER = {
             'range': [0.01, 0.2],
             'unit': 'm',
             'step': 0.01,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'k_shell': {
             'explanation': {'EN': 'Shell thermal conductivity', 'KR': '외피 열전도율'},
@@ -704,7 +727,7 @@ GSHP_BOILER = {
             'range': [1, 100],
             'unit': 'W/m·K',
             'step': 1.0,
-            'category': 'hot water tank',
+            'category': 'Hot water tank',
         },
         'k_ins': {
             'explanation': {'EN': 'Insulation thermal conductivity', 'KR': '단열재 열전도율'},
@@ -712,18 +735,18 @@ GSHP_BOILER = {
             'default': 0.03,
             'range': [0.001, 0.1],
             'unit': 'W/m·K',
-            'step': 0.001,
-            'category': 'hot water tank',
+            'step': 0.005,
+            'category': 'Hot water tank',
         },
         # Refrigerant ----------------------------------------------------------------------------
-        'T_r_int': {
-            'explanation': {'EN': 'Internal Unit Refrigerant Temperature', 'KR': '실내기 측 냉매 온도'},
-            'latex': r'$T_{r,int}$',
-            'default': 35.0,
-            'range': ['T_a_room + 1.0', 60],
+        'T_r_tank': {
+            'explanation': {'EN': 'Hot water tank side Refrigerant Temperature', 'KR': '저탕조 측 냉매 온도'},
+            'latex': r'$T_{r,tank}$',
+            'default': 65.0,
+            'range': ['T_w_tank+1.0', 100.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'refrigerant',
+            'category': 'Refrigerant',
         },
         'T_r_exch': {
             'explanation': {'EN': 'Heat Exchanger Refrigerant Temperature', 'KR': '열교환기 측 냉매 온도'},
@@ -732,48 +755,48 @@ GSHP_BOILER = {
             'range': [-30, 'T_g-1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'refrigerant',
+            'category': 'Refrigerant',
         },
         
-        # borehole ----------------------------------------------------------------------------
-        'D': {
-            'explanation': {'EN': 'Borehole Depth', 'KR': '보어홀 시작 깊이'},
-            'latex': r'$D$',
+        # Borehole ----------------------------------------------------------------------------
+        'D_b': {
+            'explanation': {'EN': 'Borehole depth', 'KR': '보어홀 시작 깊이'},
+            'latex': r'$D_b$',
             'default': 0.0,
-            'range': [50, 300],
+            'range': [-0.0, 10.0],
+            'unit': 'm',
+            'step': 0.1,
+            'category': 'Borehole',
+        },
+        'H_b': {
+            'explanation': {'EN': 'Borehole height', 'KR': '보어홀 길이'},
+            'latex': r'$H_{bh}$',
+            'default': 200.0,
+            'range': [50.0, 300.0],
             'unit': 'm',
             'step': 10.0,
-            'category': 'borehole',
-        },
-        'H': {
-            'explanation': {'EN': 'Borehole Height', 'KR': '보어홀 길이'},
-            'latex': r'$H$',
-            'default': 200.0,
-            'range': [10, 300],
-            'unit': 'm',
-            'step': 1.0,
-            'category': 'borehole',
+            'category': 'Borehole',
         },
         'r_b': {
-            'explanation': {'EN': 'Borehole Radius', 'KR': '보어홀 반지름'},
+            'explanation': {'EN': 'Borehole radius', 'KR': '보어홀 반지름'},
             'latex': r'$r_b$',
             'default': 0.08,
-            'range': [0.05, 0.2],
+            'range': [0.05, 0.20],
             'unit': 'm',
-            'step': 0.001,
-            'category': 'borehole',
+            'step': 0.01,
+            'category': 'Borehole',
         },
         'R_b': {
-            'explanation': {'EN': 'Borehole Thermal Resistance', 'KR': '보어홀 유효 열저항'},
+            'explanation': {'EN': 'Borehole thermal resistance', 'KR': '보어홀 유효 열저항'},
             'latex': r'$R_b$',
-            'default': 0.108,
-            'range': [0.01, 0.5],
+            'default': 0.10,
+            'range': [0.01, 0.50],
             'unit': 'm·K/W',
             'step': 0.01,
-            'category': 'borehole',
+            'category': 'Borehole',
         },
         
-        # Ground Heat Exchanger ----------------------------------------------------------------------------
+        # Ground heat exchanger ----------------------------------------------------------------------------
         'V_f': {
             'explanation': {'EN': 'Fluid volumetric flow rate', 'KR': '유체 체적 유량'},
             'latex': r'$V_f$',
@@ -781,16 +804,16 @@ GSHP_BOILER = {
             'range': [1.0, 50.0],
             'unit': 'L/min',
             'step': 1.0,
-            'category': 'ground heat exchanger',
+            'category': 'Ground heat exchanger',
         },
         'E_pmp': {
-            'explanation': {'EN': 'Ground Heat Exchanger Pump Power', 'KR': 'GHE 펌프 전력'},
+            'explanation': {'EN': 'Ground heat exchanger Pump Power', 'KR': 'GHE 펌프 전력'},
             'latex': r'$E_{pmp}$',
-            'default': 200,
+            'default': 200.0,
             'range': [0, 1000],
             'unit': 'W',
             'step': 50.0,
-            'category': 'ground heat exchanger',
+            'category': 'Ground heat exchanger',
         },
         
         # Ground ----------------------------------------------------------------------------
@@ -801,7 +824,7 @@ GSHP_BOILER = {
             'range': [0.5, 5.0],
             'unit': 'W/m·K',
             'step': 0.1,
-            'category': 'ground',
+            'category': 'Ground',
         },
         'c_g': {
             'explanation': {'EN': 'Ground Specific Heat', 'KR': '토양 비열'},
@@ -810,7 +833,7 @@ GSHP_BOILER = {
             'range': [500, 2000],
             'unit': 'J/kg·K',
             'step': 100.0,
-            'category': 'ground',
+            'category': 'Ground',
         },
         'rho_g': {
             'explanation': {'EN': 'Ground Density', 'KR': '토양 밀도'},
@@ -819,7 +842,7 @@ GSHP_BOILER = {
             'range': [500, 5000],
             'unit': 'kg/m³',
             'step': 100.0,
-            'category': 'ground',
+            'category': 'Ground',
         },
         'T_g': {
             'explanation': {'EN': 'Ground temperature', 'KR': '토양온도'},
@@ -828,7 +851,7 @@ GSHP_BOILER = {
             'range': [0, 20],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Condition',
         },
     }
 }
@@ -856,37 +879,46 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
         'system': selected_systems,
     })
 
-    max_v = chart_data['efficiency'].max() if len(chart_data) > 0 else 100
+    max_v = math.ceil(chart_data['efficiency'].max() / 10) * 10  # 10의 배수로 올림
 
     c = alt.Chart(chart_data).mark_bar(size=30).encode(
         y=alt.Y('system:N', title='System', sort=None)
-           .axis(title=None, labelFontSize=18, labelColor='black'),
+           .axis(title=None, labelFontSize=18, labelColor='black', labelLimit=300, labelPadding=20),
         x=alt.X('efficiency:Q', title='Exergy Efficiency [%]')
            .axis(
-                labelFontSize=20,
-                labelColor='black',
-                titleFontSize=22,
-                titleColor='black',
+                values = [i*5 for i in range(0, int(max_v/5) + 1)] if max_v > 20 else [i*2 for i in range(0, int(max_v/2) + 1)],
+                labelFontSize = 20,
+                labelColor    = 'black',
+                titleFontSize = 22,
+                titleColor    = 'black',
             )
-            .scale(domain=[0, max_v + 3]),
+            .scale(domain=[0, max_v]),
         color=alt.Color('system:N', sort=None, legend=None),
-        tooltip=['system', 'efficiency'],
+        # tooltip=['system', 'efficiency'],
     ).properties(
         width='container',
-        height=len(selected_systems) * 60 + 50,
+        height=len(selected_systems) * 60 + 50
     )
 
-    text = c.mark_text(
+    text = alt.Chart(chart_data).mark_text(
         align='left',
         baseline='middle',
         dx=3,
         fontSize=20,
         fontWeight='normal',
     ).encode(
+        y=alt.Y('system:N', sort=None),
+        x=alt.X('efficiency:Q'),
         text=alt.Text('efficiency:Q', format='.2f')
     )
 
-    return c + text
+    # LayerChart에 padding을 직접 지정
+    chart = alt.layer(c, text).properties(
+        width='container',
+        height=len(selected_systems) * 60 + 50,
+        padding={'left': 20, 'right': 10, 'top': 10, 'bottom': 10}
+    )
+    return chart
 
 
 @viz_registry.register('HOT WATER', 'Exergy Consumption Process')
@@ -896,23 +928,83 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
     sources = []
     for key in selected_systems:
         sv = session_state.systems[key]['variables']
-        if session_state.systems[key]['type'] == 'Electric boiler':
+        sys_type = session_state.systems[key]['type']
+        # 라벨별 설명문 매핑 (EN 기준)
+        label_exps = {
+            'Electric boiler': {
+                'X_w_sup_tank': 'Exergy supplied to tank',
+                'X_heater': 'Exergy input by heater',
+                'X_c_tank': 'Exergy consumption due to heat loss',
+                'X_l_tank': 'Exergy loss (tank leakage)',
+                'X_w_sup,mix': 'Exergy contained in the supply water to the mixing valve',
+                'X_c_mix': 'Exergy consumption by mixing process',
+                'X_w_serv': 'Exergy contained in service hot water',
+            },
+            'Gas boiler': {
+                'X_w_sup': 'Exergy supplied to tank',
+                'X_NG': 'Exergy input by natural gas',
+                'X_c_comb': 'Exergy loss (combustion)',
+                'X_exh': 'Exergy loss (exhaust)',
+                'X_c_tank': 'Exergy consumption due to heat loss',
+                'X_l_tank': 'Exergy loss (tank leakage)',
+                'X_w_sup_mix': 'Exergy contained in the supply water to the mixing valve',
+                'X_c_mix': 'Exergy consumption by mixing process',
+                'X_w_serv': 'Exergy contained in service hot water',
+            },
+            'Heat pump boiler': {
+                'X_fan': 'Exergy input by fan',
+                'X_r_ext': 'Exergy from external refrigerant',
+                'X_a_ext_in': 'Exergy from external air (in)',
+                'X_c_ext': 'Exergy loss (external)',
+                'X_a_ext_out': 'Exergy loss (external air out)',
+                'X_cmp': 'Exergy input by compressor',
+                'X_c_r': 'Exergy loss (refrigerant)',
+                'X_r_ext_loss': 'Exergy loss (external refrigerant)',
+                'X_l_tank': 'Exergy loss (tank leakage)',
+                'X_c_tank': 'Exergy consumption due to heat loss',
+                'X_w_sup_tank': 'Exergy supplied to tank',
+                'X_w_serv': 'Exergy contained in service hot water',
+            },
+            'Solar hot water': {
+                'X_w_sup': 'Exergy supplied to tank',
+                'X_sol': 'Exergy input by solar',
+                'X_c_stp': 'Exergy loss (solar panel)',
+                'X_l': 'Exergy loss (system leakage)',
+                'X_NG': 'Exergy input by natural gas',
+                'X_c_comb': 'Exergy loss (combustion)',
+                'X_exh': 'Exergy loss (exhaust)',
+                'X_w_sup_mix': 'Exergy contained in the supply water to the mixing valve',
+                'X_c_mix': 'Exergy consumption by mixing process',
+                'X_w_serv': 'Exergy contained in service hot water',
+            },
+            'Ground source heat pump boiler': {
+                'Xin_g': 'Exergy input from ground',
+                'Xc_g': 'Exergy loss (ground)',
+                'E_pmp': 'Pump power',
+                'Xc_GHE': 'Exergy loss (GHE)',
+                'Xc_ext': 'Exergy loss (external)',
+                'X_cmp': 'Exergy input by compressor',
+                'Xc_r': 'Exergy loss (refrigerant)',
+                'X_l_tank': 'Exergy loss (tank leakage)',
+                'X_w_sup_tank': 'Exergy supplied',
+                'Xc_tank': 'Exergy consumption due to heat loss',
+                'X_w_sup_mix': 'Exergy contained in the supply water to the mixing valve',
+                'Xc_mix': 'Exergy consumption by mixing process',
+                'X_w_serv': 'Exergy contained in service hot water',
+            },
+        }
+
+        if sys_type == 'Electric boiler':
             labels = [
-                # r'$X_{w,sup,tank}$',
-                # r'$X_{heater}$',
-                # r'$-X_{c,tank}$',
-                # r'$-X_{l,tank}$',
-                # r'$X_{w,sup,mix}$',
-                # r'$-X_{c,mix}$',
-                # r'$X_{w,serv}$',
-                r'X_{w,sup,tank}',
-                'X2',
-                'X3',
-                'X4',
-                'X5',
-                'X6',
-                'X7',
+                'X_w_sup_tank',
+                'X_heater',
+                'X_c_tank',
+                'X_l_tank',
+                'X_w_sup,mix',
+                'X_c_mix',
+                'X_w_serv',
             ]
+            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
             amounts = [
                 sv['X_w_sup_tank'],
                 sv['X_heater'],
@@ -921,28 +1013,28 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
                 sv['X_w_sup_mix'],
                 -sv['X_c_mix'],
                 0
-                # sv['X_w_serv'],
-                
             ]
             source = pd.DataFrame({
                 'label': labels,
                 'amount': amounts,
                 'group': [key] * len(labels),
+                'desc': labels_exp,
             })
             sources.append(source)
-            
-        if session_state.systems[key]['type'] == 'Gas boiler':
+
+        if sys_type == 'Gas boiler':
             labels = [
-                'X1',
-                'X2',
-                'X3',
-                'X4',
-                'X5',
-                'X6',
-                'X7',
-                'X8',
-                'X9',
+                'X_w_sup',
+                'X_NG',
+                'X_c_comb',
+                'X_exh',
+                'X_c_tank',
+                'X_l_tank',
+                'X_w_sup_mix',
+                'X_c_mix',
+                'X_w_serv',
             ]
+            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
             amounts = [
                 sv['X_w_sup'],
                 sv['X_NG'],
@@ -958,24 +1050,26 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
                 'label': labels,
                 'amount': amounts,
                 'group': [key] * len(labels),
+                'desc': labels_exp,
             })
             sources.append(source)
 
-        if session_state.systems[key]['type'] == 'Heat pump boiler':
+        if sys_type == 'Heat pump boiler':
             labels = [
-                st.latex(r'X_1'),
-                'X2',
-                'X3',
-                'X4',
-                'X5',
-                'X6',
-                'X7',
-                'X8',
-                'X9',
-                'X10',
-                'X11',
-                'X12',
+                'X_fan',
+                'X_r_ext',
+                'X_a_ext_in',
+                'X_c_ext',
+                'X_a_ext_out',
+                'X_cmp',
+                'X_c_r',
+                'X_r_ext_loss',
+                'X_l_tank',
+                'X_c_tank',
+                'X_w_sup_tank',
+                'X_w_serv',
             ]
+            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
             amounts = [
                 sv['X_fan'],
                 sv['X_r_ext'],
@@ -994,22 +1088,24 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
                 'label': labels,
                 'amount': amounts,
                 'group': [key] * len(labels),
+                'desc': labels_exp,
             })
             sources.append(source)
-        
-        if session_state.systems[key]['type'] == 'Solar hot water':
+
+        if sys_type == 'Solar hot water':
             labels = [
-                'X1',
-                'X2',
-                'X3',
-                'X4',
-                'X5',
-                'X6',
-                'X7',
-                'X8',
-                'X9',
-                'X10',
+                'X_w_sup',
+                'X_sol',
+                'X_c_stp',
+                'X_l',
+                'X_NG',
+                'X_c_comb',
+                'X_exh',
+                'X_w_sup_mix',
+                'X_c_mix',
+                'X_w_serv',
             ]
+            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
             amounts = [
                 sv['X_w_sup'],
                 sv['X_sol'],
@@ -1026,37 +1122,47 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
                 'label': labels,
                 'amount': amounts,
                 'group': [key] * len(labels),
+                'desc': labels_exp,
             })
             sources.append(source)
-        if session_state.systems[key]['type'] == 'Ground source heat pump boiler':
+
+        if sys_type == 'Ground source heat pump boiler':
             labels = [
-                'X1',
-                'X2',
-                'X3',
-                'X4',
-                'X5',
-                'X6',
-                'X7',
-                'X8',
-                'X9',
-                'X10',
-                'X11',
+                'Xin_g',
+                'Xc_g',
+                'E_pmp',
+                'Xc_GHE',
+                'Xc_ext',
+                'X_cmp',
+                'Xc_r',
+                'X_l_tank',
+                'X_w_sup_tank',
+                'Xc_tank',
+                'X_w_sup_mix',
+                'Xc_mix',
+                'X_w_serv',
             ]
+            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
             amounts = [
-                sv['X_w_sup'],
-                sv['X_r_int'],
-                sv['X_r_exch'],
-                -sv['X_c_r'],
-                -sv['X_l_borehole'],
-                -sv['X_c_borehole'],
+                sv['Xin_g'],
+                -sv['Xc_g'],
+                sv['E_pmp'],
+                -sv['Xc_GHE'],
+                -sv['Xc_exch'],
+                sv['X_cmp'],
+                -sv['Xc_r'],
+                -sv['X_l_tank'],
                 sv['X_w_sup_tank'],
-                -sv['X_c_mix'],
+                -sv['Xc_tank'],
+                sv['X_w_sup_mix'],
+                -sv['Xc_mix'],
                 0,
             ]
             source = pd.DataFrame({
                 'label': labels,
                 'amount': amounts,
                 'group': [key] * len(labels),
+                'desc': labels_exp,
             })
             sources.append(source)
 
@@ -1109,7 +1215,6 @@ def evaluate_gas_boiler(params: Dict[str, float]) -> Dict[str, float]:
     GB.T_w_sup = params['T_w_sup']
     GB.T_w_serv = params['T_w_serv']
     GB.T_exh = params['T_exh']
-    GB.T_NG = params['T_NG']
     GB.dV_w_serv = params['dV_w_serv']*enex.L2m3/enex.m2s
     GB.r0 = params['r0']
     GB.H = params['H']
@@ -1196,7 +1301,6 @@ def evaluate_solar_hot_water(params: Dict[str, float]) -> Dict[str, float]:
     SHW = enex.SolarHotWater()
     SHW.alpha = params['alpha']
     SHW.eta_comb = params['eta_comb']
-    SHW.eta_NG = params['eta_NG']
     SHW.I_DN = params['I_DN']
     SHW.I_dH = params['I_dH']
     SHW.A_stp = params['A_stp']
@@ -1208,7 +1312,6 @@ def evaluate_solar_hot_water(params: Dict[str, float]) -> Dict[str, float]:
     SHW.dV_w_serv = params['dV_w_serv']*enex.L2m3/enex.m2s
     SHW.h_o = params['h_o']
     SHW.h_r = params['h_r']
-    SHW.k_air = params['k_air']
     SHW.k_ins = params['k_ins']
     SHW.x_air = params['x_air']
     SHW.x_ins = params['x_ins']
@@ -1228,58 +1331,78 @@ def evaluate_solar_hot_water(params: Dict[str, float]) -> Dict[str, float]:
     X_w_sup_mix = SHW.X_w_sup_mix
     X_w_serv = SHW.X_w_serv
     X_c_mix = SHW.X_c_mix
+    
+    X_eff = SHW.X_w_serv / SHW.X_NG
 
     return {k: v for k, v in locals().items() if k not in ('params')}
 
-@eval_registry.register('HOT WATER', 'GSHP boiler')
+@eval_registry.register('HOT WATER', 'Ground source heat pump boiler')
 def evaluate_gshp_boiler(params: Dict[str, float]) -> Dict[str, float]:
     """GSHP 보일러 평가 함수"""
     GSHPB = enex.GroundSourceHeatPumpBoiler()
-    GSHPB.alpha = params['alpha']
-    GSHPB.eta_comb = params['eta_comb']
-    GSHPB.eta_NG = params['eta_NG']
-    GSHPB.I_DN = params['I_DN']
-    GSHPB.I_dH = params['I_dH']
-    GSHPB.A_stp = params['A_stp']
     GSHPB.T0 = params['T_0']
-    GSHPB.T_w_comb = params['T_w_comb']
-    GSHPB.T_w_serv = params['T_w_serv']
+    GSHPB.T_w_tank = params['T_w_tank']
     GSHPB.T_w_sup = params['T_w_sup']
-    GSHPB.T_exh = params['T_exh']
-    GSHPB.dV_w_serv = params['dV_w_serv']*enex.L2m3/enex.m2s
-    GSHPB.h_o = params['h_o']
-    GSHPB.h_r = params['h_r']
-    GSHPB.k_ins = params['k_ins']
-    GSHPB.x_air = params['x_air']
+    GSHPB.T_w_serv = params['T_w_serv']
+    GSHPB.dV_w_serv = params['dV_w_serv'] * enex.L2m3 / enex.m2s
+    GSHPB.COP_hp = params['COP_hp']
+    
+    GSHPB.r0 = params['r0']
+    GSHPB.H = params['H']
+    GSHPB.x_shell = params['x_shell']
     GSHPB.x_ins = params['x_ins']
+    GSHPB.k_shell = params['k_shell']
+    GSHPB.k_ins = params['k_ins']
+    GSHPB.h_o = params['h_o']
+    
+    GSHPB.T_r_tank = params['T_r_tank']
+    GSHPB.T_r_exch = params['T_r_exch']
+    
+    GSHPB.D_b = params['D_b']
+    GSHPB.H_b = params['H_b']
+    GSHPB.r_b = params['r_b']
+    GSHPB.R_b = params['R_b']
+    GSHPB.V_f = params['V_f']* enex.L2m3 / enex.m2s  # Convert L/min to m³/s
+    GSHPB.E_pmp = params['E_pmp']
+    
+    GSHPB.k_g = params['k_g']
+    GSHPB.c_g = params['c_g']
+    GSHPB.rho_g = params['rho_g']
+    GSHPB.T_g = params['T_g']
     GSHPB.system_update()
     
     # Ground
     Xin_g = GSHPB.Xin_g
-    Xout_g = GSHPB.Xout_g
     Xc_g = GSHPB.Xc_g
+    
+    E_pmp = GSHPB.E_pmp
+    Xc_GHE = GSHPB.Xc_GHE
+    Xc_exch = GSHPB.Xc_exch
+    X_cmp = GSHPB.X_cmp
+    Xc_r = GSHPB.Xc_r
+    
+    X_l_tank = GSHPB.X_l_tank
+    X_w_sup_tank = GSHPB.X_w_sup_tank
+    Xc_tank = GSHPB.Xc_tank
+    X_w_sup_mix = GSHPB.X_w_sup_mix
+    Xc_mix = GSHPB.Xc_mix
+    X_w_serv = GSHPB.X_w_serv
 
     Xin_GHE = GSHPB.Xin_GHE
     Xout_GHE = GSHPB.Xout_GHE
-    Xc_GHE = GSHPB.Xc_GHE
-
+    
     Xin_exch = GSHPB.Xin_exch
     Xout_exch = GSHPB.Xout_exch
-    Xc_exch = GSHPB.Xc_exch
-
+    
     Xin_r = GSHPB.Xin_r
     Xout_r = GSHPB.Xout_r
-    Xc_r = GSHPB.Xc_r
-
+    
     Xin_tank = GSHPB.Xin_tank
     Xout_tank = GSHPB.Xout_tank
-    Xc_tank = GSHPB.Xc_tank
-
+    
     Xin_mix = GSHPB.Xin_mix
     Xout_mix = GSHPB.Xout_mix
-    Xc_mix = GSHPB.Xc_mix
 
     X_eff = GSHPB.X_eff
-
 
     return {k: v for k, v in locals().items() if k not in ('params')}
