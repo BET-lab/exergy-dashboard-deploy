@@ -49,12 +49,15 @@ def plot_waterfall_multi(source):
 
     bar_size = 50
 
-    bar = base_chart.mark_bar(size=bar_size, tooltip=None).encode(
-        y=alt.Y("calc_prev_sum:Q", title="Amount"),
+    bar = base_chart.mark_bar(size=bar_size).encode(
+        y=alt.Y("calc_prev_sum:Q", title="Exergy [W]"),
         y2=alt.Y2("window_sum_amount:Q"),
-        # color=color_coding,
         color=alt.Color('group:N').legend(None).sort(None),
-        # tooltip=[alt.Tooltip("label:N", title="Month"), alt.Tooltip("amount:Q", title="Amount")],
+        tooltip=[
+            alt.Tooltip("label:N", title="Label"),
+            alt.Tooltip("amount:Q", title="Amount", format=".2f"),
+            alt.Tooltip("desc:N", title="Description"),
+        ],
     )
 
     # The "rule" chart is for the horizontal lines that connect the bars
