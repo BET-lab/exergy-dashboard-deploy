@@ -216,7 +216,7 @@ COOLING_GSHP = {
         'E_pmp': {
             'explanation': {'EN': 'Ground Heat Exchanger Pump Power', 'KR': 'GHE 펌프 전력'},
             'latex': r'$E_{pmp}$',
-            'default': 200,
+            'default': 200.0,
             'range': [0, 1000],
             'unit': 'W',
             'step': 50.0,
