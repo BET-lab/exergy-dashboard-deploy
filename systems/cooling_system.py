@@ -315,30 +315,71 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
     sources = []
     for key in selected_systems:
         sv = session_state.systems[key]['variables']
-        if session_state.systems[key]['type'] == 'ASHP':
-            labels = ['Input', r'X_{c,int}', r'X_{c,ref}', r'X_{c,ext}', r'X_{ext,out}', 'Output']
+        sys_type = session_state.systems[key]['type']
+        label_exps = {
+            'ASHP': {
+                'Input': 'Exergy input',
+                'X_c_int': 'Exergy consumption (internal unit)',
+                'X_c_ref': 'Exergy consumption (refrigerant)',
+                'X_c_ext': 'Exergy consumption (external unit)',
+                'X_ext_out': 'Exergy loss (external air out)',
+                'Output': 'Exergy output',
+            },
+            'GSHP': {
+                'Input': 'Exergy input',
+                'X_c_int': 'Exergy consumption (internal unit)',
+                'X_c_ref': 'Exergy consumption (refrigerant)',
+                'X_c_GHE': 'Exergy consumption (ground heat exchanger)',
+                'Output': 'Exergy output',
+            },
+            'EH': {
+                'Input': 'Exergy input',
+                'X_c_int': 'Exergy consumption (internal unit)',
+                'X_c_ref': 'Exergy consumption (heater)',
+                'X_c_GHE': 'Exergy consumption (heat transfer)',
+                'Output': 'Exergy output',
+            },
+        }
+        if sys_type == 'ASHP':
+            labels = ['Input', 'X_c_int', 'X_c_ref', 'X_c_ext', 'X_ext_out', 'Output']
+            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
             amounts = [sv['Xin_A'], -sv['Xc_int_A'], -sv['Xc_r_A'], -sv['Xc_ext_A'], -sv['X_a_ext_out_A'], 0]
             source = pd.DataFrame({
                 'label': labels,
                 'amount': amounts,
                 'group': [key] * len(labels),
+                'desc': labels_exp,
             })
             sources.append(source)
-            
-        if session_state.systems[key]['type'] == 'GSHP':
-            labels = ['Input', r'X_{c,int}', r'X_{c,ref}', r'X_{c,GHE}', 'Output']
+        
+        if sys_type == 'GSHP':
+            labels = ['Input', 'X_c_int', 'X_c_ref', 'X_c_GHE', 'Output']
+            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
             amounts = [sv['Xin_G'], -sv['Xc_int_G'], -sv['Xc_r_G'], -sv['Xc_GHE'], 0]
             source = pd.DataFrame({
                 'label': labels,
                 'amount': amounts,
                 'group': [key] * len(labels),
+                'desc': labels_exp,
+            })
+            sources.append(source)
+        
+        if sys_type == 'EH':
+            labels = ['Input', 'X_c_int', 'X_c_ref', 'X_c_GHE', 'Output']
+            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
+            amounts = [sv['Xin_G'], -sv['Xc_int_G'], -sv['Xc_r_G'], -sv['Xc_GHE'], 0]
+            source = pd.DataFrame({
+                'label': labels,
+                'amount': amounts,
+                'group': [key] * len(labels),
+                'desc': labels_exp,
             })
             sources.append(source)
 
     if sources:
         source = pd.concat(sources)
         return plot_waterfall_multi(source)
-    return alt.Chart(pd.DataFrame({'x': [0], 'y': [0]})).mark_point() 
+    return alt.Chart(pd.DataFrame({'x': [0], 'y': [0]})).mark_point()
 
 
 @eval_registry.register('COOLING', 'ASHP')

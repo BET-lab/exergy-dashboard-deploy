@@ -425,33 +425,61 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
     sources = []
     for key in selected_systems:
         sv = session_state.systems[key]['variables']
+        sys_type = session_state.systems[key]['type']
+        label_exps = {
+            'ASHP': {
+            'Xin_A': 'Exergy input',
+            'Xc_int_A': 'Exergy consumption (internal unit)',
+            'Xc_r_A': 'Exergy consumption (refrigerant)',
+            'Xc_ext_A': 'Exergy consumption (external unit)',
+            'X_a_ext_out_A': 'Exergy loss (external air out)',
+            },
+            'GSHP': {
+            'Xin_G': 'Exergy input',
+            'Xc_int_G': 'Exergy consumption (internal unit)',
+            'Xc_r_G': 'Exergy consumption (refrigerant)',
+            'Xc_GHE': 'Exergy consumption (ground heat exchanger)',
+            },
+            'EH': {
+            'Xin_G': 'Exergy input',
+            'Xc_int_G': 'Exergy consumption (internal unit)',
+            'Xc_r_G': 'Exergy consumption (heater)',
+            'Xc_GHE': 'Exergy consumption (heat transfer)',
+            },
+        }
         if session_state.systems[key]['type'] == 'ASHP':
             labels = ['Input', r'X_{c,int}', r'X_{c,ref}', r'X_{c,ext}', r'X_{ext,out}', 'Output']
+            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
             amounts = [sv['Xin_A'], -sv['Xc_int_A'], -sv['Xc_r_A'], -sv['Xc_ext_A'], -sv['X_a_ext_out_A'], 0]
             source = pd.DataFrame({
                 'label': labels,
                 'amount': amounts,
                 'group': [key] * len(labels),
+                'desc': labels_exp,
             })
             sources.append(source)
             
         if session_state.systems[key]['type'] == 'GSHP':
             labels = ['Input', r'X_{c,int}', r'X_{c,ref}', r'X_{c,GHE}', 'Output']
+            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
             amounts = [sv['Xin_G'], -sv['Xc_int_G'], -sv['Xc_r_G'], -sv['Xc_GHE'], 0]
             source = pd.DataFrame({
                 'label': labels,
                 'amount': amounts,
                 'group': [key] * len(labels),
+                'desc': labels_exp,
             })
             sources.append(source)
             
         if session_state.systems[key]['type'] == 'EH':
             labels = ['Input', r'X_{c,int}', r'X_{c,ref}', r'X_{c,GHE}', 'Output']
+            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
             amounts = [sv['Xin_G'], -sv['Xc_int_G'], -sv['Xc_r_G'], -sv['Xc_GHE'], 0]
             source = pd.DataFrame({
                 'label': labels,
                 'amount': amounts,
                 'group': [key] * len(labels),
+                'desc': labels_exp,
             })
             sources.append(source)
 
