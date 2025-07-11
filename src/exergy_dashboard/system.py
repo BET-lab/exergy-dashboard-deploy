@@ -60,7 +60,7 @@ class SystemRegistry:
         >>> register_system('MY_MODE', 'NEW_SYSTEM', new_system)
         """
         mode = mode.upper()
-        system_type = system_type.upper()
+        # system_type = system_type.upper()
         
         # 시스템 설정 검증
         self._validate_system_config(system_config)
