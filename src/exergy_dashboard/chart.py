@@ -108,8 +108,8 @@ def plot_waterfall_multi(source):
         # text_neg_values_bot_of_bar,
         # text_bar_values_mid_of_bar
     ).properties(
-        width=alt.Step(bar_size + 100),
-        # width='container',
+        # width=alt.Step(bar_size + 50),
+        width='container',
         height=190
     ).facet(
         facet=alt.Facet("group").title('').sort([]),
