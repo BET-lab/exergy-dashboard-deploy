@@ -12,7 +12,7 @@ import en_system_ex_analysis as enex
 # 기본 시스템 정의
 COOLING_ASHP = {
     'display': {
-        'title': 'Air Source Heat Pump',
+        'title': 'Air source heat pump',
         'icon': ':snowflake:',
     },
     'parameters':{
@@ -98,7 +98,7 @@ COOLING_ASHP = {
 
 COOLING_GSHP = {
     'display': {
-        'title': 'Ground Source Heat Pump(temporary)',
+        'title': 'Ground source heat pump',
         'icon': ':earth_americas:',
     },
     'parameters': {
@@ -318,32 +318,36 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
         sys_type = session_state.systems[key]['type']
         label_exps = {
             'ASHP': {
-                'Input': 'Exergy input',
-                'X_c_int': 'Exergy consumption (internal unit)',
-                'X_c_ref': 'Exergy consumption (refrigerant)',
+                'Input': 'Exergy input from fan (external unit)',
+                'X_r_ext': 'Cool exergy input from refrigerant (external unit side)',
                 'X_c_ext': 'Exergy consumption (external unit)',
-                'X_ext_out': 'Exergy loss (external air out)',
+                'X_a_ext_out': 'Exergy output (external unit outlet air)',
+                'E_cmp': 'Compressor power input (refrigerant)',
+                'X_c_r': 'Exergy consumption (refrigerant)',
+                'X_r_ext': 'Cool exergy input from refrigerant (external unit side)',
+                'X_c_int': 'Exergy consumption (internal unit)',
                 'Output': 'Exergy output',
             },
             'GSHP': {
+                'Xin_g': 'Exergy from undisturbed ground',
+                'Xc_g': 'Consumption in ground',
+                'E_pmp': 'Electric input to pump',
+                'Xc_GHE': 'Consumption in ground heat exchanger',
+                'Xc_exch': 'Consumption in heat exchanger',
+                'E_cmp': 'Electric input to compressor',
+                'Xc_r': 'Consumption in refrigerant loop',
+                'E_fan_int': 'Electric input to fan',
+                'X_a_int_in': 'Exergy from room air',
+                'Xc_int': 'Consumption in internal unit',
+                'Xout_int': 'Supply air to room',
                 'Input': 'Exergy input',
-                'X_c_int': 'Exergy consumption (internal unit)',
-                'X_c_ref': 'Exergy consumption (refrigerant)',
-                'X_c_GHE': 'Exergy consumption (ground heat exchanger)',
-                'Output': 'Exergy output',
-            },
-            'EH': {
-                'Input': 'Exergy input',
-                'X_c_int': 'Exergy consumption (internal unit)',
-                'X_c_ref': 'Exergy consumption (heater)',
-                'X_c_GHE': 'Exergy consumption (heat transfer)',
                 'Output': 'Exergy output',
             },
         }
         if sys_type == 'ASHP':
-            labels = ['Input', 'X_c_int', 'X_c_ref', 'X_c_ext', 'X_ext_out', 'Output']
+            labels = ['Input', 'X_r_ext(internal)', 'X_c_ext', 'X_a_ext_out', 'E_cmp', 'X_c_r', 'X_r_ext(ref)', 'X_c_int', 'Output']
             labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
-            amounts = [sv['Xin_A'], -sv['Xc_int_A'], -sv['Xc_r_A'], -sv['Xc_ext_A'], -sv['X_a_ext_out_A'], 0]
+            amounts = [sv['E_fan_ext'], sv['X_r_ext'], -sv['Xc_ext'], -sv['X_a_ext_out'], sv['E_cmp'], -sv['Xc_r'], -sv['X_r_ext'], -sv['Xc_int'], 0]
             source = pd.DataFrame({
                 'label': labels,
                 'amount': amounts,
@@ -353,21 +357,15 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
             sources.append(source)
         
         if sys_type == 'GSHP':
-            labels = ['Input', 'X_c_int', 'X_c_ref', 'X_c_GHE', 'Output']
+            labels = [
+                'Xin_g', 'Xc_g', 'E_pmp', 'Xc_GHE', 'Xc_exch',
+                'E_cmp', 'Xc_r', 'E_fan_int', 'X_a_int_in', 'Xc_int', 'Xout_int'
+            ]
             labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
-            amounts = [sv['Xin_G'], -sv['Xc_int_G'], -sv['Xc_r_G'], -sv['Xc_GHE'], 0]
-            source = pd.DataFrame({
-                'label': labels,
-                'amount': amounts,
-                'group': [key] * len(labels),
-                'desc': labels_exp,
-            })
-            sources.append(source)
-        
-        if sys_type == 'EH':
-            labels = ['Input', 'X_c_int', 'X_c_ref', 'X_c_GHE', 'Output']
-            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
-            amounts = [sv['Xin_G'], -sv['Xc_int_G'], -sv['Xc_r_G'], -sv['Xc_GHE'], 0]
+            amounts = [
+                sv['Xin_g'], -sv['Xc_g'], sv['E_pmp'], -sv['Xc_GHE'], -sv['Xc_exch'],
+                sv['E_cmp'], -sv['Xc_r'], sv['E_fan_int'], sv['X_a_int_in'], -sv['Xc_int'], 0
+            ]
             source = pd.DataFrame({
                 'label': labels,
                 'amount': amounts,
@@ -398,6 +396,7 @@ def evaluate_cooling_ashp(params: Dict[str, float]) -> Dict[str, float]:
     
     # fan power
     E_fan_int = ASHP_C.E_fan_int
+    E_cmp     = ASHP_C.E_cmp
     E_fan_ext = ASHP_C.E_fan_ext
 
     X_a_int_in  = ASHP_C.X_a_int_in
@@ -450,37 +449,40 @@ def evaluate_cooling_gshp(params: Dict[str, float]) -> Dict[str, float]:
     GSHP_C.k_g = params['k_g']
     GSHP_C.c_g = params['c_g']
     GSHP_C.rho_g = params['rho_g']
-    
-    GSHP_C.E_f_int = params['E_f_int']
+
     GSHP_C.E_pmp = params['E_pmp']
    
     GSHP_C.Q_r_int = params['Q_r_int']
     GSHP_C.system_update()
 
     # Ground
-    Xin_g = GSHP_C.X_g
+    Xin_g = GSHP_C.Xin_g
     Xout_g = GSHP_C.X_b
-    Xc_g = Xin_g - Xout_g
+    Xc_g = GSHP_C.Xc_g
 
     # Ground heat exchanger
-    Xin_GHE = GSHP_C.E_pmp + Xout_g + GSHP_C.X_f_in
-    Xout_GHE = GSHP_C.X_f_out 
-    Xc_GHE = Xin_GHE - Xout_GHE
+    E_pmp = GSHP_C.E_pmp
+    Xin_GHE = GSHP_C.Xin_GHE
+    Xout_GHE = GSHP_C.Xout_GHE
+    Xc_GHE = GSHP_C.Xc_GHE
 
     # Heat exchanger
-    Xin_exch = Xout_GHE 
-    Xout_exch = GSHP_C.X_r_exch + GSHP_C.X_f_in
-    Xc_exch = Xin_exch - Xout_exch
+    Xin_exch = GSHP_C.Xin_exch
+    Xout_exch = GSHP_C.Xout_exch
+    Xc_exch = GSHP_C.Xc_exch
 
     # Closed refrigerant loop system
-    Xin_r = GSHP_C.E_cmp + GSHP_C.X_r_exch
-    Xout_r = GSHP_C.X_r_int
-    Xc_r = Xin_r - Xout_r
+    E_cmp = GSHP_C.E_cmp
+    Xin_r = GSHP_C.Xin_r
+    Xout_r = GSHP_C.Xout_r
+    Xc_r = GSHP_C.Xc_r
 
     # Internal unit
-    Xin_int = GSHP_C.E_fan_int + GSHP_C.X_r_int + GSHP_C.X_a_int_in
-    Xout_int = GSHP_C.X_a_int_out
-    Xc_int = Xin_int - Xout_int
+    X_a_int_in = GSHP_C.X_a_int_in
+    E_fan_int = GSHP_C.E_fan_int
+    Xin_int = GSHP_C.Xin_int
+    Xout_int = GSHP_C.Xout_int
+    Xc_int = GSHP_C.Xc_int
 
     # Exergy efficiency
     X_eff = GSHP_C.X_eff
