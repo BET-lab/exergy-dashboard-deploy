@@ -134,7 +134,7 @@ def add_system(type_):
 with st.sidebar:
     st.title('Exergy Analyzer')
     st.divider()
-    st.header('System mode')
+    st.header('System operating mode')
     systems = get_systems()  # 최신 상태 가져오기
     available_modes = list(systems.keys())
     if not available_modes:
