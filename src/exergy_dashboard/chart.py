@@ -71,8 +71,7 @@ def plot_waterfall_multi(source):
     ).encode(
         text=alt.Text(
             "calc_amount:Q",
-            format="~s",
-        ),
+            format="~s",),
         y="calc_top:Q"
     ).transform_calculate(
         calc_amount_abs="abs(datum.calc_amount)",
@@ -98,7 +97,7 @@ def plot_waterfall_multi(source):
     #     color=alt.value("white"),
     # )
 
-    chart = alt.layer(
+    chart = alt.layer( # Altair에서 여러 개의 차트(마크)를 하나의 시각화로 "겹쳐서" 보여주는 함수입니다
         bar,
         rule,
         text_values_top,
@@ -112,6 +111,9 @@ def plot_waterfall_multi(source):
     ).facet(
         facet=alt.Facet("group").title('').sort([]),
         columns=1,
+    ).configure_header(
+        labelFontSize=20,
+        labelColor='black',
     ).transform_window(
         window_sum_amount="sum(amount)",
         window_lead_label="lead(label)",
@@ -133,5 +135,5 @@ def plot_waterfall_multi(source):
     ).resolve_scale(
         x="independent"
     )
-
+    
     return chart
