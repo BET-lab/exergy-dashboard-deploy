@@ -382,40 +382,21 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
     })
 
     max_v = chart_data['efficiency'].max() if len(chart_data) > 0 else 100
-
-    # max_v를 100부터 0까지 총 10등분하여 범위에 따라 설정
-    if max_v > 90:
-        max_v = 100
-        tick_step = 10
-    elif max_v > 80:
-        max_v = 90
-        tick_step = 9
-    elif max_v > 70:
-        max_v = 80
-        tick_step = 8
-    elif max_v > 60:
-        max_v = 70
-        tick_step = 7
-    elif max_v > 50:
-        max_v = 60
-        tick_step = 6
-    elif max_v > 40:
-        max_v = 50
-        tick_step = 5
-    elif max_v > 30:
-        max_v = 40
-        tick_step = 4
-    elif max_v > 20:
-        max_v = 30
-        tick_step = 3
-    elif max_v > 10:
-        max_v = 20
-        tick_step = 2
-    else:
+    # max_v를 10 단위로 올림, tick_step은 10 또는 max_v에 맞춤
+    if max_v <= 10:
         max_v = 10
         tick_step = 1
+    else:
+        max_v = int(np.ceil(max_v / 10.0)) * 10
+        tick_step = max_v // 10
 
     c = alt.Chart(chart_data).mark_bar(size=30).encode(
+        y=alt.Y('system:N', title='System', sort=None)
+           .axis(title=None,
+                 labelFontSize=18,
+                 labelColor='black',
+                 labelLimit=300,
+                 labelPadding=20),
         x=alt.X('efficiency:Q', title='Exergy Efficiency [%]')
             .axis(
                 labelFontSize=20,
@@ -443,7 +424,6 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
     )
 
     return c + text
-
 
 @viz_registry.register('HEATING', 'Exergy consumption crocess')
 def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> alt.Chart:

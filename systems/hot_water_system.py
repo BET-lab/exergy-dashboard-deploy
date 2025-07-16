@@ -1,6 +1,7 @@
 import math
 from typing import Any, List, Dict
 import pandas as pd
+import numpy as np
 import altair as alt
 import streamlit as st
 import en_system_ex_analysis as enex
@@ -129,7 +130,6 @@ ELECTRIC_BOILER = {
         },
     }
 }
-
 GAS_BOILER = {
     'display': {
         'title': 'Gas boiler',
@@ -878,19 +878,29 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
         'efficiency': efficiencies,
         'system': selected_systems,
     })
-
-    max_v = math.ceil(chart_data['efficiency'].max() / 10) * 10  # 10의 배수로 올림
+    
+    max_v = chart_data['efficiency'].max() if len(chart_data) > 0 else 100
+    if max_v <= 10:
+        max_v = 10
+        tick_step = 1
+    else:
+        max_v = int(np.ceil(max_v / 10.0)) * 10
+        tick_step = max_v // 10
 
     c = alt.Chart(chart_data).mark_bar(size=30).encode(
         y=alt.Y('system:N', title='System', sort=None)
-           .axis(title=None, labelFontSize=18, labelColor='black', labelLimit=300, labelPadding=20),
+           .axis(title=None,
+                 labelFontSize=18,
+                 labelColor='black',
+                 labelLimit=300,
+                 labelPadding=20),
         x=alt.X('efficiency:Q', title='Exergy Efficiency [%]')
-           .axis(
-                values = [i*5 for i in range(0, int(max_v/5) + 1)] if max_v > 20 else [i*2 for i in range(0, int(max_v/2) + 1)],
-                labelFontSize = 20,
-                labelColor    = 'black',
-                titleFontSize = 22,
-                titleColor    = 'black',
+            .axis(
+                labelFontSize=20,
+                labelColor='black',
+                titleFontSize=22,
+                titleColor='black',
+                values = np.arange(0, max_v + 1, tick_step).tolist(),
             )
             .scale(domain=[0, max_v]),
         color=alt.Color('system:N', sort=None, legend=None),

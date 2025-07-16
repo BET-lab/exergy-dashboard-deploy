@@ -1,6 +1,7 @@
 import math
 from typing import Any, List, Dict
 import pandas as pd
+import numpy as np
 import altair as alt
 from exergy_dashboard.system import register_system
 from exergy_dashboard.evaluation import registry as eval_registry
@@ -94,8 +95,6 @@ COOLING_ASHP = {
         
     }
 }
-
-
 COOLING_GSHP = {
     'display': {
         'title': 'Ground source heat pump',
@@ -276,19 +275,30 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
     })
 
     max_v = chart_data['efficiency'].max() if len(chart_data) > 0 else 100
+    # max_v를 10 단위로 올림, tick_step은 10 또는 max_v에 맞춤
+    if max_v <= 10:
+        max_v = 10
+        tick_step = 1
+    else:
+        max_v = int(np.ceil(max_v / 10.0)) * 10
+        tick_step = max_v // 10
 
     c = alt.Chart(chart_data).mark_bar(size=30).encode(
         y=alt.Y('system:N', title='System', sort=None)
-           .axis(title=None, labelFontSize=18, labelColor='black'),
+           .axis(title=None,
+                 labelFontSize=18,
+                 labelColor='black',
+                 labelLimit=300,
+                 labelPadding=20),
         x=alt.X('efficiency:Q', title='Exergy Efficiency [%]')
-           .axis(
+            .axis(
                 labelFontSize=20,
                 labelColor='black',
                 titleFontSize=22,
                 titleColor='black',
+                values = np.arange(0, max_v + 1, tick_step).tolist(),
             )
-            .scale(domain=[0, max_v + 3]),
-        color=alt.Color('system:N', sort=None, legend=None),
+            .scale(domain=[0, max_v]),
         # tooltip=['system', 'efficiency'],
     ).properties(
         width='container',
