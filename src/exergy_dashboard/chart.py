@@ -42,15 +42,34 @@ def plot_waterfall_multi(source):
         ) + calc_amount
     )
 
+    bar_size = 50
+    fs = bar_size / 3.5
+    
     # The "base_chart" defines the transform_window, transform_calculate, and X axis
     base_chart = alt.Chart(source).encode(
-        x=alt.X("label:O", axis=alt.Axis(title="", labelAngle=0), sort=None)
+        x=alt.X(
+        "label:O",
+        axis=alt.Axis(
+            title="",
+            labelAngle=0,
+            labelFontSize=fs,   # x축 틱 레이블 폰트 크기
+            labelColor="black"  # x축 틱 레이블 컬러
+            ),
+            sort=None
+        ),
+        y=alt.Y(
+            "calc_prev_sum:Q",
+            title="Exergy [W]",
+            axis=alt.Axis(
+                labelFontSize=fs,   # y축 틱 레이블 폰트 크기
+                labelColor="black",  # y축 틱 레이블 컬러
+                titleFontSize=fs * 1.2,  # y축 제목 폰트 크기
+                titleColor="black",  # y축 제목 컬러
+            )
+        )
     )
 
-    bar_size = 50
-
     bar = base_chart.mark_bar(size=bar_size).encode(
-        y=alt.Y("calc_prev_sum:Q", title="Exergy [W]"),
         y2=alt.Y2("window_sum_amount:Q"),
         color=alt.Color('group:N').legend(None).sort(None),
         tooltip=[
@@ -64,7 +83,6 @@ def plot_waterfall_multi(source):
         x2="calc_lead",
     )
 
-    fs = bar_size / 3.5
     # Add values as text
     text_values_top = base_chart.mark_text(
         baseline="bottom", dy=-4, fontSize=fs, tooltip=None
