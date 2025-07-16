@@ -317,7 +317,6 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
 
     return c + text
 
-
 @viz_registry.register('COOLING', 'Exergy consumption process')
 def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> alt.Chart:
     """엑서지 소비 과정 차트 생성"""
@@ -330,12 +329,12 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
         if sys_type == 'Air source heat pump':
             items = [
                 {'label': 'E_fan_ext', 'amount': sv['E_fan_ext'], 'desc': 'Exergy input from fan (external unit)'},
-                {'label': 'X_r_ext', 'amount': sv['X_r_ext'], 'desc': 'Cool exergy input from refrigerant (external unit side)'},
+                {'label': 'X_r_ext(ext side)', 'amount': sv['X_r_ext'], 'desc': 'Cool exergy input from refrigerant (external unit side)'},
                 {'label': 'Xc_ext', 'amount': -sv['Xc_ext'], 'desc': 'Exergy consumption (external unit)'},
                 {'label': 'X_a_ext_out', 'amount': -sv['X_a_ext_out'], 'desc': 'Exergy output (external unit outlet air)'},
                 {'label': 'E_cmp', 'amount': sv['E_cmp'], 'desc': 'Compressor power input (refrigerant)'},
                 {'label': 'Xc_r', 'amount': -sv['Xc_r'], 'desc': 'Exergy consumption (refrigerant)'},
-                {'label': 'X_r_ext', 'amount': -sv['X_r_ext'], 'desc': 'Cool exergy input from refrigerant (external unit side)'},
+                {'label': 'X_r_ext(ref side)', 'amount': -sv['X_r_ext'], 'desc': 'Cool exergy output from refrigerant (external unit side)'},
                 {'label': 'Xc_int', 'amount': -sv['Xc_int'], 'desc': 'Exergy consumption (internal unit)'},
                 {'label': 'Output', 'amount': 0, 'desc': 'Exergy output'},
             ]
