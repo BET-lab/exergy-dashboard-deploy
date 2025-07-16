@@ -425,7 +425,7 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
 
     return c + text
 
-@viz_registry.register('HEATING', 'Exergy consumption crocess')
+@viz_registry.register('HEATING', 'Exergy consumption process')
 def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> alt.Chart:
     """엑서지 소비 과정 차트 생성"""
     # HEATING 모드 전용 시각화
