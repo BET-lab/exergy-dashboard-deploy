@@ -254,12 +254,12 @@ COOLING_GSHP = {
 }
 
 # 시스템 등록
-register_system('COOLING', 'ASHP', COOLING_ASHP)
-register_system('COOLING', 'GSHP', COOLING_GSHP)
+register_system('COOLING', 'Air source heat pump', COOLING_ASHP)
+register_system('COOLING', 'Ground source heat pump', COOLING_GSHP)
 
 
 # COOLING 모드 시각화 함수들
-@viz_registry.register('COOLING', 'Exergy Efficiency')
+@viz_registry.register('COOLING', 'Exergy efficiency')
 def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> alt.Chart:
     """엑서지 효율 차트 생성"""
     # COOLING 모드 전용 시각화
@@ -289,7 +289,7 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
             )
             .scale(domain=[0, max_v + 3]),
         color=alt.Color('system:N', sort=None, legend=None),
-        tooltip=['system', 'efficiency'],
+        # tooltip=['system', 'efficiency'],
     ).properties(
         width='container',
         height=len(selected_systems) * 60 + 50,
@@ -308,7 +308,7 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
     return c + text
 
 
-@viz_registry.register('COOLING', 'Exergy Consumption Process')
+@viz_registry.register('COOLING', 'Exergy consumption process')
 def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> alt.Chart:
     """엑서지 소비 과정 차트 생성"""
     # COOLING 모드 전용 시각화
@@ -317,20 +317,20 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
         sv = session_state.systems[key]['variables']
         sys_type = session_state.systems[key]['type']
         
-        if sys_type == 'ASHP':
+        if sys_type == 'Air source heat pump':
             items = [
-            {'label': 'E_fan_ext', 'amount': sv['E_fan_ext'], 'desc': 'Exergy input from fan (external unit)'},
-            {'label': 'X_r_ext', 'amount': sv['X_r_ext'], 'desc': 'Cool exergy input from refrigerant (external unit side)'},
-            {'label': 'Xc_ext', 'amount': -sv['Xc_ext'], 'desc': 'Exergy consumption (external unit)'},
-            {'label': 'X_a_ext_out', 'amount': -sv['X_a_ext_out'], 'desc': 'Exergy output (external unit outlet air)'},
-            {'label': 'E_cmp', 'amount': sv['E_cmp'], 'desc': 'Compressor power input (refrigerant)'},
-            {'label': 'Xc_r', 'amount': -sv['Xc_r'], 'desc': 'Exergy consumption (refrigerant)'},
-            {'label': 'X_r_ext', 'amount': -sv['X_r_ext'], 'desc': 'Cool exergy input from refrigerant (external unit side)'},
-            {'label': 'Xc_int', 'amount': -sv['Xc_int'], 'desc': 'Exergy consumption (internal unit)'},
-            {'label': 'Output', 'amount': 0, 'desc': 'Exergy output'},
+                {'label': 'E_fan_ext', 'amount': sv['E_fan_ext'], 'desc': 'Exergy input from fan (external unit)'},
+                {'label': 'X_r_ext', 'amount': sv['X_r_ext'], 'desc': 'Cool exergy input from refrigerant (external unit side)'},
+                {'label': 'Xc_ext', 'amount': -sv['Xc_ext'], 'desc': 'Exergy consumption (external unit)'},
+                {'label': 'X_a_ext_out', 'amount': -sv['X_a_ext_out'], 'desc': 'Exergy output (external unit outlet air)'},
+                {'label': 'E_cmp', 'amount': sv['E_cmp'], 'desc': 'Compressor power input (refrigerant)'},
+                {'label': 'Xc_r', 'amount': -sv['Xc_r'], 'desc': 'Exergy consumption (refrigerant)'},
+                {'label': 'X_r_ext', 'amount': -sv['X_r_ext'], 'desc': 'Cool exergy input from refrigerant (external unit side)'},
+                {'label': 'Xc_int', 'amount': -sv['Xc_int'], 'desc': 'Exergy consumption (internal unit)'},
+                {'label': 'Output', 'amount': 0, 'desc': 'Exergy output'},
             ]
         
-        if sys_type == 'GSHP':
+        if sys_type == 'Ground source heat pump':
             items = [
             {'label': 'Xin_g', 'amount': sv['Xin_g'], 'desc': 'Exergy from undisturbed ground'},
             {'label': 'Xc_g', 'amount': -sv['Xc_g'], 'desc': 'Consumption in ground'},
@@ -356,7 +356,7 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
     return alt.Chart(pd.DataFrame({'x': [0], 'y': [0]})).mark_point()
 
 
-@eval_registry.register('COOLING', 'ASHP')
+@eval_registry.register('COOLING', 'Air source heat pump')
 def evaluate_cooling_ashp(params: Dict[str, float]) -> Dict[str, float]:
     """ASHP 냉방 모드 평가 함수"""
     ASHP_C = enex.AirSourceHeatPump_cooling()
@@ -404,7 +404,7 @@ def evaluate_cooling_ashp(params: Dict[str, float]) -> Dict[str, float]:
     return {k: v for k, v in locals().items() if k not in ('params')}
 
 
-@eval_registry.register('COOLING', 'GSHP')
+@eval_registry.register('COOLING', 'Ground source heat pump')
 def evaluate_cooling_gshp(params: Dict[str, float]) -> Dict[str, float]:
     """GSHP 냉방 모드 평가 함수"""
     GSHP_C = enex.GroundSourceHeatPump_cooling()

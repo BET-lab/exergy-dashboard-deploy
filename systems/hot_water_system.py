@@ -864,7 +864,7 @@ register_system('HOT WATER', 'Solar hot water', SOLAR_HOT_WATER)
 register_system('HOT WATER', 'Ground source heat pump boiler', GSHP_BOILER)
 
 # HOT WATER 모드 시각화 함수들
-@viz_registry.register('HOT WATER', 'Exergy Efficiency')
+@viz_registry.register('HOT WATER', 'Exergy efficiency')
 def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> alt.Chart:
     """엑서지 효율 차트 생성"""
     # HOT WATER 모드 전용 시각화
@@ -921,7 +921,7 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
     return chart
 
 
-@viz_registry.register('HOT WATER', 'Exergy Consumption Process')
+@viz_registry.register('HOT WATER', 'Exergy consumption process')
 def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> alt.Chart:
     """엑서지 소비 과정 차트 생성"""
     # COOLING 모드 전용 시각화

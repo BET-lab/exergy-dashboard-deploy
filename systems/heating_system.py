@@ -1,6 +1,7 @@
 import math
 from typing import Any, List, Dict
 import pandas as pd
+import numpy as np
 import altair as alt
 from exergy_dashboard.system import register_system
 from exergy_dashboard.evaluation import registry as eval_registry
@@ -254,7 +255,6 @@ HEATING_GSHP = {
         },
     }
 }
-
 ELECTRIC_HEATER = {
     'display': {
         'title': 'Electric Heater',
@@ -360,13 +360,12 @@ ELECTRIC_HEATER = {
 }
 
 # 시스템 등록
-register_system('HEATING', 'ASHP', HEATING_ASHP)
-register_system('HEATING', 'GSHP', HEATING_GSHP)
-register_system('HEATING', 'EH', ELECTRIC_HEATER)
-
+register_system('HEATING', 'Air source heat pump', HEATING_ASHP)
+register_system('HEATING', 'Ground source heat pump', HEATING_GSHP)
+register_system('HEATING', 'Electric heater', ELECTRIC_HEATER)
 
 # HEATING 모드 시각화 함수들
-@viz_registry.register('HEATING', 'Exergy Efficiency')
+@viz_registry.register('HEATING', 'Exergy efficiency')
 def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> alt.Chart:
     """엑서지 효율 차트 생성"""
     # HEATING 모드 전용 시각화
@@ -384,23 +383,55 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
 
     max_v = chart_data['efficiency'].max() if len(chart_data) > 0 else 100
 
+    # max_v를 100부터 0까지 총 10등분하여 범위에 따라 설정
+    if max_v > 90:
+        max_v = 100
+        tick_step = 10
+    elif max_v > 80:
+        max_v = 90
+        tick_step = 9
+    elif max_v > 70:
+        max_v = 80
+        tick_step = 8
+    elif max_v > 60:
+        max_v = 70
+        tick_step = 7
+    elif max_v > 50:
+        max_v = 60
+        tick_step = 6
+    elif max_v > 40:
+        max_v = 50
+        tick_step = 5
+    elif max_v > 30:
+        max_v = 40
+        tick_step = 4
+    elif max_v > 20:
+        max_v = 30
+        tick_step = 3
+    elif max_v > 10:
+        max_v = 20
+        tick_step = 2
+    else:
+        max_v = 10
+        tick_step = 1
+
     c = alt.Chart(chart_data).mark_bar(size=30).encode(
-        y=alt.Y('system:N', title='System', sort=None)
-           .axis(title=None, labelFontSize=18, labelColor='black'),
         x=alt.X('efficiency:Q', title='Exergy Efficiency [%]')
-           .axis(
+            .axis(
                 labelFontSize=20,
                 labelColor='black',
                 titleFontSize=22,
                 titleColor='black',
+                values = np.arange(0, max_v + 1, tick_step).tolist(),
             )
-            .scale(domain=[0, max_v + 3]),
+            .scale(domain=[0, max_v]),
         color=alt.Color('system:N', sort=None, legend=None),
+        # tooltip=['system', 'efficiency'],
     ).properties(
         width='container',
         height=len(selected_systems) * 60 + 50,
     )
-
+        # tooltip=['system', 'efficiency'],
     text = c.mark_text(
         align='left',
         baseline='middle',
@@ -408,13 +439,13 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
         fontSize=20,
         fontWeight='normal',
     ).encode(
-        text=alt.Text('efficiency:Q', format='.2f')
+        text=alt.Text('efficiency:Q', format='.1f')
     )
 
     return c + text
 
 
-@viz_registry.register('HEATING', 'Exergy Consumption Process')
+@viz_registry.register('HEATING', 'Exergy consumption crocess')
 def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> alt.Chart:
     """엑서지 소비 과정 차트 생성"""
     # HEATING 모드 전용 시각화
@@ -423,7 +454,7 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
         sv = session_state.systems[key]['variables']
         sys_type = session_state.systems[key]['type']
         
-        if sys_type == 'ASHP':
+        if sys_type == 'Air source heat pump':
             items = [
                 {'label': 'Input', 'amount': sv['E_fan_ext'], 'desc': 'Exergy input from fan (external unit)'},
                 {'label': 'X_r_ext(internal)', 'amount': sv['X_r_ext'], 'desc': 'Cool exergy input from refrigerant (internal unit side)'},
@@ -436,7 +467,7 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
                 {'label': 'Output', 'amount': 0, 'desc': 'Exergy output'},
             ]
 
-        if sys_type == 'GSHP':
+        if sys_type == 'Ground source heat pump':
             items = [
                 {'label': 'Xin_g', 'amount': sv['Xin_g'], 'desc': 'Exergy from undisturbed ground'},
                 {'label': 'Xc_g', 'amount': -sv['Xc_g'], 'desc': 'Consumption in ground'},
@@ -451,7 +482,7 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
                 {'label': 'Xout_int', 'amount': 0, 'desc': 'Supply air to room'},
             ]
 
-        if sys_type == 'EH':
+        if sys_type == 'Electric heater':
            items = [
                 {'label': 'X_heater', 'amount': sv['X_heater'], 'desc': 'Exergy input'},
                 {'label': 'X_c_hb', 'amount': -sv['X_c_hb'], 'desc': 'Exergy consumption (heater body)'},
@@ -470,7 +501,7 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
     return alt.Chart(pd.DataFrame({'x': [0], 'y': [0]})).mark_point() 
 
 
-@eval_registry.register('HEATING', 'ASHP')
+@eval_registry.register('HEATING', 'Air source heat pump')
 def evaluate_heating_ashp(params: Dict[str, float]) -> Dict[str, float]:
     """ASHP 냉방 모드 평가 함수"""
     ASHP_H = enex.AirSourceHeatPump_heating()
@@ -517,7 +548,7 @@ def evaluate_heating_ashp(params: Dict[str, float]) -> Dict[str, float]:
 
     return {k: v for k, v in locals().items() if k not in ('params')}
 
-@eval_registry.register('HEATING', 'GSHP')
+@eval_registry.register('HEATING', 'Ground source heat pump')
 def evaluate_heating_gshp(params: Dict[str, float]) -> Dict[str, float]:
     """GSHP 냉방 모드 평가 함수"""
     GSHP_H = enex.GroundSourceHeatPump_heating()
@@ -578,7 +609,7 @@ def evaluate_heating_gshp(params: Dict[str, float]) -> Dict[str, float]:
 
     return {k: v for k, v in locals().items() if k not in ('params')}
 
-@eval_registry.register('HEATING', 'EH')
+@eval_registry.register('HEATING', 'Electric heater')
 def evaluate_heating_EH(params: Dict[str, float]) -> Dict[str, float]:
     """GSHP 냉방 모드 평가 함수"""
     EH = enex.ElectricHeater()
