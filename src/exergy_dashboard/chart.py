@@ -54,8 +54,6 @@ def plot_waterfall_multi(source):
         y2=alt.Y2("window_sum_amount:Q"),
         color=alt.Color('group:N').legend(None).sort(None),
         tooltip=[
-            alt.Tooltip("label:N", title="Label"),
-            alt.Tooltip("amount:Q", title="Amount", format=".2f"),
             alt.Tooltip("desc:N", title="Description"),
         ],
     )
