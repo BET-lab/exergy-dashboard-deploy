@@ -134,7 +134,7 @@ def add_system(type_):
 with st.sidebar:
     st.title('Exergy Analyzer')
     st.divider()
-    st.header('시스템 모드')
+    st.header('System mode')
     systems = get_systems()  # 최신 상태 가져오기
     available_modes = list(systems.keys())
     if not available_modes:
@@ -155,7 +155,7 @@ with st.sidebar:
             sss.selected_system_tab = None
         st.rerun()
 
-    st.header('시스템 추가')
+    st.header('Add system')
     systems = get_systems()  # 최신 상태 가져오기
     if len(systems[sss.mode.upper()]) == 0:
         st.write('No system available for the selected mode.')
@@ -174,7 +174,7 @@ with st.sidebar:
     mode_upper = sss.mode.upper()
     valid_systems = [sys_name for sys_name, system in sss.systems.items() if system['type'] in systems[mode_upper]]
     if valid_systems:
-        st.header('시스템 선택')
+        st.header('Select system')
         for sys_name in valid_systems:
             st.button(
                 sys_name,
