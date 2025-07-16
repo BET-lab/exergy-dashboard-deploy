@@ -24,7 +24,7 @@ COOLING_ASHP = {
             'range': [-50, 50],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment condtion',
+            'category': 'Environment Condition',
         },
         'T_a_room': {
             'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
@@ -33,7 +33,7 @@ COOLING_ASHP = {
             'range': [-50, 'T_0 - 1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment condtion',
+            'category': 'Environment Condition',
         },
         
         'T_a_int_out': {
@@ -108,7 +108,7 @@ COOLING_GSHP = {
             'range': [-50, 50],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment condtion',
+            'category': 'Environment Condition',
         },
         'T_g': {
             'explanation': {'EN': 'Ground Temperature', 'KR': '토양온도'},
@@ -117,7 +117,7 @@ COOLING_GSHP = {
             'range': [0, 20],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment condtion',
+            'category': 'Environment Condition',
         },
         'T_a_room': {
             'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
@@ -126,7 +126,7 @@ COOLING_GSHP = {
             'range': [0, 'T_0-1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment condtion',
+            'category': 'Environment Condition',
         },
         
         'T_a_int_out': {

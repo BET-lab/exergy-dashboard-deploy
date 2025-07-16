@@ -24,7 +24,7 @@ HEATING_ASHP = {
             'range': [-50, 50],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment condtion',
+            'category': 'Environment Condition',
         },
         'T_a_room': {
             'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
@@ -33,7 +33,7 @@ HEATING_ASHP = {
             'range': ['T_0 + 1.0', 50],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment condtion',
+            'category': 'Environment Condition',
         },
         'T_a_int_out': {
             'explanation': {'EN': 'Internal Unit Air Outlet Temperature', 'KR': '실내기 공기 토출 온도'},
@@ -106,7 +106,7 @@ HEATING_GSHP = {
             'range': [-30, 30],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment condtion',
+            'category': 'Environment Condition',
         },
         'T_g': {
             'explanation': {'EN': 'Ground Temperature', 'KR': '토양온도'},
@@ -115,7 +115,7 @@ HEATING_GSHP = {
             'range': [0, 20],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment condtion',
+            'category': 'Environment Condition',
         },
         'T_a_room': {
             'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
@@ -124,7 +124,7 @@ HEATING_GSHP = {
             'range': ['T_0+1.0', 40],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment condtion',
+            'category': 'Environment Condition',
         },
         
         # Internal Unit ----------------------------------------------------------------------------
@@ -269,7 +269,7 @@ ELECTRIC_HEATER = {
             'range': [-30, 30],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment condtion',
+            'category': 'Environment Condition',
         },
         'T_mr': {
             'explanation': {'EN': 'Mean Radiant Temperature', 'KR': '평균 복사 온도'},
@@ -278,7 +278,7 @@ ELECTRIC_HEATER = {
             'range': [0, 20],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment condtion',
+            'category': 'Environment Condition',
         },
         'T_a_room': {
             'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
@@ -287,7 +287,7 @@ ELECTRIC_HEATER = {
             'range': ['T_0+1.0', 40],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment condtion',
+            'category': 'Environment Condition',
         },
             
         # Heater material properties ------------------------------------------------------------
