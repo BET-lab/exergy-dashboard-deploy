@@ -919,7 +919,7 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
     ).encode(
         y=alt.Y('system:N', sort=None),
         x=alt.X('efficiency:Q'),
-        text=alt.Text('efficiency:Q', format='.2f')
+        text=alt.Text('efficiency:Q', format='.1f')
     )
 
     # LayerChart에 padding을 직접 지정

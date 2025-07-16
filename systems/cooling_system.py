@@ -312,7 +312,7 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
         fontSize=20,
         fontWeight='normal',
     ).encode(
-        text=alt.Text('efficiency:Q', format='.2f')
+        text=alt.Text('efficiency:Q', format='.1f')
     )
 
     return c + text
