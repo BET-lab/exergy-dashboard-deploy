@@ -24,7 +24,7 @@ HEATING_ASHP = {
             'range': [-50, 50],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Environment condtion',
         },
         'T_a_room': {
             'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
@@ -33,7 +33,7 @@ HEATING_ASHP = {
             'range': ['T_0 + 1.0', 50],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Environment condtion',
         },
         'T_a_int_out': {
             'explanation': {'EN': 'Internal Unit Air Outlet Temperature', 'KR': '실내기 공기 토출 온도'},
@@ -45,7 +45,7 @@ HEATING_ASHP = {
             'category': 'internal unit',
         },
         'Q_r_int': {
-            'explanation': {'EN': 'Internal Unit Heat Absorption', 'KR': '실내기 실내 흡열량'},
+            'explanation': {'EN': 'Heating load', 'KR': '난방 부하'},
             'latex': r'$Q_{r,int}$',
             'default': 10000.0,
             'range': [0, 20000],
@@ -106,7 +106,7 @@ HEATING_GSHP = {
             'range': [-30, 30],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Environment condtion',
         },
         'T_g': {
             'explanation': {'EN': 'Ground Temperature', 'KR': '토양온도'},
@@ -115,7 +115,7 @@ HEATING_GSHP = {
             'range': [0, 20],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Environment condtion',
         },
         'T_a_room': {
             'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
@@ -124,7 +124,7 @@ HEATING_GSHP = {
             'range': ['T_0+1.0', 40],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Environment condtion',
         },
         
         # Internal Unit ----------------------------------------------------------------------------
@@ -138,12 +138,12 @@ HEATING_GSHP = {
             'category': 'internal unit',
         },
         'Q_r_int': {
-            'explanation': {'EN': 'Internal Unit Heat Absorption', 'KR': '실내기 실내 흡열량'},
+            'explanation': {'EN': 'Heating load', 'KR': '난방 부하'},
             'latex': r'$Q_{r,int}$',
-            'default': 4000.0,
+            'default': 10000.0,
             'range': [0, 30000],
             'unit': 'W',
-            'step': 500.0,
+            'step': 100.0,
             'category': 'internal unit',
         },
         
@@ -269,7 +269,7 @@ ELECTRIC_HEATER = {
             'range': [-30, 30],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Environment condtion',
         },
         'T_mr': {
             'explanation': {'EN': 'Mean Radiant Temperature', 'KR': '평균 복사 온도'},
@@ -278,7 +278,7 @@ ELECTRIC_HEATER = {
             'range': [0, 20],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Environment condtion',
         },
         'T_a_room': {
             'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
@@ -287,7 +287,7 @@ ELECTRIC_HEATER = {
             'range': ['T_0+1.0', 40],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Environment condtion',
         },
             
         # Heater material properties ------------------------------------------------------------
@@ -436,7 +436,7 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
         
         if sys_type == 'Air source heat pump':
             items = [
-                {'label': 'Input', 'amount': sv['E_fan_ext'], 'desc': 'Exergy input from fan (external unit)'},
+                {'label': 'E_fan_ext', 'amount': sv['E_fan_ext'], 'desc': 'Exergy input from fan (external unit)'},
                 {'label': 'X_r_ext(internal)', 'amount': sv['X_r_ext'], 'desc': 'Cool exergy input from refrigerant (internal unit side)'},
                 {'label': 'X_c_ext', 'amount': -sv['Xc_ext'], 'desc': 'Exergy consumption (external unit)'},
                 {'label': 'X_a_ext_out', 'amount': -sv['X_a_ext_out'], 'desc': 'Exergy output (external unit outlet air)'},

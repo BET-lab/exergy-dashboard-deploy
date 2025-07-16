@@ -24,7 +24,7 @@ COOLING_ASHP = {
             'range': [-50, 50],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Environment condtion',
         },
         'T_a_room': {
             'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
@@ -33,7 +33,7 @@ COOLING_ASHP = {
             'range': [-50, 'T_0 - 1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Environment condtion',
         },
         
         'T_a_int_out': {
@@ -46,7 +46,7 @@ COOLING_ASHP = {
             'category': 'internal unit',
         },
         'Q_r_int': {
-            'explanation': {'EN': 'Internal Unit Heat Absorption', 'KR': '실내기 실내 흡열량'},
+            'explanation': {'EN': 'Cooling load', 'KR': '냉방 부하'},
             'latex': r'$Q_{r,int}$',
             'default': 10000.0,
             'range': [0, 20000],
@@ -108,7 +108,7 @@ COOLING_GSHP = {
             'range': [-50, 50],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Environment condtion',
         },
         'T_g': {
             'explanation': {'EN': 'Ground Temperature', 'KR': '토양온도'},
@@ -117,7 +117,7 @@ COOLING_GSHP = {
             'range': [0, 20],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Environment condtion',
         },
         'T_a_room': {
             'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
@@ -126,7 +126,7 @@ COOLING_GSHP = {
             'range': [0, 'T_0-1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'condition',
+            'category': 'Environment condtion',
         },
         
         'T_a_int_out': {
@@ -139,12 +139,12 @@ COOLING_GSHP = {
             'category': 'internal unit',
         },
         'Q_r_int': {
-            'explanation': {'EN': 'Internal Unit Heat Absorption', 'KR': '실내기 실내 흡열량'},
+            'explanation': {'EN': 'Cooling load', 'KR': '냉방 부하'},
             'latex': r'$Q_{r,int}$',
             'default': 10000.0,
             'range': [0, 30000],
             'unit': 'W',
-            'step': 500.0,
+            'step': 100.0,
             'category': 'internal unit',
         },
         
