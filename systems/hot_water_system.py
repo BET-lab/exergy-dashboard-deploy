@@ -457,7 +457,7 @@ HEAT_PUMP_BOILER = {
 }
 SOLAR_HOT_WATER = {
     'display': {
-        'title': 'Solar hot water',
+        'title': 'Solar assisted gas boiler',
         'icon': ':sun:',
     },
     'parameters': {
@@ -860,7 +860,7 @@ GSHP_BOILER = {
 register_system('HOT WATER', 'Electric boiler', ELECTRIC_BOILER)
 register_system('HOT WATER', 'Gas boiler', GAS_BOILER)
 register_system('HOT WATER', 'Heat pump boiler', HEAT_PUMP_BOILER)
-register_system('HOT WATER', 'Solar hot water', SOLAR_HOT_WATER)
+register_system('HOT WATER', 'Solar assisted gas boiler', SOLAR_HOT_WATER)
 register_system('HOT WATER', 'Ground source heat pump boiler', GSHP_BOILER)
 
 # HOT WATER 모드 시각화 함수들
@@ -979,7 +979,7 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
             {'label': 'X_w_serv', 'amount': 0, 'desc': 'Exergy contained in service hot water'},
             ]
 
-        if sys_type == 'Solar hot water':
+        if sys_type == 'Solar assisted gas boiler':
             items = [
             {'label': 'X_w_sup', 'amount': sv['X_w_sup'], 'desc': 'Exergy supplied to tank'},
             {'label': 'X_sol', 'amount': sv['X_sol'], 'desc': 'Exergy input by solar'},
@@ -1144,7 +1144,7 @@ def evaluate_heat_pump_boiler(params: Dict[str, float]) -> Dict[str, float]:
 
     return {k: v for k, v in locals().items() if k not in ('params')}
 
-@eval_registry.register('HOT WATER', 'Solar hot water')
+@eval_registry.register('HOT WATER', 'Solar assisted gas boiler')
 def evaluate_solar_hot_water(params: Dict[str, float]) -> Dict[str, float]:
     """ASHP 냉방 모드 평가 함수"""
     SHW = enex.SolarHotWater()
