@@ -112,7 +112,7 @@ def plot_waterfall_multi(source):
         facet=alt.Facet("group").title('').sort([]),
         columns=1,
     ).configure_header(
-        labelFontSize=20,
+        labelFontSize=fs*1.2,
         labelColor='black',
     ).transform_window(
         window_sum_amount="sum(amount)",
