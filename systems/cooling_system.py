@@ -316,63 +316,39 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
     for key in selected_systems:
         sv = session_state.systems[key]['variables']
         sys_type = session_state.systems[key]['type']
-        label_exps = {
-            'ASHP': {
-                'Input': 'Exergy input from fan (external unit)',
-                'X_r_ext': 'Cool exergy input from refrigerant (external unit side)',
-                'X_c_ext': 'Exergy consumption (external unit)',
-                'X_a_ext_out': 'Exergy output (external unit outlet air)',
-                'E_cmp': 'Compressor power input (refrigerant)',
-                'X_c_r': 'Exergy consumption (refrigerant)',
-                'X_r_ext': 'Cool exergy input from refrigerant (external unit side)',
-                'X_c_int': 'Exergy consumption (internal unit)',
-                'Output': 'Exergy output',
-            },
-            'GSHP': {
-                'Xin_g': 'Exergy from undisturbed ground',
-                'Xc_g': 'Consumption in ground',
-                'E_pmp': 'Electric input to pump',
-                'Xc_GHE': 'Consumption in ground heat exchanger',
-                'Xc_exch': 'Consumption in heat exchanger',
-                'E_cmp': 'Electric input to compressor',
-                'Xc_r': 'Consumption in refrigerant loop',
-                'E_fan_int': 'Electric input to fan',
-                'X_a_int_in': 'Exergy from room air',
-                'Xc_int': 'Consumption in internal unit',
-                'Xout_int': 'Supply air to room',
-                'Input': 'Exergy input',
-                'Output': 'Exergy output',
-            },
-        }
+        
         if sys_type == 'ASHP':
-            labels = ['Input', 'X_r_ext(internal)', 'X_c_ext', 'X_a_ext_out', 'E_cmp', 'X_c_r', 'X_r_ext(ref)', 'X_c_int', 'Output']
-            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
-            amounts = [sv['E_fan_ext'], sv['X_r_ext'], -sv['Xc_ext'], -sv['X_a_ext_out'], sv['E_cmp'], -sv['Xc_r'], -sv['X_r_ext'], -sv['Xc_int'], 0]
-            source = pd.DataFrame({
-                'label': labels,
-                'amount': amounts,
-                'group': [key] * len(labels),
-                'desc': labels_exp,
-            })
-            sources.append(source)
+            items = [
+            {'label': 'E_fan_ext', 'amount': sv['E_fan_ext'], 'desc': 'Exergy input from fan (external unit)'},
+            {'label': 'X_r_ext', 'amount': sv['X_r_ext'], 'desc': 'Cool exergy input from refrigerant (external unit side)'},
+            {'label': 'Xc_ext', 'amount': -sv['Xc_ext'], 'desc': 'Exergy consumption (external unit)'},
+            {'label': 'X_a_ext_out', 'amount': -sv['X_a_ext_out'], 'desc': 'Exergy output (external unit outlet air)'},
+            {'label': 'E_cmp', 'amount': sv['E_cmp'], 'desc': 'Compressor power input (refrigerant)'},
+            {'label': 'Xc_r', 'amount': -sv['Xc_r'], 'desc': 'Exergy consumption (refrigerant)'},
+            {'label': 'X_r_ext', 'amount': -sv['X_r_ext'], 'desc': 'Cool exergy input from refrigerant (external unit side)'},
+            {'label': 'Xc_int', 'amount': -sv['Xc_int'], 'desc': 'Exergy consumption (internal unit)'},
+            {'label': 'Output', 'amount': 0, 'desc': 'Exergy output'},
+            ]
         
         if sys_type == 'GSHP':
-            labels = [
-                'Xin_g', 'Xc_g', 'E_pmp', 'Xc_GHE', 'Xc_exch',
-                'E_cmp', 'Xc_r', 'E_fan_int', 'X_a_int_in', 'Xc_int', 'Xout_int'
+            items = [
+            {'label': 'Xin_g', 'amount': sv['Xin_g'], 'desc': 'Exergy from undisturbed ground'},
+            {'label': 'Xc_g', 'amount': -sv['Xc_g'], 'desc': 'Consumption in ground'},
+            {'label': 'E_pmp', 'amount': sv['E_pmp'], 'desc': 'Electric input to pump'},
+            {'label': 'Xc_GHE', 'amount': -sv['Xc_GHE'], 'desc': 'Consumption in ground heat exchanger'},
+            {'label': 'Xc_exch', 'amount': -sv['Xc_exch'], 'desc': 'Consumption in heat exchanger'},
+            {'label': 'E_cmp', 'amount': sv['E_cmp'], 'desc': 'Electric input to compressor'},
+            {'label': 'Xc_r', 'amount': -sv['Xc_r'], 'desc': 'Consumption in refrigerant loop'},
+            {'label': 'E_fan_int', 'amount': sv['E_fan_int'], 'desc': 'Electric input to fan'},
+            {'label': 'X_a_int_in', 'amount': sv['X_a_int_in'], 'desc': 'Exergy from room air'},
+            {'label': 'Xc_int', 'amount': -sv['Xc_int'], 'desc': 'Consumption in internal unit'},
+            {'label': 'Xout_int', 'amount': 0, 'desc': 'Supply air to room'},
             ]
-            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
-            amounts = [
-                sv['Xin_g'], -sv['Xc_g'], sv['E_pmp'], -sv['Xc_GHE'], -sv['Xc_exch'],
-                sv['E_cmp'], -sv['Xc_r'], sv['E_fan_int'], sv['X_a_int_in'], -sv['Xc_int'], 0
-            ]
-            source = pd.DataFrame({
-                'label': labels,
-                'amount': amounts,
-                'group': [key] * len(labels),
-                'desc': labels_exp,
-            })
-            sources.append(source)
+            
+        for item in items:
+            item['group'] = key
+        source = pd.DataFrame(items)
+        sources.append(source)
 
     if sources:
         source = pd.concat(sources)

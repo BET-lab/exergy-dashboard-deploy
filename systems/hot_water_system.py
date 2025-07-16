@@ -930,241 +930,80 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
         sv = session_state.systems[key]['variables']
         sys_type = session_state.systems[key]['type']
         # 라벨별 설명문 매핑 (EN 기준)
-        label_exps = {
-            'Electric boiler': {
-                'X_w_sup_tank': 'Exergy supplied to tank',
-                'X_heater': 'Exergy input by heater',
-                'X_c_tank': 'Exergy consumption due to heat loss',
-                'X_l_tank': 'Exergy loss (tank leakage)',
-                'X_w_sup,mix': 'Exergy contained in the supply water to the mixing valve',
-                'X_c_mix': 'Exergy consumption by mixing process',
-                'X_w_serv': 'Exergy contained in service hot water',
-            },
-            'Gas boiler': {
-                'X_w_sup': 'Exergy supplied to tank',
-                'X_NG': 'Exergy input by natural gas',
-                'X_c_comb': 'Exergy loss (combustion)',
-                'X_exh': 'Exergy loss (exhaust)',
-                'X_c_tank': 'Exergy consumption due to heat loss',
-                'X_l_tank': 'Exergy loss (tank leakage)',
-                'X_w_sup_mix': 'Exergy contained in the supply water to the mixing valve',
-                'X_c_mix': 'Exergy consumption by mixing process',
-                'X_w_serv': 'Exergy contained in service hot water',
-            },
-            'Heat pump boiler': {
-                'X_fan': 'Exergy input by fan',
-                'X_r_ext': 'Exergy from external refrigerant',
-                'X_a_ext_in': 'Exergy from external air (in)',
-                'X_c_ext': 'Exergy loss (external)',
-                'X_a_ext_out': 'Exergy loss (external air out)',
-                'X_cmp': 'Exergy input by compressor',
-                'X_c_r': 'Exergy loss (refrigerant)',
-                'X_r_ext_loss': 'Exergy loss (external refrigerant)',
-                'X_l_tank': 'Exergy loss (tank leakage)',
-                'X_c_tank': 'Exergy consumption due to heat loss',
-                'X_w_sup_tank': 'Exergy supplied to tank',
-                'X_w_serv': 'Exergy contained in service hot water',
-            },
-            'Solar hot water': {
-                'X_w_sup': 'Exergy supplied to tank',
-                'X_sol': 'Exergy input by solar',
-                'X_c_stp': 'Exergy loss (solar panel)',
-                'X_l': 'Exergy loss (system leakage)',
-                'X_NG': 'Exergy input by natural gas',
-                'X_c_comb': 'Exergy loss (combustion)',
-                'X_exh': 'Exergy loss (exhaust)',
-                'X_w_sup_mix': 'Exergy contained in the supply water to the mixing valve',
-                'X_c_mix': 'Exergy consumption by mixing process',
-                'X_w_serv': 'Exergy contained in service hot water',
-            },
-            'Ground source heat pump boiler': {
-                'Xin_g': 'Exergy input from ground',
-                'Xc_g': 'Exergy loss (ground)',
-                'E_pmp': 'Pump power',
-                'Xc_GHE': 'Exergy loss (GHE)',
-                'Xc_ext': 'Exergy loss (external)',
-                'X_cmp': 'Exergy input by compressor',
-                'Xc_r': 'Exergy loss (refrigerant)',
-                'X_l_tank': 'Exergy loss (tank leakage)',
-                'X_w_sup_tank': 'Exergy supplied',
-                'Xc_tank': 'Exergy consumption due to heat loss',
-                'X_w_sup_mix': 'Exergy contained in the supply water to the mixing valve',
-                'Xc_mix': 'Exergy consumption by mixing process',
-                'X_w_serv': 'Exergy contained in service hot water',
-            },
-        }
-
         if sys_type == 'Electric boiler':
-            labels = [
-                'X_w_sup_tank',
-                'X_heater',
-                'X_c_tank',
-                'X_l_tank',
-                'X_w_sup,mix',
-                'X_c_mix',
-                'X_w_serv',
+            items = [
+            {'label': 'X_w_sup_tank', 'amount': sv['X_w_sup_tank'], 'desc': 'Exergy supplied to tank'},
+            {'label': 'X_heater', 'amount': sv['X_heater'], 'desc': 'Exergy input by heater'},
+            {'label': 'X_c_tank', 'amount': -sv['X_c_tank'], 'desc': 'Exergy consumption due to heat loss'},
+            {'label': 'X_l_tank', 'amount': -sv['X_l_tank'], 'desc': 'Exergy loss (tank leakage)'},
+            {'label': 'X_w_sup_mix', 'amount': sv['X_w_sup_mix'], 'desc': 'Exergy contained in the supply water to the mixing valve'},
+            {'label': 'X_c_mix', 'amount': -sv['X_c_mix'], 'desc': 'Exergy consumption by mixing process'},
+            {'label': 'X_w_serv', 'amount': 0, 'desc': 'Exergy contained in service hot water'},
             ]
-            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
-            amounts = [
-                sv['X_w_sup_tank'],
-                sv['X_heater'],
-                -sv['X_c_tank'],
-                -sv['X_l_tank'],
-                sv['X_w_sup_mix'],
-                -sv['X_c_mix'],
-                0
-            ]
-            source = pd.DataFrame({
-                'label': labels,
-                'amount': amounts,
-                'group': [key] * len(labels),
-                'desc': labels_exp,
-            })
-            sources.append(source)
 
         if sys_type == 'Gas boiler':
-            labels = [
-                'X_w_sup',
-                'X_NG',
-                'X_c_comb',
-                'X_exh',
-                'X_c_tank',
-                'X_l_tank',
-                'X_w_sup_mix',
-                'X_c_mix',
-                'X_w_serv',
+            items = [
+            {'label': 'X_w_sup', 'amount': sv['X_w_sup'], 'desc': 'Exergy supplied to tank'},
+            {'label': 'X_NG', 'amount': sv['X_NG'], 'desc': 'Exergy input by natural gas'},
+            {'label': 'X_c_comb', 'amount': -sv['X_c_comb'], 'desc': 'Exergy loss (combustion)'},
+            {'label': 'X_exh', 'amount': -sv['X_exh'], 'desc': 'Exergy loss (exhaust)'},
+            {'label': 'X_c_tank', 'amount': -sv['X_c_tank'], 'desc': 'Exergy consumption due to heat loss'},
+            {'label': 'X_l_tank', 'amount': -sv['X_l_tank'], 'desc': 'Exergy loss (tank leakage)'},
+            {'label': 'X_w_sup_mix', 'amount': sv['X_w_sup_mix'], 'desc': 'Exergy contained in the supply water to the mixing valve'},
+            {'label': 'X_c_mix', 'amount': -sv['X_c_mix'], 'desc': 'Exergy consumption by mixing process'},
+            {'label': 'X_w_serv', 'amount': 0, 'desc': 'Exergy contained in service hot water'},
             ]
-            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
-            amounts = [
-                sv['X_w_sup'],
-                sv['X_NG'],
-                -sv['X_c_comb'],
-                -sv['X_exh'],
-                -sv['X_c_tank'],
-                -sv['X_l_tank'],
-                sv['X_w_sup_mix'],
-                -sv['X_c_mix'],
-                0
-            ]
-            source = pd.DataFrame({
-                'label': labels,
-                'amount': amounts,
-                'group': [key] * len(labels),
-                'desc': labels_exp,
-            })
-            sources.append(source)
 
         if sys_type == 'Heat pump boiler':
-            labels = [
-                'X_fan',
-                'X_r_ext',
-                'X_a_ext_in',
-                'X_c_ext',
-                'X_a_ext_out',
-                'X_cmp',
-                'X_c_r',
-                'X_r_ext_loss',
-                'X_l_tank',
-                'X_c_tank',
-                'X_w_sup_tank',
-                'X_w_serv',
+            items = [
+            {'label': 'X_fan', 'amount': sv['X_fan'], 'desc': 'Exergy input by fan'},
+            {'label': 'X_r_ext', 'amount': sv['X_r_ext'], 'desc': 'Exergy from external refrigerant'},
+            {'label': 'X_a_ext_in', 'amount': sv['X_a_ext_in'], 'desc': 'Exergy from external air (in)'},
+            {'label': 'X_c_ext', 'amount': -sv['X_c_ext'], 'desc': 'Exergy loss (external)'},
+            {'label': 'X_a_ext_out', 'amount': -sv['X_a_ext_out'], 'desc': 'Exergy loss (external air out)'},
+            {'label': 'X_cmp', 'amount': sv['X_cmp'], 'desc': 'Exergy input by compressor'},
+            {'label': 'X_c_r', 'amount': -sv['X_c_r'], 'desc': 'Exergy loss (refrigerant)'},
+            {'label': 'X_l_tank', 'amount': -sv['X_l_tank'], 'desc': 'Exergy loss (tank leakage)'},
+            {'label': 'X_c_tank', 'amount': -sv['X_c_tank'], 'desc': 'Exergy consumption due to heat loss'},
+            {'label': 'X_w_sup_tank', 'amount': sv['X_w_sup_tank'], 'desc': 'Exergy supplied to tank'},
+            {'label': 'X_w_serv', 'amount': 0, 'desc': 'Exergy contained in service hot water'},
             ]
-            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
-            amounts = [
-                sv['X_fan'],
-                sv['X_r_ext'],
-                sv['X_a_ext_in'],
-                -sv['X_c_ext'],
-                -sv['X_a_ext_out'],
-                sv['X_cmp'],
-                -sv['X_c_r'],
-                -sv['X_r_ext'],
-                -sv['X_l_tank'],
-                -sv['X_c_tank'],
-                sv['X_w_sup_tank'],
-                0,
-            ]
-            source = pd.DataFrame({
-                'label': labels,
-                'amount': amounts,
-                'group': [key] * len(labels),
-                'desc': labels_exp,
-            })
-            sources.append(source)
 
         if sys_type == 'Solar hot water':
-            labels = [
-                'X_w_sup',
-                'X_sol',
-                'X_c_stp',
-                'X_l',
-                'X_NG',
-                'X_c_comb',
-                'X_exh',
-                'X_w_sup_mix',
-                'X_c_mix',
-                'X_w_serv',
+            items = [
+            {'label': 'X_w_sup', 'amount': sv['X_w_sup'], 'desc': 'Exergy supplied to tank'},
+            {'label': 'X_sol', 'amount': sv['X_sol'], 'desc': 'Exergy input by solar'},
+            {'label': 'X_c_stp', 'amount': -sv['X_c_stp'], 'desc': 'Exergy loss (solar panel)'},
+            {'label': 'X_l', 'amount': -sv['X_l'], 'desc': 'Exergy loss (system leakage)'},
+            {'label': 'X_NG', 'amount': sv['X_NG'], 'desc': 'Exergy input by natural gas'},
+            {'label': 'X_c_comb', 'amount': -sv['X_c_comb'], 'desc': 'Exergy loss (combustion)'},
+            {'label': 'X_exh', 'amount': -sv['X_exh'], 'desc': 'Exergy loss (exhaust)'},
+            {'label': 'X_w_sup_mix', 'amount': sv['X_w_sup_mix'], 'desc': 'Exergy contained in the supply water to the mixing valve'},
+            {'label': 'X_c_mix', 'amount': -sv['X_c_mix'], 'desc': 'Exergy consumption by mixing process'},
+            {'label': 'X_w_serv', 'amount': 0, 'desc': 'Exergy contained in service hot water'},
             ]
-            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
-            amounts = [
-                sv['X_w_sup'],
-                sv['X_sol'],
-                -sv['X_c_stp'],
-                -sv['X_l'],
-                sv['X_NG'],
-                -sv['X_c_comb'],
-                -sv['X_exh'],
-                sv['X_w_sup_mix'],
-                -sv['X_c_mix'],
-                0,
-            ]
-            source = pd.DataFrame({
-                'label': labels,
-                'amount': amounts,
-                'group': [key] * len(labels),
-                'desc': labels_exp,
-            })
-            sources.append(source)
 
         if sys_type == 'Ground source heat pump boiler':
-            labels = [
-                'Xin_g',
-                'Xc_g',
-                'E_pmp',
-                'Xc_GHE',
-                'Xc_ext',
-                'X_cmp',
-                'Xc_r',
-                'X_l_tank',
-                'X_w_sup_tank',
-                'Xc_tank',
-                'X_w_sup_mix',
-                'Xc_mix',
-                'X_w_serv',
+            items = [
+            {'label': 'Xin_g', 'amount': sv['Xin_g'], 'desc': 'Exergy input from ground'},
+            {'label': 'Xc_g', 'amount': -sv['Xc_g'], 'desc': 'Exergy loss (ground)'},
+            {'label': 'E_pmp', 'amount': sv['E_pmp'], 'desc': 'Pump power'},
+            {'label': 'Xc_GHE', 'amount': -sv['Xc_GHE'], 'desc': 'Exergy loss (GHE)'},
+            {'label': 'Xc_exch', 'amount': -sv['Xc_exch'], 'desc': 'Exergy loss (external)'},
+            {'label': 'X_cmp', 'amount': sv['X_cmp'], 'desc': 'Exergy input by compressor'},
+            {'label': 'Xc_r', 'amount': -sv['Xc_r'], 'desc': 'Exergy loss (refrigerant)'},
+            {'label': 'X_l_tank', 'amount': -sv['X_l_tank'], 'desc': 'Exergy loss (tank leakage)'},
+            {'label': 'X_w_sup_tank', 'amount': sv['X_w_sup_tank'], 'desc': 'Exergy supplied'},
+            {'label': 'Xc_tank', 'amount': -sv['Xc_tank'], 'desc': 'Exergy consumption due to heat loss'},
+            {'label': 'X_w_sup_mix', 'amount': sv['X_w_sup_mix'], 'desc': 'Exergy contained in the supply water to the mixing valve'},
+            {'label': 'Xc_mix', 'amount': -sv['Xc_mix'], 'desc': 'Exergy consumption by mixing process'},
+            {'label': 'X_w_serv', 'amount': 0, 'desc': 'Exergy contained in service hot water'},
             ]
-            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
-            amounts = [
-                sv['Xin_g'],
-                -sv['Xc_g'],
-                sv['E_pmp'],
-                -sv['Xc_GHE'],
-                -sv['Xc_exch'],
-                sv['X_cmp'],
-                -sv['Xc_r'],
-                -sv['X_l_tank'],
-                sv['X_w_sup_tank'],
-                -sv['Xc_tank'],
-                sv['X_w_sup_mix'],
-                -sv['Xc_mix'],
-                0,
-            ]
-            source = pd.DataFrame({
-                'label': labels,
-                'amount': amounts,
-                'group': [key] * len(labels),
-                'desc': labels_exp,
-            })
-            sources.append(source)
+            
+        for item in items:
+            item['group'] = key
+        source = pd.DataFrame(items)
+        sources.append(source)
 
     if sources:
         source = pd.concat(sources)

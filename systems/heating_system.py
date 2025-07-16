@@ -12,14 +12,14 @@ import en_system_ex_analysis as enex
 # 기본 시스템 정의
 HEATING_ASHP = {
     'display': {
-        'title': 'Air Source Heat Pump',
+        'title': 'Air source heat pump',
         'icon': ':snowflake:',
     },
     'parameters':{
         'T_0': {
             'explanation': {'EN': 'Environment Temperature', 'KR': '환경온도'},
             'latex': r'$T_0$',
-            'default': 30.0,
+            'default': 0.0,
             'range': [-50, 50],
             'unit': '℃',
             'step': 1.0,
@@ -29,19 +29,18 @@ HEATING_ASHP = {
             'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
             'latex': r'$T_{a,room}$',
             'default': 20.0,
-            'range': [-50, 'T_0 - 1.0'],
+            'range': ['T_0 + 1.0', 50],
             'unit': '℃',
             'step': 1.0,
             'category': 'condition',
         },
-        
         'T_a_int_out': {
             'explanation': {'EN': 'Internal Unit Air Outlet Temperature', 'KR': '실내기 공기 토출 온도'},
             'latex': r'$T_{a,int,out}$',
-            'default': 10.0,
-            'range': [-60, 'T_a_room - 0.5'],
+            'default': 30.0,
+            'range': ['T_a_room + 1.0', 60],
             'unit': '℃',
-            'step': 0.5,
+            'step': 1.0,
             'category': 'internal unit',
         },
         'Q_r_int': {
@@ -62,12 +61,11 @@ HEATING_ASHP = {
             'step': 100.0,
             'category': 'internal unit',
         },
-        
         'T_r_int': {
             'explanation': {'EN': 'Internal Unit Refrigerant Temperature', 'KR': '실내기 측 냉매 온도'},
             'latex': r'$T_{r,int}$',
-            'default': 5.0,
-            'range': [-30, 'T_a_int_out - 1.0'],
+            'default': 35.0,
+            'range': ['T_a_room + 1.0', 80],
             'unit': '℃',
             'step': 1.0,
             'category': 'refrigerant',
@@ -75,18 +73,17 @@ HEATING_ASHP = {
         'T_r_ext': {
             'explanation': {'EN': 'External Unit Refrigerant Temperature', 'KR': '실외기 측 냉매 온도'},
             'latex': r'$T_{r,ext}$',
-            'default': 45.0,
-            'range': ['T_r_int + 5', 100],
+            'default': -15.0,
+            'range': [-40 , 'T_a_ext_out - 1.0'],
             'unit': '℃',
             'step': 1.0,
             'category': 'refrigerant',
         },
-        
         'T_a_ext_out': {
             'explanation': {'EN': 'External Unit Air Outlet Temperature', 'KR': '실외기 공기 토출 온도'},
             'latex': r'$T_{a,ext,out}$',
-            'default': 40.0,
-            'range': ['T_0', 80],
+            'default': -10.0,
+            'range': [-30, 'T_0'],
             'unit': '℃',
             'step': 1.0,
             'category': 'external unit',
@@ -96,7 +93,7 @@ HEATING_ASHP = {
 }
 HEATING_GSHP = {
     'display': {
-        'title': 'Ground Source Heat Pump',
+        'title': 'Ground source heat pump',
         'icon': ':earth_americas:',
     },
     'parameters': {
@@ -399,7 +396,6 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
             )
             .scale(domain=[0, max_v + 3]),
         color=alt.Color('system:N', sort=None, legend=None),
-        tooltip=['system', 'efficiency'],
     ).properties(
         width='container',
         height=len(selected_systems) * 60 + 50,
@@ -426,62 +422,47 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
     for key in selected_systems:
         sv = session_state.systems[key]['variables']
         sys_type = session_state.systems[key]['type']
-        label_exps = {
-            'ASHP': {
-            'Xin_A': 'Exergy input',
-            'Xc_int_A': 'Exergy consumption (internal unit)',
-            'Xc_r_A': 'Exergy consumption (refrigerant)',
-            'Xc_ext_A': 'Exergy consumption (external unit)',
-            'X_a_ext_out_A': 'Exergy loss (external air out)',
-            },
-            'GSHP': {
-            'Xin_G': 'Exergy input',
-            'Xc_int_G': 'Exergy consumption (internal unit)',
-            'Xc_r_G': 'Exergy consumption (refrigerant)',
-            'Xc_GHE': 'Exergy consumption (ground heat exchanger)',
-            },
-            'EH': {
-            'Xin_G': 'Exergy input',
-            'Xc_int_G': 'Exergy consumption (internal unit)',
-            'Xc_r_G': 'Exergy consumption (heater)',
-            'Xc_GHE': 'Exergy consumption (heat transfer)',
-            },
-        }
-        if session_state.systems[key]['type'] == 'ASHP':
-            labels = ['Input', r'X_{c,int}', r'X_{c,ref}', r'X_{c,ext}', r'X_{ext,out}', 'Output']
-            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
-            amounts = [sv['Xin_A'], -sv['Xc_int_A'], -sv['Xc_r_A'], -sv['Xc_ext_A'], -sv['X_a_ext_out_A'], 0]
-            source = pd.DataFrame({
-                'label': labels,
-                'amount': amounts,
-                'group': [key] * len(labels),
-                'desc': labels_exp,
-            })
-            sources.append(source)
+        
+        if sys_type == 'ASHP':
+            items = [
+                {'label': 'Input', 'amount': sv['E_fan_ext'], 'desc': 'Exergy input from fan (external unit)'},
+                {'label': 'X_r_ext(internal)', 'amount': sv['X_r_ext'], 'desc': 'Cool exergy input from refrigerant (internal unit side)'},
+                {'label': 'X_c_ext', 'amount': -sv['Xc_ext'], 'desc': 'Exergy consumption (external unit)'},
+                {'label': 'X_a_ext_out', 'amount': -sv['X_a_ext_out'], 'desc': 'Exergy output (external unit outlet air)'},
+                {'label': 'E_cmp', 'amount': sv['E_cmp'], 'desc': 'Compressor power input (refrigerant)'},
+                {'label': 'X_c_r', 'amount': -sv['Xc_r'], 'desc': 'Exergy consumption (refrigerant)'},
+                {'label': 'X_r_ext(ref)', 'amount': -sv['X_r_ext'], 'desc': 'Cool exergy input from refrigerant (external unit side)'},
+                {'label': 'X_c_int', 'amount': -sv['Xc_int'], 'desc': 'Exergy consumption (internal unit)'},
+                {'label': 'Output', 'amount': 0, 'desc': 'Exergy output'},
+            ]
+
+        if sys_type == 'GSHP':
+            items = [
+                {'label': 'Xin_g', 'amount': sv['Xin_g'], 'desc': 'Exergy from undisturbed ground'},
+                {'label': 'Xc_g', 'amount': -sv['Xc_g'], 'desc': 'Consumption in ground'},
+                {'label': 'E_pmp', 'amount': sv['E_pmp'], 'desc': 'Electric input to pump'},
+                {'label': 'Xc_GHE', 'amount': -sv['Xc_GHE'], 'desc': 'Consumption in ground heat exchanger'},
+                {'label': 'Xc_exch', 'amount': -sv['Xc_exch'], 'desc': 'Consumption in heat exchanger'},
+                {'label': 'E_cmp', 'amount': sv['E_cmp'], 'desc': 'Electric input to compressor'},
+                {'label': 'Xc_r', 'amount': -sv['Xc_r'], 'desc': 'Consumption in refrigerant loop'},
+                {'label': 'E_fan_int', 'amount': sv['E_fan_int'], 'desc': 'Electric input to fan'},
+                {'label': 'X_a_int_in', 'amount': sv['X_a_int_in'], 'desc': 'Exergy from room air'},
+                {'label': 'Xc_int', 'amount': -sv['Xc_int'], 'desc': 'Consumption in internal unit'},
+                {'label': 'Xout_int', 'amount': 0, 'desc': 'Supply air to room'},
+            ]
+
+        if sys_type == 'EH':
+           items = [
+                {'label': 'X_heater', 'amount': sv['X_heater'], 'desc': 'Exergy input'},
+                {'label': 'X_c_hb', 'amount': -sv['X_c_hb'], 'desc': 'Exergy consumption (heater body)'},
+                {'label': 'X_c_hs', 'amount': -sv['X_c_hs'], 'desc': 'Exergy consumption (heater surface)'},
+                {'label': 'Output', 'amount': 0, 'desc': 'Exergy output (heat transfer)'},
+            ]
             
-        if session_state.systems[key]['type'] == 'GSHP':
-            labels = ['Input', r'X_{c,int}', r'X_{c,ref}', r'X_{c,GHE}', 'Output']
-            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
-            amounts = [sv['Xin_G'], -sv['Xc_int_G'], -sv['Xc_r_G'], -sv['Xc_GHE'], 0]
-            source = pd.DataFrame({
-                'label': labels,
-                'amount': amounts,
-                'group': [key] * len(labels),
-                'desc': labels_exp,
-            })
-            sources.append(source)
-            
-        if session_state.systems[key]['type'] == 'EH':
-            labels = ['Input', r'X_{c,int}', r'X_{c,ref}', r'X_{c,GHE}', 'Output']
-            labels_exp = [label_exps[sys_type].get(l, l) for l in labels]
-            amounts = [sv['Xin_G'], -sv['Xc_int_G'], -sv['Xc_r_G'], -sv['Xc_GHE'], 0]
-            source = pd.DataFrame({
-                'label': labels,
-                'amount': amounts,
-                'group': [key] * len(labels),
-                'desc': labels_exp,
-            })
-            sources.append(source)
+        for item in items:
+            item['group'] = key
+        source = pd.DataFrame(items)
+        sources.append(source)
 
     if sources:
         source = pd.concat(sources)
@@ -490,7 +471,7 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
 
 
 @eval_registry.register('HEATING', 'ASHP')
-def evaluate_HEATING_ashp(params: Dict[str, float]) -> Dict[str, float]:
+def evaluate_heating_ashp(params: Dict[str, float]) -> Dict[str, float]:
     """ASHP 냉방 모드 평가 함수"""
     ASHP_H = enex.AirSourceHeatPump_heating()
     ASHP_H.T0 = params['T_0']
@@ -505,6 +486,7 @@ def evaluate_HEATING_ashp(params: Dict[str, float]) -> Dict[str, float]:
     
     # fan power
     E_fan_int = ASHP_H.E_fan_int
+    E_cmp     = ASHP_H.E_cmp
     E_fan_ext = ASHP_H.E_fan_ext
 
     X_a_int_in  = ASHP_H.X_a_int_in
@@ -536,7 +518,7 @@ def evaluate_HEATING_ashp(params: Dict[str, float]) -> Dict[str, float]:
     return {k: v for k, v in locals().items() if k not in ('params')}
 
 @eval_registry.register('HEATING', 'GSHP')
-def evaluate_HEATING_gshp(params: Dict[str, float]) -> Dict[str, float]:
+def evaluate_heating_gshp(params: Dict[str, float]) -> Dict[str, float]:
     """GSHP 냉방 모드 평가 함수"""
     GSHP_H = enex.GroundSourceHeatPump_heating()
     GSHP_H.T0 = params['T_0']
@@ -556,37 +538,40 @@ def evaluate_HEATING_gshp(params: Dict[str, float]) -> Dict[str, float]:
     GSHP_H.k_g = params['k_g']
     GSHP_H.c_g = params['c_g']
     GSHP_H.rho_g = params['rho_g']
-    
-    GSHP_H.E_f_int = params['E_f_int']
+
     GSHP_H.E_pmp = params['E_pmp']
    
     GSHP_H.Q_r_int = params['Q_r_int']
     GSHP_H.system_update()
 
     # Ground
-    Xin_g = GSHP_H.X_g
+    Xin_g = GSHP_H.Xin_g
     Xout_g = GSHP_H.X_b
-    Xc_g = Xin_g - Xout_g
+    Xc_g = GSHP_H.Xc_g
 
     # Ground heat exchanger
-    Xin_GHE = GSHP_H.E_pmp + Xout_g + GSHP_H.X_f_in
-    Xout_GHE = GSHP_H.X_f_out 
-    Xc_GHE = Xin_GHE - Xout_GHE
+    E_pmp = GSHP_H.E_pmp
+    Xin_GHE = GSHP_H.Xin_GHE
+    Xout_GHE = GSHP_H.Xout_GHE
+    Xc_GHE = GSHP_H.Xc_GHE
 
     # Heat exchanger
-    Xin_exch = Xout_GHE 
-    Xout_exch = GSHP_H.X_r_exch + GSHP_H.X_f_in
-    Xc_exch = Xin_exch - Xout_exch
+    Xin_exch = GSHP_H.Xin_exch
+    Xout_exch = GSHP_H.Xout_exch
+    Xc_exch = GSHP_H.Xc_exch
 
     # Closed refrigerant loop system
-    Xin_r = GSHP_H.E_cmp + GSHP_H.X_r_exch
-    Xout_r = GSHP_H.X_r_int
-    Xc_r = Xin_r - Xout_r
+    E_cmp = GSHP_H.E_cmp
+    Xin_r = GSHP_H.Xin_r
+    Xout_r = GSHP_H.Xout_r
+    Xc_r = GSHP_H.Xc_r
 
     # Internal unit
-    Xin_int = GSHP_H.E_fan_int + GSHP_H.X_r_int + GSHP_H.X_a_int_in
-    Xout_int = GSHP_H.X_a_int_out
-    Xc_int = Xin_int - Xout_int
+    X_a_int_in = GSHP_H.X_a_int_in
+    E_fan_int = GSHP_H.E_fan_int
+    Xin_int = GSHP_H.Xin_int
+    Xout_int = GSHP_H.Xout_int
+    Xc_int = GSHP_H.Xc_int
 
     # Exergy efficiency
     X_eff = GSHP_H.X_eff
@@ -594,9 +579,9 @@ def evaluate_HEATING_gshp(params: Dict[str, float]) -> Dict[str, float]:
     return {k: v for k, v in locals().items() if k not in ('params')}
 
 @eval_registry.register('HEATING', 'EH')
-def evaluate_Heating_EH(params: Dict[str, float]) -> Dict[str, float]:
+def evaluate_heating_EH(params: Dict[str, float]) -> Dict[str, float]:
     """GSHP 냉방 모드 평가 함수"""
-    EH = enex.ElectricHeater_heating()
+    EH = enex.ElectricHeater()
     EH.T0 = params['T_0']
     EH.T_mr = params['T_mr']
     EH.T_a_room = params['T_a_room']
