@@ -77,6 +77,16 @@ def plot_waterfall_multi(source):
         ],
     )
 
+    # 툴팁 영역 확장용 투명 rect (전체 y범위)
+    max_y = float(source['amount'].sum()) if not source.empty else 1.0
+    hover_rect = alt.Chart(source).mark_rect(opacity=0).encode(
+        x=alt.X("label:O", sort=None),
+        color=alt.value('rgba(0,0,0,0)'),
+        tooltip=[
+            alt.Tooltip("desc:N", title="Description"),
+        ],
+    )
+
     # The "rule" chart is for the horizontal lines that connect the bars
     rule = base_chart.mark_rule(xOffset=-bar_size / 2, x2Offset=bar_size / 2, strokeWidth=0.5, tooltip=None).encode(
         y="window_sum_amount:Q",
@@ -117,6 +127,7 @@ def plot_waterfall_multi(source):
 
     chart = alt.layer( # Altair에서 여러 개의 차트(마크)를 하나의 시각화로 "겹쳐서" 보여주는 함수입니다
         bar,
+        hover_rect,  # bar 위에 투명 rect를 겹침
         rule,
         text_values_top,
         # text_pos_values_top_of_bar,
