@@ -459,7 +459,7 @@ wheels = [
 [[package]]
 name = "en-system-ex-analysis"
 version = "0.1.0"
-source = { git = "https://github.com/BET-lab/En_system_Ex_analysis.git#0ec9b6d8bfcaaa9fdd83037ee6194d0354fcca80" }
+source = { git = "https://github.com/BET-lab/En_system_Ex_analysis.git#58c5620633a55ab28fba048f80c6ad86c1523e0d" }
 dependencies = [
     { name = "dartwork-mpl" },
     { name = "ipykernel" },
