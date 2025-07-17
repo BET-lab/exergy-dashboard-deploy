@@ -152,9 +152,9 @@ with st.sidebar:
     )
 
     if selected_mode is None:
-        selected_mode = available_modes[0]
+        st.stop()
 
-    if sss.mode != selected_mode and selected_mode is not None:
+    if sss.mode != selected_mode:
         sss.mode = selected_mode
         reset_systems()
         if 'selected_options' in sss:
