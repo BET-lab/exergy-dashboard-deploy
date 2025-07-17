@@ -285,12 +285,23 @@ with col2:
         if sys_type in systems[mode_upper]:
             valid_system_names.append(sys_name)
     
+    short_name_map = {
+        name: ''.join(c[0] for c in name.title().split()[:-1]) + ' ' + name.title().split()[-1]
+        for name in valid_system_names
+    }
+
+    short_name_reverse_map = {
+        v: k for k, v in short_name_map.items()
+    }
+
     options = st.multiselect(
         'Select systems to display',
-        valid_system_names,
+        short_name_map.values(),
         default=[opt for opt in (sss.selected_options if 'selected_options' in sss else []) if opt in valid_system_names],
         key='selected_options',
     )
+
+    options = [short_name_reverse_map[opt] for opt in options]
 
     if len(options) != 0:
         # Initialize visualization manager with the registry
