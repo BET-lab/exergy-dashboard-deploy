@@ -184,17 +184,18 @@ with st.sidebar:
     valid_systems = [sys_name for sys_name, system in sss.systems.items() if system['type'] in systems[mode_upper]]
     if valid_systems:
         st.header('Select system')
-        for sys_name in valid_systems:
-            st.button(
-                sys_name,
-                key=f"select_{sys_name}",
-                use_container_width=True  # 버튼을 sidebar 너비에 맞춤
-            )
-            if st.session_state.get(f"select_{sys_name}"):
-                st.session_state['selected_system_tab'] = sys_name
-        # 기본 선택이 없으면 첫 번째 시스템을 기본값으로
+        # 세션 상태의 선택값이 유효하지 않으면 첫 번째로 자동 설정
         if 'selected_system_tab' not in st.session_state or st.session_state['selected_system_tab'] not in valid_systems:
             st.session_state['selected_system_tab'] = valid_systems[0]
+        # 라디오 버튼으로 시스템 선택 (index 항상 유효하게)
+        selected_system = st.radio(
+            label="Select a system",
+            options=valid_systems,
+            # index=valid_systems.index(st.session_state['selected_system_tab']),
+            key="selected_system_radio",
+            label_visibility='collapsed',
+        )
+        st.session_state['selected_system_tab'] = selected_system
     else:
         st.session_state['selected_system_tab'] = None
 
@@ -209,7 +210,7 @@ def remove_system(name):
     sss.systems.pop(name)
     to_be_removed = []
     for k, v in sss.items():
-        if k.startswith(name):
+        if isinstance(k, str) and k.startswith(name):
             to_be_removed.append(k)
     for k in to_be_removed:
         sss.pop(k)
