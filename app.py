@@ -142,12 +142,21 @@ with st.sidebar:
         st.stop()
     previous_mode = sss.mode if 'mode' in sss else None
 
-    for mode in available_modes:
-        button_label = f"{mode}" if sss.mode == mode.capitalize() else mode.capitalize()
-        if st.button(button_label, use_container_width=True, key=f"mode_button_{mode}"):
-            sss.mode = mode
+    # Segmented control로 모드 선택
+    selected_mode = st.segmented_control(
+        label="Select mode",
+        options=available_modes,
+        # index=available_modes.index(sss.mode) if sss.mode in available_modes else 0,
+        key="mode_segmented_control",
+        label_visibility='collapsed',
+        width="stretch",
+    )
 
-    if previous_mode != sss.mode:
+    if selected_mode is None:
+        selected_mode = available_modes[0]
+
+    if sss.mode != selected_mode and selected_mode is not None:
+        sss.mode = selected_mode
         reset_systems()
         if 'selected_options' in sss:
             sss.selected_options = []

@@ -12,7 +12,7 @@ dependencies = [
     "dartwork-mpl",
     "en-system-ex-analysis",
     "pylatexenc>=2.10",
-    "streamlit>=1.41.1",
+    "streamlit>=1.47",
     "vl-convert-python>=1.7.0",
 ]
 
