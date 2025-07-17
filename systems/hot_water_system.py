@@ -455,7 +455,7 @@ HEAT_PUMP_BOILER = {
         },
     }
 }
-SOLAR_HOT_WATER = {
+SOLAR_ASSISTED_GAS_BOILER = {
     'display': {
         'title': 'Solar assisted gas boiler',
         'icon': ':sun:',
@@ -860,7 +860,7 @@ GSHP_BOILER = {
 register_system('HOT WATER', 'Electric boiler', ELECTRIC_BOILER)
 register_system('HOT WATER', 'Gas boiler', GAS_BOILER)
 register_system('HOT WATER', 'Heat pump boiler', HEAT_PUMP_BOILER)
-register_system('HOT WATER', 'Solar assisted gas boiler', SOLAR_HOT_WATER)
+register_system('HOT WATER', 'Solar assisted gas boiler', SOLAR_ASSISTED_GAS_BOILER)
 register_system('HOT WATER', 'Ground source heat pump boiler', GSHP_BOILER)
 
 # HOT WATER 모드 시각화 함수들
@@ -1145,43 +1145,43 @@ def evaluate_heat_pump_boiler(params: Dict[str, float]) -> Dict[str, float]:
     return {k: v for k, v in locals().items() if k not in ('params')}
 
 @eval_registry.register('HOT WATER', 'Solar assisted gas boiler')
-def evaluate_solar_hot_water(params: Dict[str, float]) -> Dict[str, float]:
+def evaluate_SOLAR_ASSISTED_GAS_BOILER(params: Dict[str, float]) -> Dict[str, float]:
     """ASHP 냉방 모드 평가 함수"""
-    SHW = enex.SolarHotWater()
-    SHW.alpha = params['alpha']
-    SHW.eta_comb = params['eta_comb']
-    SHW.I_DN = params['I_DN']
-    SHW.I_dH = params['I_dH']
-    SHW.A_stp = params['A_stp']
-    SHW.T0 = params['T_0']
-    SHW.T_w_comb = params['T_w_comb']
-    SHW.T_w_serv = params['T_w_serv']
-    SHW.T_w_sup = params['T_w_sup']
-    SHW.T_exh = params['T_exh']
-    SHW.dV_w_serv = params['dV_w_serv']*enex.L2m3/enex.m2s
-    SHW.h_o = params['h_o']
-    SHW.h_r = params['h_r']
-    SHW.k_ins = params['k_ins']
-    SHW.x_air = params['x_air']
-    SHW.x_ins = params['x_ins']
-    SHW.system_update()
+    SAGB = enex.SolarAssistedGasBoiler()
+    SAGB.alpha = params['alpha']
+    SAGB.eta_comb = params['eta_comb']
+    SAGB.I_DN = params['I_DN']
+    SAGB.I_dH = params['I_dH']
+    SAGB.A_stp = params['A_stp']
+    SAGB.T0 = params['T_0']
+    SAGB.T_w_comb = params['T_w_comb']
+    SAGB.T_w_serv = params['T_w_serv']
+    SAGB.T_w_sup = params['T_w_sup']
+    SAGB.T_exh = params['T_exh']
+    SAGB.dV_w_serv = params['dV_w_serv']*enex.L2m3/enex.m2s
+    SAGB.h_o = params['h_o']
+    SAGB.h_r = params['h_r']
+    SAGB.k_ins = params['k_ins']
+    SAGB.x_air = params['x_air']
+    SAGB.x_ins = params['x_ins']
+    SAGB.system_update()
 
-    X_w_sup = SHW.X_w_sup
-    X_sol = SHW.X_sol
-    X_w_stp_out = SHW.X_w_stp_out
-    X_l = SHW.X_l
-    X_c_stp = SHW.X_c_stp
+    X_w_sup = SAGB.X_w_sup
+    X_sol = SAGB.X_sol
+    X_w_stp_out = SAGB.X_w_stp_out
+    X_l = SAGB.X_l
+    X_c_stp = SAGB.X_c_stp
 
-    X_NG = SHW.X_NG
-    X_exh = SHW.X_exh
-    X_w_comb = SHW.X_w_comb
-    X_c_comb = SHW.X_c_comb
+    X_NG = SAGB.X_NG
+    X_exh = SAGB.X_exh
+    X_w_comb = SAGB.X_w_comb
+    X_c_comb = SAGB.X_c_comb
 
-    X_w_sup_mix = SHW.X_w_sup_mix
-    X_w_serv = SHW.X_w_serv
-    X_c_mix = SHW.X_c_mix
+    X_w_sup_mix = SAGB.X_w_sup_mix
+    X_w_serv = SAGB.X_w_serv
+    X_c_mix = SAGB.X_c_mix
     
-    X_eff = SHW.X_w_serv / SHW.X_NG
+    X_eff = SAGB.X_w_serv / SAGB.X_NG
 
     return {k: v for k, v in locals().items() if k not in ('params')}
 
