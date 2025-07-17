@@ -41,8 +41,7 @@ st.markdown(
     """
     <style>
     [data-testid="stSidebar"][aria-expanded="true"]{
-        min-width: 350px;
-        max-width: 350px;
+        width: 350px;
     }
     </style>
     """,
