@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  exergy-dashboard:
+    build:
+      context: .
+      args:
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
+    container_name: exergy-dashboard
+    ports:
+      - "47886:8501"
+    environment:
+      - STREAMLIT_SERVER_PORT=8501
+    # 필요시 볼륨 마운트 예시
+    # volumes:
+    #   - ./app:/app/app
+    #   - ./data:/app/data
+    restart: always
+    command: ["uv", "run", "streamlit", "run", "app.py"]

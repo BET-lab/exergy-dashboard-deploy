@@ -4,3 +4,4 @@ pages-backup
 __pycache__
 # notebooks
 node_modules
+.env
