@@ -155,8 +155,11 @@ class SystemRegistry:
 # 전역 시스템 레지스트리 인스턴스 생성
 system_registry = SystemRegistry()
 
-# SYSTEM_CASE를 레지스트리의 프로퍼티로 정의
-SYSTEM_CASE = system_registry.get_systems()
+# SYSTEM_CASE를 항상 최신 상태로 유지하기 위해 함수로 정의
+def _update_system_case() -> Dict[str, Dict[str, Any]]:
+    return system_registry.get_systems()
+
+SYSTEM_CASE = _update_system_case()
 
 def register_system(mode: str, system_type: str, system_config: dict) -> None:
     """새로운 시스템을 등록하는 편의 함수
@@ -187,6 +190,9 @@ def register_system(mode: str, system_type: str, system_config: dict) -> None:
     >>> register_system('COOLING', 'NEW_SYSTEM', new_system)
     """
     system_registry.register_system(mode, system_type, system_config)
+    # 시스템 등록 후 SYSTEM_CASE 갱신
+    global SYSTEM_CASE
+    SYSTEM_CASE = _update_system_case()
     
     
 def get_system_template() -> dict:
