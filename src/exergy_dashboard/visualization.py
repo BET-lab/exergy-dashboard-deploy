@@ -47,7 +47,7 @@ Examples
     ```
 """
 
-from typing import Callable, Dict, List, Any
+from typing import Callable, Dict, List, Any, Optional
 import streamlit as st
 from dataclasses import dataclass
 
@@ -86,9 +86,9 @@ class VisualizationRegistry:
             return func
         return decorator
     
-    def get_visualizer(self, name: str, mode: str) -> Callable:
+    def get_visualizer(self, name: str, mode: str) -> Optional[Callable]:
         """
-        시각화 도구 함수를 반환
+        시각화 도구 함수를 반환합니다. 존재하지 않으면 ``None``을 반환합니다.
 
         Parameters
         ----------
@@ -99,8 +99,8 @@ class VisualizationRegistry:
 
         Returns
         -------
-        Callable
-            시각화 함수
+        Optional[Callable]
+            시각화 함수. 시각화가 존재하지 않으면 ``None``을 반환합니다.
         """
         if mode in self._visualizers and name in self._visualizers[mode]:
             return self._visualizers[mode][name]
