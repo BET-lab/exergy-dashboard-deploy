@@ -462,7 +462,7 @@ wheels = [
 [[package]]
 name = "enex-analysis"
 version = "0.1.0"
-source = { git = "https://github.com/BET-lab/enex_analysis_engine.git#bc03880a1f17fe2b7a4f067b08ef9139075bc633" }
+source = { git = "https://github.com/BET-lab/enex_analysis_engine.git#8d026cbe6cdc8796c9db0f44540a5a063b64f4ef" }
 dependencies = [
     { name = "dartwork-mpl" },
     { name = "ipykernel" },
