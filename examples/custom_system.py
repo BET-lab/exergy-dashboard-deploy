@@ -55,7 +55,7 @@ def evaluate_she(params):
    
     diff_T = T_in_h - T_out_h
 
-    # 결과 반환 (plot에 사용할 변수수)
+    # 결과 반환 (plot에 사용할 변수들)
     return {
         'diff_T': diff_T,  # 온도차 (℃)
     }
