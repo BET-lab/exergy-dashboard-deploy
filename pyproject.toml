@@ -28,4 +28,4 @@ dev = [
 
 [tool.uv.sources]
 dartwork-mpl = { git = "https://github.com/dartwork-repo/dartwork-mpl.git"}
-en-system-ex-analysis = { git = "https://github.com/BET-lab/En_system_Ex_analysis.git" }
+en-system-ex-analysis = { git = "https://github.com/BET-lab/enex_analysis_engine.git" }
