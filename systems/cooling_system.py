@@ -35,7 +35,6 @@ COOLING_ASHP = {
             'step': 1.0,
             'category': 'Operating condition',
         },
-        
         'T_a_int_out': {
             'explanation': {'EN': 'Internal Unit Air Outlet Temperature', 'KR': '실내기 공기 토출 온도'},
             'latex': r'$T_{a,int,out}$',
@@ -48,19 +47,19 @@ COOLING_ASHP = {
         'Q_r_int': {
             'explanation': {'EN': 'Cooling load', 'KR': '냉방 부하'},
             'latex': r'$Q_{r,int}$',
-            'default': 10000.0,
-            'range': [0, 20000],
+            'default': 6000.0,
+            'range': [0, 9000],
             'unit': 'W',
-            'step': 100.0,
+            'step': 500.0,
             'category': 'internal unit',
         },
         'Q_r_max': {
             'explanation': {'EN': 'Maximum Cooling Capacity', 'KR': '최대 냉방 용량'},
             'latex': r'$Q_{r,max}$',
-            'default': 10000.0,
-            'range': ['Q_r_int', 20000],
+            'default': 9000.0,
+            'range': ['Q_r_int', 9000],
             'unit': 'W',
-            'step': 100.0,
+            'step': 500.0,
             'category': 'internal unit',
         },
         
@@ -122,8 +121,8 @@ COOLING_GSHP = {
         'T_g': {
             'explanation': {'EN': 'Ground Temperature', 'KR': '토양온도'},
             'latex': r'$T_g$',
-            'default': 19.0,
-            'range': [0, 20],
+            'default': 15.0,
+            'range': [10, 20],
             'unit': '℃',
             'step': 1.0,
             'category': 'Operating condition',
@@ -137,11 +136,10 @@ COOLING_GSHP = {
             'step': 1.0,
             'category': 'Operating condition',
         },
-        
         'T_a_int_out': {
             'explanation': {'EN': 'Internal Unit Outlet Air Temperature', 'KR': '실내기 토출 공기 온도'},
             'latex': r'$T_{a,int,out}$',
-            'default': 14.0,
+            'default': 10.0,
             'range': [-20, 'T_a_room-1.0'],
             'unit': '℃',
             'step': 1.0,
@@ -150,32 +148,22 @@ COOLING_GSHP = {
         'Q_r_int': {
             'explanation': {'EN': 'Cooling load', 'KR': '냉방 부하'},
             'latex': r'$Q_{r,int}$',
-            'default': 10000.0,
-            'range': [0, 30000],
+            'default': 6000.0,
+            'range': [0, 9000],
             'unit': 'W',
-            'step': 100.0,
+            'step': 500.0,
             'category': 'internal unit',
         },
         
         'T_r_int': {
             'explanation': {'EN': 'Internal Unit Refrigerant Temperature', 'KR': '실내기 측 냉매 온도'},
             'latex': r'$T_{r,int}$',
-            'default': 9.0,
+            'default': 5.0,
             'range': [-25, 'T_a_int_out-1.0'],
             'unit': '℃',
             'step': 1.0,
             'category': 'refrigerant',
         },
-        'T_r_exch': {
-            'explanation': {'EN': 'Heat Exchanger Refrigerant Temperature', 'KR': '열교환기 측 냉매 온도'},
-            'latex': r'$T_{r,exch}$',
-            'default': 29.0,
-            'range': ['T_g+1.0', 'T_0-1.0'],
-            'unit': '℃',
-            'step': 1.0,
-            'category': 'refrigerant',
-        },
-        
         'H': {
             'explanation': {'EN': 'Borehole Height', 'KR': '보어홀 길이'},
             'latex': r'$H$',
@@ -189,7 +177,7 @@ COOLING_GSHP = {
             'explanation': {'EN': 'Borehole Radius', 'KR': '보어홀 반지름'},
             'latex': r'$r_b$',
             'default': 0.08,
-            'range': [0.05, 0.2],
+            'range': [0.05, 0.1],
             'unit': 'm',
             'step': 0.005,
             'category': 'ground heat exchanger',
@@ -207,7 +195,7 @@ COOLING_GSHP = {
             'explanation': {'EN': 'Fluid Velocity', 'KR': '유체 속도'},
             'latex': r'$V_f$',
             'default': 24.0,
-            'range': [1.0, 50.0],
+            'range': [5.0, 30.0],
             'unit': 'L/min',
             'step': 1.0,
             'category': 'ground heat exchanger',
@@ -336,6 +324,8 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
                 {'label': 'E_cmp', 'amount': sv['E_cmp'], 'desc': 'Compressor power input (refrigerant)'},
                 {'label': 'Xc_r', 'amount': -sv['Xc_r'], 'desc': 'Exergy consumption (refrigerant)'},
                 {'label': 'X_r_ext(ref side)', 'amount': -sv['X_r_ext'], 'desc': 'Cool exergy output from refrigerant (external unit side)'},
+                {'label': 'X_fan_int', 'amount': sv['E_fan_int'], 'desc': 'Exergy input from fan (internal unit)'},
+                {'label': 'X_a_int_in', 'amount': sv['X_a_int_in'], 'desc': 'Exergy from room air'},
                 {'label': 'Xc_int', 'amount': -sv['Xc_int'], 'desc': 'Exergy consumption (internal unit)'},
                 {'label': 'Output', 'amount': 0, 'desc': 'Exergy output'},
             ]
@@ -424,7 +414,6 @@ def evaluate_cooling_gshp(params: Dict[str, float]) -> Dict[str, float]:
     GSHP_C.T_a_room = params['T_a_room']
     GSHP_C.T_a_int_out = params['T_a_int_out']
     GSHP_C.T_r_int = params['T_r_int']
-    GSHP_C.T_r_exch = params['T_r_exch']
 
     GSHP_C.height = params['H']
     GSHP_C.r_b = params['r_b']

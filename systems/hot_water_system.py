@@ -757,15 +757,6 @@ GSHP_BOILER = {
             'step': 1.0,
             'category': 'Refrigerant',
         },
-        'T_r_exch': {
-            'explanation': {'EN': 'Heat Exchanger Refrigerant Temperature', 'KR': '열교환기 측 냉매 온도'},
-            'latex': r'$T_{r,exch}$',
-            'default': 5.0,
-            'range': [-30, 'T_g-1.0'],
-            'unit': '℃',
-            'step': 1.0,
-            'category': 'Refrigerant',
-        },
         
         # Ground heat exchanger ----------------------------------------------------------------------------
         'H_b': {
@@ -778,13 +769,13 @@ GSHP_BOILER = {
             'category': 'ground heat exchanger',
         },
         'r_b': {
-            'explanation': {'EN': 'Borehole radius', 'KR': '보어홀 반지름'},
+            'explanation': {'EN': 'Borehole Radius', 'KR': '보어홀 반지름'},
             'latex': r'$r_b$',
             'default': 0.08,
-            'range': [0.05, 0.20],
+            'range': [0.05, 0.1],
             'unit': 'm',
             'step': 0.005,
-            'category': 'Ground heat exchanger',
+            'category': 'ground heat exchanger',
         },
         'R_b': {
             'explanation': {'EN': 'Borehole thermal resistance', 'KR': '보어홀 유효 열저항'},
@@ -844,10 +835,10 @@ GSHP_BOILER = {
             'category': 'Ground',
         },
         'T_g': {
-            'explanation': {'EN': 'Ground temperature', 'KR': '토양온도'},
+            'explanation': {'EN': 'Ground Temperature', 'KR': '토양온도'},
             'latex': r'$T_g$',
             'default': 15.0,
-            'range': [0, 20],
+            'range': [10, 20],
             'unit': '℃',
             'step': 1.0,
             'category': 'Operating condition',
@@ -1205,7 +1196,6 @@ def evaluate_gshp_boiler(params: Dict[str, float]) -> Dict[str, float]:
     GSHPB.h_o = params['h_o']
     
     GSHPB.T_r_tank = params['T_r_tank']
-    GSHPB.T_r_exch = params['T_r_exch']
     
     GSHPB.D_b = params['D_b']
     GSHPB.H_b = params['H_b']
