@@ -105,7 +105,7 @@ HEATING_GSHP = {
             'default': 100,
             'range': [0, 2000],
             'unit': 'h',
-            'step': 100,
+            'step': 100.0,
             'category': 'Operating condition',
         },
         'T_0': {

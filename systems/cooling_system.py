@@ -103,10 +103,10 @@ COOLING_GSHP = {
         't':{
             'explanation': {'EN': 'Operating time', 'KR': '운전 시간'},
             'latex': r'$t$',
-            'default': 100,
+            'default': 100.0,
             'range': [0, 2000],
             'unit': 'h',
-            'step': 100,
+            'step': 100.0,
             'category': 'Operating condition',
         },
         'T_0': {
@@ -149,7 +149,7 @@ COOLING_GSHP = {
             'explanation': {'EN': 'Cooling load', 'KR': '냉방 부하'},
             'latex': r'$Q_{r,int}$',
             'default': 6000.0,
-            'range': [0, 9000],
+            'range': [1000, 9000],
             'unit': 'W',
             'step': 500.0,
             'category': 'internal unit',
