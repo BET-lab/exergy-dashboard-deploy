@@ -1,6 +1,6 @@
-# Exergy Analysis Dashboard
+# Exergy Analyzer
 
-엑서지 분석을 위한 대시보드 애플리케이션입니다.
+엑서지 분석을 위한 애플리케이션입니다.
 
 
 ## 1. 새로운 시스템 등록하기
