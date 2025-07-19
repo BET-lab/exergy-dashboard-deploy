@@ -7,7 +7,7 @@ from exergy_dashboard.system import register_system
 from exergy_dashboard.evaluation import registry as eval_registry
 from exergy_dashboard.visualization import registry as viz_registry
 from exergy_dashboard.chart import plot_waterfall_multi
-import en_system_ex_analysis as enex
+import enex_analysis as enex
 
 
 # 기본 시스템 정의
@@ -24,7 +24,7 @@ HEATING_ASHP = {
             'range': [-50, 50],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_a_room': {
             'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
@@ -33,7 +33,7 @@ HEATING_ASHP = {
             'range': ['T_0 + 1.0', 50],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_a_int_out': {
             'explanation': {'EN': 'Internal Unit Air Outlet Temperature', 'KR': '실내기 공기 토출 온도'},
@@ -99,6 +99,15 @@ HEATING_GSHP = {
     },
     'parameters': {
         # Condition ----------------------------------------------------------------------------
+        't':{
+            'explanation': {'EN': 'Operating time', 'KR': '운전 시간'},
+            'latex': r'$t$',
+            'default': 100,
+            'range': [0, 2000],
+            'unit': 'h',
+            'step': 100,
+            'category': 'Operating condition',
+        },
         'T_0': {
             'explanation': {'EN': 'Environment Temperature', 'KR': '환경온도'},
             'latex': r'$T_0$',
@@ -106,7 +115,7 @@ HEATING_GSHP = {
             'range': [-30, 30],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_g': {
             'explanation': {'EN': 'Ground Temperature', 'KR': '토양온도'},
@@ -115,7 +124,7 @@ HEATING_GSHP = {
             'range': [0, 20],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_a_room': {
             'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
@@ -124,7 +133,7 @@ HEATING_GSHP = {
             'range': ['T_0+1.0', 40],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         
         # Internal Unit ----------------------------------------------------------------------------
@@ -168,23 +177,14 @@ HEATING_GSHP = {
         },
         
         # borehole ----------------------------------------------------------------------------
-        'D': {
-            'explanation': {'EN': 'Borehole Depth', 'KR': '보어홀 시작 깊이'},
-            'latex': r'$D$',
-            'default': 0.0,
-            'range': [50, 300],
-            'unit': 'm',
-            'step': 10.0,
-            'category': 'borehole',
-        },
         'H': {
             'explanation': {'EN': 'Borehole Height', 'KR': '보어홀 길이'},
             'latex': r'$H$',
             'default': 200.0,
-            'range': [10, 300],
+            'range': [100, 300],
             'unit': 'm',
-            'step': 1.0,
-            'category': 'borehole',
+            'step': 50.0,
+            'category': 'ground heat exchanger',
         },
         'r_b': {
             'explanation': {'EN': 'Borehole Radius', 'KR': '보어홀 반지름'},
@@ -192,8 +192,8 @@ HEATING_GSHP = {
             'default': 0.08,
             'range': [0.05, 0.2],
             'unit': 'm',
-            'step': 0.001,
-            'category': 'borehole',
+            'step': 0.005,
+            'category': 'ground heat exchanger',
         },
         'R_b': {
             'explanation': {'EN': 'Borehole Thermal Resistance', 'KR': '보어홀 유효 열저항'},
@@ -202,10 +202,8 @@ HEATING_GSHP = {
             'range': [0.01, 0.5],
             'unit': 'm·K/W',
             'step': 0.01,
-            'category': 'borehole',
+            'category': 'ground heat exchanger',
         },
-        
-        # Ground Heat Exchanger ----------------------------------------------------------------------------
         'V_f': {
             'explanation': {'EN': 'Fluid volumetric flow rate', 'KR': '유체 체적 유량'},
             'latex': r'$V_f$',
@@ -269,7 +267,7 @@ ELECTRIC_HEATER = {
             'range': [-30, 30],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_mr': {
             'explanation': {'EN': 'Mean Radiant Temperature', 'KR': '평균 복사 온도'},
@@ -278,7 +276,7 @@ ELECTRIC_HEATER = {
             'range': [0, 20],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_a_room': {
             'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
@@ -287,7 +285,7 @@ ELECTRIC_HEATER = {
             'range': ['T_0+1.0', 40],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
             
         # Heater material properties ------------------------------------------------------------
@@ -345,15 +343,6 @@ ELECTRIC_HEATER = {
             'range': [0.5, 2.0],
             'unit': 'm',
             'step': 0.01,
-            'category': 'heater geometry',
-        },
-        'D': {
-            'explanation': {'EN': 'Heater Diameter', 'KR': '히터 직경'},
-            'latex': r'$D$',
-            'default': 0.005,
-            'range': [0.001, 0.02],
-            'unit': 'm',
-            'step': 0.001,
             'category': 'heater geometry',
         },
     }
@@ -539,7 +528,6 @@ def evaluate_heating_gshp(params: Dict[str, float]) -> Dict[str, float]:
     GSHP_H.T_r_int = params['T_r_int']
     GSHP_H.T_r_exch = params['T_r_exch']
 
-    GSHP_H.depth = params['D']
     GSHP_H.height = params['H']
     GSHP_H.r_b = params['r_b']
     GSHP_H.R_b = params['R_b']

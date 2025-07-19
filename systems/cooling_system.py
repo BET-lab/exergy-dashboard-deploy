@@ -7,7 +7,7 @@ from exergy_dashboard.system import register_system
 from exergy_dashboard.evaluation import registry as eval_registry
 from exergy_dashboard.visualization import registry as viz_registry
 from exergy_dashboard.chart import plot_waterfall_multi
-import en_system_ex_analysis as enex
+import enex_analysis as enex
 
 
 # 기본 시스템 정의
@@ -24,7 +24,7 @@ COOLING_ASHP = {
             'range': [-50, 50],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_a_room': {
             'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
@@ -33,7 +33,7 @@ COOLING_ASHP = {
             'range': [-50, 'T_0 - 1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         
         'T_a_int_out': {
@@ -101,14 +101,23 @@ COOLING_GSHP = {
         'icon': ':earth_americas:',
     },
     'parameters': {
+        't':{
+            'explanation': {'EN': 'Operating time', 'KR': '운전 시간'},
+            'latex': r'$t$',
+            'default': 100,
+            'range': [0, 2000],
+            'unit': 'h',
+            'step': 100,
+            'category': 'Operating condition',
+        },
         'T_0': {
             'explanation': {'EN': 'Environment Temperature', 'KR': '환경온도'},
             'latex': r'$T_0$',
-            'default': 32.0,
+            'default': 30.0,
             'range': [-50, 50],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_g': {
             'explanation': {'EN': 'Ground Temperature', 'KR': '토양온도'},
@@ -117,7 +126,7 @@ COOLING_GSHP = {
             'range': [0, 20],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_a_room': {
             'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
@@ -126,7 +135,7 @@ COOLING_GSHP = {
             'range': [0, 'T_0-1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         
         'T_a_int_out': {
@@ -167,32 +176,23 @@ COOLING_GSHP = {
             'category': 'refrigerant',
         },
         
-        'D': {
-            'explanation': {'EN': 'Borehole Depth', 'KR': '보어홀 시작 깊이'},
-            'latex': r'$D$',
-            'default': 150.0,
-            'range': [50, 300],
-            'unit': 'm',
-            'step': 10.0,
-            'category': 'borehole',
-        },
         'H': {
             'explanation': {'EN': 'Borehole Height', 'KR': '보어홀 길이'},
             'latex': r'$H$',
-            'default': 100.0,
-            'range': [10, 300],
+            'default': 200.0,
+            'range': [100, 300],
             'unit': 'm',
-            'step': 1.0,
-            'category': 'borehole',
+            'step': 50.0,
+            'category': 'ground heat exchanger',
         },
         'r_b': {
             'explanation': {'EN': 'Borehole Radius', 'KR': '보어홀 반지름'},
             'latex': r'$r_b$',
-            'default': 0.075,
+            'default': 0.08,
             'range': [0.05, 0.2],
             'unit': 'm',
-            'step': 0.001,
-            'category': 'borehole',
+            'step': 0.005,
+            'category': 'ground heat exchanger',
         },
         'R_b': {
             'explanation': {'EN': 'Borehole Thermal Resistance', 'KR': '보어홀 유효 열저항'},
@@ -201,7 +201,7 @@ COOLING_GSHP = {
             'range': [0.01, 0.5],
             'unit': 'm·K/W',
             'step': 0.01,
-            'category': 'borehole',
+            'category': 'ground heat exchanger',
         },
         'V_f': {
             'explanation': {'EN': 'Fluid Velocity', 'KR': '유체 속도'},
@@ -299,6 +299,7 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
                 values = np.arange(0, max_v + 1, tick_step).tolist(),
             )
             .scale(domain=[0, max_v]),
+            color=alt.Color('system:N', legend=None),
         # tooltip=['system', 'efficiency'],
     ).properties(
         width='container',
@@ -417,6 +418,7 @@ def evaluate_cooling_ashp(params: Dict[str, float]) -> Dict[str, float]:
 def evaluate_cooling_gshp(params: Dict[str, float]) -> Dict[str, float]:
     """GSHP 냉방 모드 평가 함수"""
     GSHP_C = enex.GroundSourceHeatPump_cooling()
+    GSHP_C.time = params['t']
     GSHP_C.T0 = params['T_0']
     GSHP_C.T_g = params['T_g']
     GSHP_C.T_a_room = params['T_a_room']
@@ -424,7 +426,6 @@ def evaluate_cooling_gshp(params: Dict[str, float]) -> Dict[str, float]:
     GSHP_C.T_r_int = params['T_r_int']
     GSHP_C.T_r_exch = params['T_r_exch']
 
-    GSHP_C.depth = params['D']
     GSHP_C.height = params['H']
     GSHP_C.r_b = params['r_b']
     GSHP_C.R_b = params['R_b']

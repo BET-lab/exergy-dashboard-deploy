@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import altair as alt
 import streamlit as st
-import en_system_ex_analysis as enex
+import enex_analysis as enex
 from exergy_dashboard.system import register_system
 from exergy_dashboard.evaluation import registry as eval_registry
 from exergy_dashboard.visualization import registry as viz_registry
@@ -26,7 +26,7 @@ ELECTRIC_BOILER = {
             'range': [-50.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'dV_w_serv': {
             'explanation': {'EN': 'Tank water use', 'KR': '탱크 온수 사용량'},
@@ -35,7 +35,7 @@ ELECTRIC_BOILER = {
             'range': [0.0, 10.0],
             'unit': 'L/min',
             'step': 0.1,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_w_sup': {
             'explanation': {'EN': 'Supply water temperature', 'KR': '상수도 온도'},
@@ -44,7 +44,7 @@ ELECTRIC_BOILER = {
             'range': [0.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_w_tank': {
             'explanation': {'EN': 'Tank water temperature', 'KR': '탱크 내 온수 온도'},
@@ -62,7 +62,7 @@ ELECTRIC_BOILER = {
             'range': ['T_w_sup+1.0', 'T_w_tank-1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'h_o': {
             'explanation': {'EN': 'Overall heat transfer coefficient', 'KR': '종합 열전달계수'},
@@ -71,7 +71,7 @@ ELECTRIC_BOILER = {
             'range': [1, 50],
             'unit': 'W/m²·K',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         # Hot water tank ------------------------------------------------------------
         'r0': {
@@ -144,7 +144,7 @@ GAS_BOILER = {
             'range': [-50.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'dV_w_serv': {
             'explanation': {'EN': 'Tank water use', 'KR': '탱크 온수 사용량'},
@@ -153,7 +153,7 @@ GAS_BOILER = {
             'range': [0.0, 10.0],
             'unit': 'L/min',
             'step': 0.1,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_w_sup': {
             'explanation': {'EN': 'Supply water temperature', 'KR': '상수도 온도'},
@@ -162,7 +162,7 @@ GAS_BOILER = {
             'range': [0.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_w_serv': {
             'explanation': {'EN': 'Service water temperature', 'KR': '공급 온수 온도'},
@@ -171,7 +171,7 @@ GAS_BOILER = {
             'range': ['T_w_sup + 1.0', 'T_w_tank - 1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'h_o': {
             'explanation': {'EN': 'Overall heat transfer coefficient', 'KR': '종합 열전달계수'},
@@ -180,7 +180,7 @@ GAS_BOILER = {
             'range': [1, 50],
             'unit': 'W/m²·K',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         
         # combustion chamber ------------------------------------------------------------
@@ -283,7 +283,7 @@ HEAT_PUMP_BOILER = {
             'range': [-50.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'dV_w_serv': {
             'explanation': {'EN': 'Tank water use', 'KR': '탱크 온수 사용량'},
@@ -292,7 +292,7 @@ HEAT_PUMP_BOILER = {
             'range': [0.0, 10.0],
             'unit': 'L/min',
             'step': 0.1,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_w_sup': {
             'explanation': {'EN': 'Supply water temperature', 'KR': '상수도 온도'},
@@ -301,7 +301,7 @@ HEAT_PUMP_BOILER = {
             'range': [0.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_w_serv': {
             'explanation': {'EN': 'Service water temperature', 'KR': '공급 온수 온도'},
@@ -310,7 +310,7 @@ HEAT_PUMP_BOILER = {
             'range': ['T_w_sup + 1.0', 'T_w_tank - 1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'h_o': {
             'explanation': {'EN': 'Overall heat transfer coefficient', 'KR': '종합 열전달계수'},
@@ -319,7 +319,7 @@ HEAT_PUMP_BOILER = {
             'range': [1, 50],
             'unit': 'W/m²·K',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'COP_hp': {
             'explanation': {'EN': 'Heat Pump COP', 'KR': '히트펌프 COP'},
@@ -469,7 +469,7 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'range': [-50.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'dV_w_serv': {
             'explanation': {'EN': 'Tank water use', 'KR': '탱크 온수 사용량'},
@@ -478,7 +478,7 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'range': [0.0, 10.0],
             'unit': 'L/min',
             'step': 0.1,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_w_sup': {
             'explanation': {'EN': 'Supply water temperature', 'KR': '상수도 온도'},
@@ -487,7 +487,7 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'range': [0.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_w_serv': {
             'explanation': {'EN': 'Service water temperature', 'KR': '공급 온수 온도'},
@@ -496,7 +496,7 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'range': ['T_w_sup + 1.0', 'T_w_tank - 1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'h_o': {
             'explanation': {'EN': 'Overall heat transfer coefficient', 'KR': '종합 열전달계수'},
@@ -505,7 +505,7 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'range': [1, 50],
             'unit': 'W/m²·K',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         
         
@@ -609,7 +609,7 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'range': ['T_w_sup + 1.0', 200.0],
             'unit': '℃',
             'step': 5.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
     }
 }
@@ -620,6 +620,15 @@ GSHP_BOILER = {
     },
     'parameters': {
         # Condition ----------------------------------------------------------------------------
+        't':{
+            'explanation': {'EN': 'Operating time', 'KR': '운전 시간'},
+            'latex': r'$t$',
+            'default': 100,
+            'range': [0, 2000],
+            'unit': 'h',
+            'step': 100,
+            'category': 'Operating condition',
+        },
         'T_0': {
             'explanation': {'EN': 'environment temperature', 'KR': '기준 온도'},
             'latex': r'$T_0$',
@@ -627,7 +636,7 @@ GSHP_BOILER = {
             'range': [-50.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'dV_w_serv': {
             'explanation': {'EN': 'Tank water use', 'KR': '탱크 온수 사용량'},
@@ -636,7 +645,7 @@ GSHP_BOILER = {
             'range': [0.0, 10.0],
             'unit': 'L/min',
             'step': 0.1,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_w_sup': {
             'explanation': {'EN': 'Supply water temperature', 'KR': '상수도 온도'},
@@ -645,7 +654,7 @@ GSHP_BOILER = {
             'range': [0.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'T_w_tank': {
             'explanation': {'EN': 'Tank water temperature', 'KR': '탱크 내 온수 온도'},
@@ -663,7 +672,7 @@ GSHP_BOILER = {
             'range': ['T_w_sup+1.0', 'T_w_tank-1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'h_o': {
             'explanation': {'EN': 'Overall heat transfer coefficient', 'KR': '종합 열전달계수'},
@@ -672,7 +681,7 @@ GSHP_BOILER = {
             'range': [1, 50],
             'unit': 'W/m²·K',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         'COP_hp': {
             'explanation': {'EN': 'Heat Pump COP', 'KR': '히트펌프 COP'},
@@ -681,7 +690,7 @@ GSHP_BOILER = {
             'range': [1.0, 6.0],
             'unit': '-',
             'step': 0.1,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
         # Hot water tank ------------------------------------------------------------
         'r0': {
@@ -758,24 +767,15 @@ GSHP_BOILER = {
             'category': 'Refrigerant',
         },
         
-        # Borehole ----------------------------------------------------------------------------
-        'D_b': {
-            'explanation': {'EN': 'Borehole depth', 'KR': '보어홀 시작 깊이'},
-            'latex': r'$D_b$',
-            'default': 0.0,
-            'range': [-0.0, 10.0],
-            'unit': 'm',
-            'step': 0.1,
-            'category': 'Borehole',
-        },
+        # Ground heat exchanger ----------------------------------------------------------------------------
         'H_b': {
-            'explanation': {'EN': 'Borehole height', 'KR': '보어홀 길이'},
-            'latex': r'$H_{bh}$',
+            'explanation': {'EN': 'Borehole Height', 'KR': '보어홀 길이'},
+            'latex': r'$H$',
             'default': 200.0,
-            'range': [50.0, 300.0],
+            'range': [100, 300],
             'unit': 'm',
-            'step': 10.0,
-            'category': 'Borehole',
+            'step': 50.0,
+            'category': 'ground heat exchanger',
         },
         'r_b': {
             'explanation': {'EN': 'Borehole radius', 'KR': '보어홀 반지름'},
@@ -783,8 +783,8 @@ GSHP_BOILER = {
             'default': 0.08,
             'range': [0.05, 0.20],
             'unit': 'm',
-            'step': 0.01,
-            'category': 'Borehole',
+            'step': 0.005,
+            'category': 'Ground heat exchanger',
         },
         'R_b': {
             'explanation': {'EN': 'Borehole thermal resistance', 'KR': '보어홀 유효 열저항'},
@@ -793,10 +793,9 @@ GSHP_BOILER = {
             'range': [0.01, 0.50],
             'unit': 'm·K/W',
             'step': 0.01,
-            'category': 'Borehole',
+            'category': 'Ground heat exchanger',
         },
         
-        # Ground heat exchanger ----------------------------------------------------------------------------
         'V_f': {
             'explanation': {'EN': 'Fluid volumetric flow rate', 'KR': '유체 체적 유량'},
             'latex': r'$V_f$',
@@ -851,7 +850,7 @@ GSHP_BOILER = {
             'range': [0, 20],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Environment Condition',
+            'category': 'Operating condition',
         },
     }
 }
@@ -1189,6 +1188,7 @@ def evaluate_SOLAR_ASSISTED_GAS_BOILER(params: Dict[str, float]) -> Dict[str, fl
 def evaluate_gshp_boiler(params: Dict[str, float]) -> Dict[str, float]:
     """GSHP 보일러 평가 함수"""
     GSHPB = enex.GroundSourceHeatPumpBoiler()
+    GSHPB.time = params['t']
     GSHPB.T0 = params['T_0']
     GSHPB.T_w_tank = params['T_w_tank']
     GSHPB.T_w_sup = params['T_w_sup']

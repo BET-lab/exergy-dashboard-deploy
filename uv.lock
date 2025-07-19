@@ -460,9 +460,9 @@ wheels = [
 ]
 
 [[package]]
-name = "en-system-ex-analysis"
+name = "enex-analysis"
 version = "0.1.0"
-source = { git = "https://github.com/BET-lab/enex_analysis_engine.git#42373cfe2fad06981b6748c91d0e17550d668725" }
+source = { git = "https://github.com/BET-lab/enex_analysis_engine.git#bc03880a1f17fe2b7a4f067b08ef9139075bc633" }
 dependencies = [
     { name = "dartwork-mpl" },
     { name = "ipykernel" },
@@ -492,7 +492,7 @@ source = { editable = "." }
 dependencies = [
     { name = "altair" },
     { name = "dartwork-mpl" },
-    { name = "en-system-ex-analysis" },
+    { name = "enex-analysis" },
     { name = "pylatexenc" },
     { name = "streamlit" },
     { name = "vl-convert-python" },
@@ -508,7 +508,7 @@ dev = [
 requires-dist = [
     { name = "altair", specifier = ">=5.5.0" },
     { name = "dartwork-mpl", git = "https://github.com/dartwork-repo/dartwork-mpl.git" },
-    { name = "en-system-ex-analysis", git = "https://github.com/BET-lab/enex_analysis_engine.git" },
+    { name = "enex-analysis", git = "https://github.com/BET-lab/enex_analysis_engine.git" },
     { name = "pylatexenc", specifier = ">=2.10" },
     { name = "streamlit", specifier = ">=1.47" },
     { name = "vl-convert-python", specifier = ">=1.7.0" },

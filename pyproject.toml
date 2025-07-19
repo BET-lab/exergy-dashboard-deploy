@@ -10,7 +10,7 @@ requires-python = ">=3.11"
 dependencies = [
     "altair>=5.5.0",
     "dartwork-mpl",
-    "en-system-ex-analysis",
+    "enex-analysis",
     "pylatexenc>=2.10",
     "streamlit>=1.47",
     "vl-convert-python>=1.7.0",
@@ -28,4 +28,4 @@ dev = [
 
 [tool.uv.sources]
 dartwork-mpl = { git = "https://github.com/dartwork-repo/dartwork-mpl.git"}
-en-system-ex-analysis = { git = "https://github.com/BET-lab/enex_analysis_engine.git" }
+enex-analysis = { git = "https://github.com/BET-lab/enex_analysis_engine.git" }
