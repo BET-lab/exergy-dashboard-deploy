@@ -169,7 +169,15 @@ def plot_waterfall_multi(source):
     return chart
 
 
-def create_efficiency_grade_chart(cases=None, margin=0.5, bottom_height=20, top_height=40):
+def create_efficiency_grade_chart(
+    cases=None,
+    margin=0.5,
+    bottom_height=20,
+    top_height=40,
+    show_range=False,
+    text_rotation=0,
+    text_dy=-12,
+):
     """
     에너지 효율 등급 시각화 생성
     
@@ -183,6 +191,10 @@ def create_efficiency_grade_chart(cases=None, margin=0.5, bottom_height=20, top_
         아래쪽 진한색 박스의 높이
     top_height : int, default 40
         위쪽 연한색 박스의 높이
+    show_range : bool, default True
+        range 텍스트 표시 여부
+    text_rotation : int, default 0
+        텍스트 회전 각도 (0 또는 90)
     
     Returns:
     --------
@@ -213,6 +225,8 @@ def create_efficiency_grade_chart(cases=None, margin=0.5, bottom_height=20, top_
             'grade': grade['grade'],
             'start': grade['start'] + offset,
             'end': grade['end'] + offset,
+            'read_start': grade['start'],
+            'read_end': grade['end'],
             'color': grade['color'],
             'y': 0,
             'height': bottom_height,
@@ -224,6 +238,8 @@ def create_efficiency_grade_chart(cases=None, margin=0.5, bottom_height=20, top_
             'grade': grade['grade'],
             'start': grade['start'] + offset,
             'end': grade['end'] + offset,
+            'read_start': grade['start'],
+            'read_end': grade['end'],
             'color': grade['color'],
             'y': bottom_height - 0.5,  # 아래쪽 박스 위에 위치
             'height': top_height,
@@ -233,16 +249,16 @@ def create_efficiency_grade_chart(cases=None, margin=0.5, bottom_height=20, top_
     grade_df_bottom = pd.DataFrame(grade_data_bottom)
     grade_df_top = pd.DataFrame(grade_data_top)
     
-    # 포인트 위치 계산 (박스보다 훨씬 위)
-    point_y = bottom_height + top_height + 30  # 박스 전체 높이 + 여백
+    # 포인트 위치 계산 (위쪽 박스의 윗면과 정확히 일치)
+    point_y = top_height  # 위쪽 박스의 윗면 위치
     
     # 원래 등급 시작점들 (x축 틱 라벨용)
     original_starts = [0, 10, 20, 30, 40, 50]
     # 실제 등급 시작점들 (x축 틱 위치용)
     actual_starts = [grade['start'] for grade in grade_data_bottom]
     
-    # 전체 차트 높이 계산
-    chart_height = point_y + 50  # 포인트 위치 + 텍스트 여백
+    # 전체 차트 높이 계산 (range 텍스트를 위한 여백 추가)
+    chart_height = point_y + 0  # 포인트 위치 + 텍스트 여백 (80에서 30으로 줄임)
     
     # 아래쪽 진한색 박스 차트
     bottom_chart = alt.Chart(grade_df_bottom).mark_rect(
@@ -319,24 +335,15 @@ def create_efficiency_grade_chart(cases=None, margin=0.5, bottom_height=20, top_
             offset = margin * grade_index
             adjusted_case = case.copy()
             adjusted_case['efficiency'] = efficiency + offset
-            adjusted_case['y'] = point_y  # 박스보다 훨씬 위에 위치
+            adjusted_case['y'] = point_y  # 위쪽 박스의 윗면과 정확히 일치
             adjusted_cases.append(adjusted_case)
         
         case_df = pd.DataFrame(adjusted_cases)
         
-        # 케이스 range 텍스트 (가장 위에) - 첫 번째
-        case_texts = alt.Chart(case_df).mark_text(
-            fontSize=10,
-            fontWeight='bold',
-            dy=-15,  # 포인트 위로 15px 이동
-            align='center'
-        ).encode(
-            x=alt.X('efficiency:Q'),
-            y=alt.Y('y:Q'),
-            text=alt.Text('range:N')
-        )
+        # 레이어 순서: point, text, range (y축 낮은 순서대로 추가, 그려질 때는 높은 순서)
+        layers = [bottom_chart, top_chart, label_chart]
         
-        # 케이스 점 차트 - 두 번째
+        # 3. 케이스 점 차트 (가장 아래) - 위쪽 박스의 윗면에 정확히 위치
         case_points = alt.Chart(case_df).mark_circle(
             size=100,
             color='black',
@@ -347,20 +354,38 @@ def create_efficiency_grade_chart(cases=None, margin=0.5, bottom_height=20, top_
             y=alt.Y('y:Q'),
             tooltip=['name:N', 'efficiency:Q', 'range:N']
         )
+        layers.append(case_points)
         
-        # 케이스 이름 텍스트 (포인트 아래) - 세 번째
+        # 2. 케이스 이름 텍스트 (포인트 위) - 회전 옵션 적용
+        text_angle = text_rotation
         case_names = alt.Chart(case_df).mark_text(
             fontSize=9,
-            dy=20,  # 포인트 아래로 20px 이동
-            align='center'
+            dx=text_dy,  # 회전 시 위치 조정
+            align='left',
+            angle=text_angle
         ).encode(
             x=alt.X('efficiency:Q'),
             y=alt.Y('y:Q'),
             text=alt.Text('name:N')
         )
+        layers.append(case_names)
         
-        # 모든 레이어 결합 (순서: range텍스트, 포인트, 이름텍스트)
-        chart = alt.layer(bottom_chart, top_chart, label_chart, case_texts, case_points, case_names)
+        # 1. 케이스 range 텍스트 (가장 위에) - show_range가 True일 때만
+        if show_range:
+            case_texts = alt.Chart(case_df).mark_text(
+                fontSize=10,
+                fontWeight='bold',
+                dy=-15,  # 포인트 위로 15px 이동
+                align='center'
+            ).encode(
+                x=alt.X('efficiency:Q'),
+                y=alt.Y('y:Q'),
+                text=alt.Text('range:N')
+            )
+            layers.append(case_texts)
+        
+        # 모든 레이어 결합
+        chart = alt.layer(*layers)
     else:
         # 케이스 없이 등급만 표시
         chart = alt.layer(bottom_chart, top_chart, label_chart)
