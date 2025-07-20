@@ -180,6 +180,7 @@ def create_efficiency_grade_chart(
     text_dy=-12,
     grade_unit=10,
     font_size=16,
+    grade_ranges=None,
 ):
     """
     에너지 효율 등급 시각화 생성
@@ -187,17 +188,28 @@ def create_efficiency_grade_chart(
     Parameters:
     -----------
     cases : list of dict, optional
-        케이스 데이터 [{'name': '가스보일러', 'efficiency': 4.5, 'range': '4-6'}, ...]
+        케이스 데이터 [{'name': '가스보일러', 'efficiency': 4.5}, ...]
     margin : float, default 0.5
         인접한 등급 간 마진
     bottom_height : int, default 20
-        아래쪽 진한색 박스의 높이
+        아래쪽 알파 박스의 높이
     top_height : int, default 40
-        위쪽 연한색 박스의 높이
-    show_range : bool, default True
-        range 텍스트 표시 여부
+        위쪽 진한색 박스의 높이
+    show_range : bool, default False
+        효율값 텍스트 표시 여부 (현재 비활성화됨)
     text_rotation : int, default 0
         텍스트 회전 각도 (0 또는 90)
+    text_dx : int, default 12
+        텍스트 x축 오프셋
+    text_dy : int, default -12
+        텍스트 y축 오프셋
+    grade_unit : int, default 10
+        기본 등급 단위 (grade_ranges가 None일 때만 사용)
+    font_size : int, default 16
+        폰트 크기
+    grade_ranges : list of tuple, optional
+        각 등급의 (start, end) 범위 리스트. 예: [(0,10), (10,20), (20,30), (30,40), (40,50), (50,60)]
+        제공되면 grade_unit은 무시됨
     
     Returns:
     --------
@@ -226,13 +238,24 @@ def create_efficiency_grade_chart(
     ]
 
     grades = []
-    for i, label in zip(range(6), ['E', 'D', 'C', 'B', 'A', 'S']):
-        grades.append({
-            'grade': label,
-            'start': i * grade_unit,
-            'end': (i + 1) * grade_unit,
-            'color': colors[i]
-        })
+    if grade_ranges is not None:
+        # 직접 지정된 범위 사용
+        for i, (label, (start, end)) in enumerate(zip(['E', 'D', 'C', 'B', 'A', 'S'], grade_ranges)):
+            grades.append({
+                'grade': label,
+                'start': start,
+                'end': end,
+                'color': colors[i]
+            })
+    else:
+        # grade_unit을 사용한 기본 범위
+        for i, label in zip(range(6), ['E', 'D', 'C', 'B', 'A', 'S']):
+            grades.append({
+                'grade': label,
+                'start': i * grade_unit,
+                'end': (i + 1) * grade_unit,
+                'color': colors[i]
+            })
     
     # 마진을 적용한 등급 데이터 생성 (박스 이동 방식)
     grade_data_bottom = []  # 아래쪽 알파 박스
