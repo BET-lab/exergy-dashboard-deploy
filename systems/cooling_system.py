@@ -70,7 +70,7 @@ COOLING_ASHP = {
             'range': [-30, 'T_a_int_out - 1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'refrigerant',
+            'category': 'internal unit',
         },
         'T_r_ext': {
             'explanation': {'EN': 'External Unit Refrigerant Temperature', 'KR': '실외기 측 냉매 온도'},
@@ -79,7 +79,7 @@ COOLING_ASHP = {
             'range': ['T_r_int + 5', 100],
             'unit': '℃',
             'step': 1.0,
-            'category': 'refrigerant',
+            'category': 'external unit',
         },
         
         'T_a_ext_out': {
@@ -162,7 +162,7 @@ COOLING_GSHP = {
             'range': [-25, 'T_a_int_out-1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'refrigerant',
+            'category': 'internal unit',
         },
         'H': {
             'explanation': {'EN': 'Borehole Height', 'KR': '보어홀 길이'},
@@ -207,7 +207,7 @@ COOLING_GSHP = {
             'range': [150, 250],
             'unit': 'W',
             'step': 10.0,
-            'category': 'Ground heat exchanger',
+            'category': 'ground heat exchanger',
         },
         
         'k_g': {
@@ -332,17 +332,19 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
         
         if sys_type == 'Ground source heat pump':
             items = [
-            {'label': 'Xin_g', 'amount': sv['Xin_g'], 'desc': 'Exergy from undisturbed ground'},
-            {'label': 'Xc_g', 'amount': -sv['Xc_g'], 'desc': 'Consumption in ground'},
-            {'label': 'E_pmp', 'amount': sv['E_pmp'], 'desc': 'Electric input to pump'},
-            {'label': 'Xc_GHE', 'amount': -sv['Xc_GHE'], 'desc': 'Consumption in ground heat exchanger'},
-            {'label': 'Xc_exch', 'amount': -sv['Xc_exch'], 'desc': 'Consumption in heat exchanger'},
-            {'label': 'E_cmp', 'amount': sv['E_cmp'], 'desc': 'Electric input to compressor'},
-            {'label': 'Xc_r', 'amount': -sv['Xc_r'], 'desc': 'Consumption in refrigerant loop'},
-            {'label': 'E_fan_int', 'amount': sv['E_fan_int'], 'desc': 'Electric input to fan'},
-            {'label': 'X_a_int_in', 'amount': sv['X_a_int_in'], 'desc': 'Exergy from room air'},
-            {'label': 'Xc_int', 'amount': -sv['Xc_int'], 'desc': 'Consumption in internal unit'},
-            {'label': 'Xout_int', 'amount': 0, 'desc': 'Supply air to room'},
+                {'label': 'Xin_g', 'amount': sv['Xin_g'], 'desc': 'Exergy from undisturbed ground'},
+                {'label': 'Xc_g', 'amount': -sv['Xc_g'], 'desc': 'Consumption in ground'},
+                {'label': 'E_pmp', 'amount': sv['E_pmp'], 'desc': 'Electric input to pump'},
+                {'label': 'Xc_GHE', 'amount': -sv['Xc_GHE'], 'desc': 'Consumption in ground heat exchanger'},
+                {'label': 'X_r_exch(from refrigerant)', 'amount': abs(sv['X_r_exch']), 'desc': 'Cool exergy supplied by refrigerant' if sv['X_r_exch'] >= 0 else 'Warm exergy supplied by refrigerant'},
+                {'label': 'Xc_exch', 'amount': -sv['Xc_exch'], 'desc': 'Consumption in heat exchanger'},
+                {'label': 'E_cmp', 'amount': sv['E_cmp'], 'desc': 'Electric input to compressor'},
+                {'label': 'Xc_r', 'amount': -sv['Xc_r'], 'desc': 'Consumption in refrigerant loop'},
+                {'label': 'X_r_exch(to heat exchanger)', 'amount': -abs(sv['X_r_exch']), 'desc': 'Cool exergy supplied to heat exchanger' if sv['X_r_exch'] >= 0 else 'Warm exergy supplied to heat exchanger'},
+                {'label': 'E_fan_int', 'amount': sv['E_fan_int'], 'desc': 'Electric input to fan'},
+                {'label': 'X_a_int_in', 'amount': sv['X_a_int_in'], 'desc': 'Exergy from room air'},
+                {'label': 'Xc_int', 'amount': -sv['Xc_int'], 'desc': 'Consumption in internal unit'},
+                {'label': 'Xout_int', 'amount': 0, 'desc': 'Supply air to room'},
             ]
             
         for item in items:
@@ -469,6 +471,7 @@ def evaluate_cooling_gshp(params: Dict[str, float]) -> Dict[str, float]:
     Xc_g = GSHP_C.Xc_g
 
     # Ground heat exchanger
+    X_r_exch = GSHP_C.X_r_exch
     E_pmp = GSHP_C.E_pmp
     Xin_GHE = GSHP_C.Xin_GHE
     Xout_GHE = GSHP_C.Xout_GHE

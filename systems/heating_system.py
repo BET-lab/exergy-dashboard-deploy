@@ -69,7 +69,7 @@ HEATING_ASHP = {
             'range': ['T_a_room + 1.0', 80],
             'unit': '℃',
             'step': 1.0,
-            'category': 'refrigerant',
+            'category': 'internal unit',
         },
         'T_r_ext': {
             'explanation': {'EN': 'External Unit Refrigerant Temperature', 'KR': '실외기 측 냉매 온도'},
@@ -78,7 +78,7 @@ HEATING_ASHP = {
             'range': [-40 , 'T_a_ext_out - 1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'refrigerant',
+            'category': 'external unit',
         },
         'T_a_ext_out': {
             'explanation': {'EN': 'External Unit Air Outlet Temperature', 'KR': '실외기 공기 토출 온도'},
@@ -155,8 +155,6 @@ HEATING_GSHP = {
             'step': 500.0,
             'category': 'internal unit',
         },
-        
-        # Refrigerant ----------------------------------------------------------------------------
         'T_r_int': {
             'explanation': {'EN': 'Internal Unit Refrigerant Temperature', 'KR': '실내기 측 냉매 온도'},
             'latex': r'$T_{r,int}$',
@@ -164,7 +162,7 @@ HEATING_GSHP = {
             'range': ['T_a_room + 1.0', 60],
             'unit': '℃',
             'step': 1.0,
-            'category': 'refrigerant',
+            'category': 'internal unit',
         },
         
         # borehole ----------------------------------------------------------------------------
@@ -211,7 +209,7 @@ HEATING_GSHP = {
             'range': [150, 250],
             'unit': 'W',
             'step': 10.0,
-            'category': 'Ground heat exchanger',
+            'category': 'ground heat exchanger',
         },
         
         # Ground ----------------------------------------------------------------------------
@@ -435,9 +433,11 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
                 {'label': 'Xc_g', 'amount': -sv['Xc_g'], 'desc': 'Consumption in ground'},
                 {'label': 'E_pmp', 'amount': sv['E_pmp'], 'desc': 'Electric input to pump'},
                 {'label': 'Xc_GHE', 'amount': -sv['Xc_GHE'], 'desc': 'Consumption in ground heat exchanger'},
+                {'label': 'X_r_exch(from refrigerant)', 'amount': abs(sv['X_r_exch']), 'desc': 'Cool exergy supplied by refrigerant' if sv['X_r_exch'] >= 0 else 'Warm exergy supplied by refrigerant'},
                 {'label': 'Xc_exch', 'amount': -sv['Xc_exch'], 'desc': 'Consumption in heat exchanger'},
                 {'label': 'E_cmp', 'amount': sv['E_cmp'], 'desc': 'Electric input to compressor'},
                 {'label': 'Xc_r', 'amount': -sv['Xc_r'], 'desc': 'Consumption in refrigerant loop'},
+                {'label': 'X_r_exch(to heat exchanger)', 'amount': -abs(sv['X_r_exch']), 'desc': 'Cool exergy supplied to heat exchanger' if sv['X_r_exch'] >= 0 else 'Warm exergy supplied to heat exchanger'},
                 {'label': 'E_fan_int', 'amount': sv['E_fan_int'], 'desc': 'Electric input to fan'},
                 {'label': 'X_a_int_in', 'amount': sv['X_a_int_in'], 'desc': 'Exergy from room air'},
                 {'label': 'Xc_int', 'amount': -sv['Xc_int'], 'desc': 'Consumption in internal unit'},
@@ -573,6 +573,7 @@ def evaluate_heating_gshp(params: Dict[str, float]) -> Dict[str, float]:
     Xc_g = GSHP_H.Xc_g
 
     # Ground heat exchanger
+    X_r_exch = GSHP_H.X_r_exch
     E_pmp = GSHP_H.E_pmp
     Xin_GHE = GSHP_H.Xin_GHE
     Xout_GHE = GSHP_H.Xout_GHE

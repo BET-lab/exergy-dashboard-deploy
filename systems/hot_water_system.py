@@ -348,7 +348,7 @@ HEAT_PUMP_BOILER = {
             'range': [0, 100],
             'unit': '℃',
             'step': 5.0,
-            'category': 'temperature',
+            'category': 'Hot water tank',
         },
         
         # external unit -------------------------------------------------------------
@@ -747,7 +747,7 @@ GSHP_BOILER = {
             'range': ['T_w_tank+1.0', 100.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Refrigerant',
+            'category': 'Hot water tank',
         },
 
         # Ground heat exchanger -----------------------------------------------------------------
@@ -776,7 +776,7 @@ GSHP_BOILER = {
             'range': [0.01, 0.50],
             'unit': 'm·K/W',
             'step': 0.01,
-            'category': 'Ground heat exchanger',
+            'category': 'ground heat exchanger',
         },
         
         'V_f': {
@@ -786,7 +786,7 @@ GSHP_BOILER = {
             'range': [1.0, 50.0],
             'unit': 'L/min',
             'step': 1.0,
-            'category': 'Ground heat exchanger',
+            'category': 'ground heat exchanger',
         },
         'E_pmp': {
             'explanation': {'EN': 'Ground heat exchanger Pump Power', 'KR': 'GHE 펌프 전력'},
@@ -795,7 +795,7 @@ GSHP_BOILER = {
             'range': [150, 250],
             'unit': 'W',
             'step': 10.0,
-            'category': 'Ground heat exchanger',
+            'category': 'ground heat exchanger',
         },
         
         # Ground ----------------------------------------------------------------------------
@@ -981,9 +981,11 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
             {'label': 'Xc_g', 'amount': -sv['Xc_g'], 'desc': 'Exergy loss (ground)'},
             {'label': 'E_pmp', 'amount': sv['E_pmp'], 'desc': 'Pump power'},
             {'label': 'Xc_GHE', 'amount': -sv['Xc_GHE'], 'desc': 'Exergy loss (GHE)'},
+            {'label': 'X_r_exch(from refrigerant)', 'amount': abs(sv['X_r_exch']), 'desc': 'Cool exergy supplied by refrigerant' if sv['X_r_exch'] >= 0 else 'Warm exergy supplied by refrigerant'},
             {'label': 'Xc_exch', 'amount': -sv['Xc_exch'], 'desc': 'Exergy loss (external)'},
             {'label': 'X_cmp', 'amount': sv['X_cmp'], 'desc': 'Exergy input by compressor'},
             {'label': 'Xc_r', 'amount': -sv['Xc_r'], 'desc': 'Exergy loss (refrigerant)'},
+            {'label': 'X_r_exch(to heat exchanger)', 'amount': -abs(sv['X_r_exch']), 'desc': 'Cool exergy supplied to heat exchanger' if sv['X_r_exch'] >= 0 else 'Warm exergy supplied to heat exchanger'},
             {'label': 'X_l_tank', 'amount': -sv['X_l_tank'], 'desc': 'Exergy loss (tank leakage)'},
             {'label': 'X_w_sup_tank', 'amount': sv['X_w_sup_tank'], 'desc': 'Exergy supplied'},
             {'label': 'Xc_tank', 'amount': -sv['Xc_tank'], 'desc': 'Exergy consumption due to heat loss'},
@@ -1244,6 +1246,7 @@ def evaluate_gshp_boiler(params: Dict[str, float]) -> Dict[str, float]:
     X_cmp = GSHPB.X_cmp
     Xc_r = GSHPB.Xc_r
     
+    X_r_exch = GSHPB.X_r_exch
     X_l_tank = GSHPB.X_l_tank
     X_w_sup_tank = GSHPB.X_w_sup_tank
     Xc_tank = GSHPB.Xc_tank
