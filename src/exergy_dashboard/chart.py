@@ -340,7 +340,7 @@ def create_efficiency_grade_chart(
     ).encode(
         x=alt.X('start:Q', 
                 title='엑서지 효율 [%] = 사용된 엑서지 / 투입된 엑서지',
-                scale=alt.Scale(domain=[actual_starts[0] - margin/2, actual_starts[-1] + margin]),
+                scale=alt.Scale(domain=[actual_starts[0] - margin/2, actual_starts[-1] + margin/2]),
                 axis=alt.Axis(
                     values=actual_starts,
                     labelExpr=f"datum.value == {actual_starts[0]} ? '{labels[0]}' : datum.value == {actual_starts[1]} ? '{labels[1]}' : datum.value == {actual_starts[2]} ? '{labels[2]}' : datum.value == {actual_starts[3]} ? '{labels[3]}' : datum.value == {actual_starts[4]} ? '{labels[4]}' : datum.value == {actual_starts[5]} ? '{labels[5]}' : datum.value == {actual_starts[6]} ? '{labels[6]}' : ''",
