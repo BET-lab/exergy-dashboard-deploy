@@ -214,6 +214,16 @@ def create_efficiency_grade_chart(
         '#32CD32',
         '#228B22'
     ]
+    
+    # 텍스트용 진한 색상 (시인성 개선)
+    text_colors = [
+        '#E72D19',
+        '#FF8C00',
+        '#F0CA00',
+        '#6BFF6B',
+        '#25DA25',
+        '#00A752'
+    ]
 
     grades = []
     for i, label in zip(range(6), ['F', 'D', 'C', 'B', 'A', 'A+']):
@@ -354,14 +364,17 @@ def create_efficiency_grade_chart(
             # 어느 등급에 속하는지 찾기
             grade_index = 0
             grade_color = colors[0]  # 기본값
+            text_color = text_colors[0]  # 텍스트용 기본값
             for i, grade in enumerate(grades):
                 if grade['start'] <= efficiency < grade['end']:
                     grade_index = i
                     grade_color = grade['color']
+                    text_color = text_colors[i]
                     break
                 elif efficiency >= grades[-1]['end']:  # A+ 등급 이상
                     grade_index = len(grades) - 1
                     grade_color = grades[-1]['color']
+                    text_color = text_colors[-1]
                     break
             
             # 해당 등급의 마진 offset 적용
@@ -372,6 +385,7 @@ def create_efficiency_grade_chart(
             adjusted_case['y'] = point_y  # 위쪽 박스의 윗면과 정확히 일치
             adjusted_case['y2'] = bottom_height
             adjusted_case['grade_color'] = grade_color  # 등급 색상 추가
+            adjusted_case['text_color'] = text_color  # 텍스트용 진한 색상 추가
             adjusted_cases.append(adjusted_case)
         
         case_df = pd.DataFrame(adjusted_cases)
@@ -422,7 +436,7 @@ def create_efficiency_grade_chart(
             x=alt.X('efficiency:Q'),
             y=alt.Y('y:Q'),
             text=alt.Text('name:N'),
-            color=alt.Color('grade_color:N', scale=None)
+            color=alt.Color('text_color:N', scale=None)
         )
         layers.append(case_names)
         
