@@ -275,7 +275,7 @@ def create_efficiency_grade_chart(
     print(labels)
 
     # 전체 차트 높이 계산
-    chart_height = bottom_height + top_height  # 전체 박스 높이
+    chart_height = top_height  # 전체 박스 높이
     
     # 아래쪽 알파 박스 차트
     bottom_chart = alt.Chart(grade_df_bottom).mark_rect(
