@@ -404,21 +404,21 @@ def create_efficiency_grade_chart(
         layers.append(case_names)
         
         # 1. 케이스 range 텍스트 (가장 위에) - show_range가 True일 때만
-        if show_range:
-            case_texts = alt.Chart(case_df).mark_text(
-                fontSize=font_size,
-                fontWeight='normal',
-                color='black',
-                # stroke='white',
-                # strokeWidth=0.5,
-                dy=text_dy + 5,  # 포인트 위로 15px 이동
-                align='center'
-            ).encode(
-                x=alt.X('efficiency:Q'),
-                y=alt.Y('y:Q'),
-                text=alt.Text('real_efficiency:N', format='.1f')
-            )
-            layers.append(case_texts)
+        # if show_range:
+        #     case_texts = alt.Chart(case_df).mark_text(
+        #         fontSize=font_size,
+        #         fontWeight='normal',
+        #         color='black',
+        #         # stroke='white',
+        #         # strokeWidth=0.5,
+        #         dy=text_dy + 5,  # 포인트 위로 15px 이동
+        #         align='center'
+        #     ).encode(
+        #         x=alt.X('efficiency:Q'),
+        #         y=alt.Y('y:Q'),
+        #         text=alt.Text('real_efficiency:N', format='.1f')
+        #     )
+        #     layers.append(case_texts)
         
         # 모든 레이어 결합
         chart = alt.layer(*layers)
