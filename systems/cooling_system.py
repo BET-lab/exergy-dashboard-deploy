@@ -6,7 +6,7 @@ import altair as alt
 from exergy_dashboard.system import register_system
 from exergy_dashboard.evaluation import registry as eval_registry
 from exergy_dashboard.visualization import registry as viz_registry
-from exergy_dashboard.chart import plot_waterfall_multi
+from exergy_dashboard.chart import plot_waterfall_multi, create_efficiency_grade_chart
 import enex_analysis as enex
 
 
@@ -354,6 +354,39 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
         source = pd.concat(sources)
         return plot_waterfall_multi(source)
     return alt.Chart(pd.DataFrame({'x': [0], 'y': [0]})).mark_point()
+
+
+# COOLING 모드 시각화 함수들
+@viz_registry.register('COOLING', 'Exergy efficiency grade')
+def plot_exergy_efficiency_grade(session_state: Any, selected_systems: List[str]) -> alt.Chart:
+    """엑서지 효율 차트 생성"""
+    # COOLING 모드 전용 시각화
+    cases = [
+
+    ]
+    for key in selected_systems:
+        sv = session_state.systems[key]['variables']
+        eff = sv['X_eff'] * 100
+        name = ''.join(c[0] for c in key.title().split()[:-1]) + ' ' + key.title().split()[-1]
+        cases.append({
+            'name': name,
+            'efficiency': eff,
+            # No meaning.
+            'range': '0-100',
+            # No meaning.
+            'y': 45,
+        })
+
+    return create_efficiency_grade_chart(
+        cases=cases,
+        margin=0.5,
+        bottom_height=30,
+        top_height=90,
+        show_range=True,
+        text_rotation=270,
+        text_dy=12,
+        grade_unit=8,
+    )
 
 
 @eval_registry.register('COOLING', 'Air source heat pump')
