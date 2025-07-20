@@ -178,6 +178,7 @@ def create_efficiency_grade_chart(
     text_rotation=0,
     text_dy=-12,
     grade_unit=10,
+    font_size=16,
 ):
     """
     에너지 효율 등급 시각화 생성
@@ -282,7 +283,11 @@ def create_efficiency_grade_chart(
                     labelExpr=f"datum.value == {actual_starts[0]} ? '{labels[0]}' : datum.value == {actual_starts[1]} ? '{labels[1]}' : datum.value == {actual_starts[2]} ? '{labels[2]}' : datum.value == {actual_starts[3]} ? '{labels[3]}' : datum.value == {actual_starts[4]} ? '{labels[4]}' : datum.value == {actual_starts[5]} ? '{labels[5]}' : ''",
                     grid=False,
                     domain=False,
-                    ticks=False
+                    ticks=False,
+                    labelFontSize=font_size,
+                    labelColor='black',
+                    titleFontSize=font_size,
+                    titleColor='black',
                 )),
         x2=alt.X2('end:Q'),
         y=alt.Y('y:Q', 
@@ -296,8 +301,8 @@ def create_efficiency_grade_chart(
             alt.Tooltip('real_end:Q', title='End')
         ]
     ).properties(
-        width=600,
-        height=chart_height
+        width='container',
+        # height=chart_height
     )
     
     # 위쪽 연한색 박스 차트 (알파 적용)
@@ -324,7 +329,7 @@ def create_efficiency_grade_chart(
     grade_labels['y_center'] = grade_labels['y'] + grade_labels['height'] / 2
     
     label_chart = alt.Chart(grade_labels).mark_text(
-        fontSize=16,
+        fontSize=font_size * 1.3,
         fontWeight='bold',
         color='white'
     ).encode(
@@ -381,7 +386,7 @@ def create_efficiency_grade_chart(
         # 2. 케이스 이름 텍스트 (포인트 위) - 회전 옵션 적용
         text_angle = text_rotation
         case_names = alt.Chart(case_df).mark_text(
-            fontSize=9,
+            fontSize=font_size,
             dx=text_dy,  # 회전 시 위치 조정
             align='left',
             angle=text_angle
@@ -395,17 +400,17 @@ def create_efficiency_grade_chart(
         # 1. 케이스 range 텍스트 (가장 위에) - show_range가 True일 때만
         if show_range:
             case_texts = alt.Chart(case_df).mark_text(
-                fontSize=10,
+                fontSize=font_size,
                 fontWeight='normal',
                 color='black',
                 # stroke='white',
                 # strokeWidth=0.5,
-                dy=15,  # 포인트 위로 15px 이동
+                dy=text_dy + 5,  # 포인트 위로 15px 이동
                 align='center'
             ).encode(
                 x=alt.X('efficiency:Q'),
                 y=alt.Y('y:Q'),
-                text=alt.Text('real_efficiency:N')
+                text=alt.Text('real_efficiency:N', format='.1f')
             )
             layers.append(case_texts)
         
@@ -417,5 +422,6 @@ def create_efficiency_grade_chart(
     
     # view의 외각선 제거
     chart = chart.configure_view(stroke=None).resolve_scale(color='independent')
-    
+    chart = chart.properties(width='container')
+
     return chart
