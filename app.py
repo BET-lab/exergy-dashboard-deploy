@@ -130,12 +130,13 @@ def add_system(type_):
         sss[f"{data['name']}:{k}"] = v['default']
 
 
+
 with st.sidebar:
     st.title('Exergy Analyzer')
     st.divider()
-    st.header('System operating mode')
+    st.header('System Operating Mode')
     systems = get_systems()  # 최신 상태 가져오기
-    available_modes = list(systems.keys())
+    available_modes = [k.capitalize() for k in systems.keys()]
     if not available_modes:
         st.write('No modes available.')
         st.stop()
@@ -163,7 +164,10 @@ with st.sidebar:
             sss.selected_system_tab = None
         st.rerun()
 
-    st.header('Add system')
+    # --- 공간 추가 ---
+    st.markdown("<div style='height: 32px;'></div>", unsafe_allow_html=True)
+
+    st.header('Add New System')
     systems = get_systems()  # 최신 상태 가져오기
     if len(systems[sss.mode.upper()]) == 0:
         st.write('No system available for the selected mode.')
@@ -173,16 +177,19 @@ with st.sidebar:
             'System type', systems[sss.mode.upper()].keys()
         )
         st.button(
-            'Add system',
+            'Add to List',
             use_container_width=True,
             on_click=functools.partial(add_system, type_=selected),
         )
+
+    # --- 공간 추가 ---
+    st.markdown("<div style='height: 32px;'></div>", unsafe_allow_html=True)
 
     # 시스템 type 선택을 버튼으로 변경
     mode_upper = sss.mode.upper()
     valid_systems = [sys_name for sys_name, system in sss.systems.items() if system['type'] in systems[mode_upper]]
     if valid_systems:
-        st.header('Select system')
+        st.header('Systems for Comparison')
         # 세션 상태의 선택값이 유효하지 않으면 첫 번째로 자동 설정
         if 'selected_system_tab' not in st.session_state or st.session_state['selected_system_tab'] not in valid_systems:
             st.session_state['selected_system_tab'] = valid_systems[0]
@@ -271,7 +278,7 @@ for key in sss.systems.keys():
         print(f"Error evaluating parameters for {key}: {e}")
 
 with col2:
-    st.subheader('Output Data :chart_with_upwards_trend:')
+    st.subheader('Results Visualization :chart_with_upwards_trend:')
     
     # 현재 모드에 유효한 시스템만 필터링
     mode_upper = sss.mode.upper()
