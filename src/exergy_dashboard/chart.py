@@ -177,6 +177,7 @@ def create_efficiency_grade_chart(
     show_range=False,
     text_rotation=0,
     text_dy=-12,
+    grade_unit=10,
 ):
     """
     에너지 효율 등급 시각화 생성
@@ -203,14 +204,23 @@ def create_efficiency_grade_chart(
     """
     
     # 효율 등급 정의
-    grades = [
-        {'grade': 'F', 'start': 0, 'end': 10, 'color': '#E74C3C'},      # 빨강
-        {'grade': 'D', 'start': 10, 'end': 20, 'color': '#FF8C00'},     # 주황
-        {'grade': 'C', 'start': 20, 'end': 30, 'color': '#FFD700'},     # 노랑
-        {'grade': 'B', 'start': 30, 'end': 40, 'color': '#90EE90'},     # 연두
-        {'grade': 'A', 'start': 40, 'end': 50, 'color': '#32CD32'},     # 초록
-        {'grade': 'A+', 'start': 50, 'end': 60, 'color': '#228B22'}     # 진초록
+    colors = [
+        '#E74C3C',
+        '#FF8C00',
+        '#FFD700',
+        '#90EE90',
+        '#32CD32',
+        '#228B22'
     ]
+
+    grades = []
+    for i, label in zip(range(6), ['F', 'D', 'C', 'B', 'A', 'A+']):
+        grades.append({
+            'grade': label,
+            'start': i * grade_unit,
+            'end': (i + 1) * grade_unit,
+            'color': colors[i]
+        })
     
     # 마진을 적용한 등급 데이터 생성 (박스 이동 방식)
     grade_data_bottom = []  # 아래쪽 진한색 박스
@@ -252,11 +262,11 @@ def create_efficiency_grade_chart(
     # 포인트 위치 계산 (위쪽 박스의 윗면과 정확히 일치)
     point_y = top_height  # 위쪽 박스의 윗면 위치
     
-    # 원래 등급 시작점들 (x축 틱 라벨용)
-    original_starts = [0, 10, 20, 30, 40, 50]
     # 실제 등급 시작점들 (x축 틱 위치용)
     actual_starts = [grade['start'] for grade in grade_data_bottom]
-    
+    labels= [grade['read_start'] for grade in grade_data_bottom]
+    print(labels)
+
     # 전체 차트 높이 계산 (range 텍스트를 위한 여백 추가)
     chart_height = point_y + 0  # 포인트 위치 + 텍스트 여백 (80에서 30으로 줄임)
     
@@ -269,7 +279,7 @@ def create_efficiency_grade_chart(
                 title='엑서지 효율 [%] = 사용된 엑서지 / 투입된 엑서지',
                 axis=alt.Axis(
                     values=actual_starts,
-                    labelExpr=f"datum.value == {actual_starts[0]} ? '0' : datum.value == {actual_starts[1]} ? '10' : datum.value == {actual_starts[2]} ? '20' : datum.value == {actual_starts[3]} ? '30' : datum.value == {actual_starts[4]} ? '40' : datum.value == {actual_starts[5]} ? '50' : ''",
+                    labelExpr=f"datum.value == {actual_starts[0]} ? '{labels[0]}' : datum.value == {actual_starts[1]} ? '{labels[1]}' : datum.value == {actual_starts[2]} ? '{labels[2]}' : datum.value == {actual_starts[3]} ? '{labels[3]}' : datum.value == {actual_starts[4]} ? '{labels[4]}' : datum.value == {actual_starts[5]} ? '{labels[5]}' : ''",
                     grid=False,
                     domain=False,
                     ticks=False
