@@ -376,7 +376,7 @@ def create_efficiency_grade_chart(
         layers = [bottom_chart, top_chart, label_chart]
         # 포인트에서 알파 박스 높이까지의 점선 수직선
         case_lines = alt.Chart(case_df).mark_rule(
-            strokeDash=[3, 3],  # 점선
+            strokeDash=[2, 2],  # 점선
             color='gray',
             strokeWidth=1
         ).encode(
