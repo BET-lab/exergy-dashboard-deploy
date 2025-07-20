@@ -351,6 +351,7 @@ def create_efficiency_grade_chart(
                     labelColor='black',
                     titleFontSize=font_size,
                     titleColor='black',
+                    labelPadding=5,  # 틱 라벨과 축 사이의 거리 줄임
                 )),
         x2=alt.X2('end:Q'),
         y=alt.Y('y:Q'),
