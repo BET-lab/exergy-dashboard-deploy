@@ -340,7 +340,11 @@ def create_efficiency_grade_chart(
     ).encode(
         x=alt.X('start:Q', 
                 title='',  # 빈 제목으로 설정
-                scale=alt.Scale(domain=[actual_starts[0] - margin/2, actual_starts[-1] + margin/2]),
+                scale=alt.Scale(
+                    domain=[actual_starts[0] - margin/2, actual_starts[-1] + margin/2],
+                    range=[{'expr': '- width * 0.03'}, {'expr': 'width - 20'}]  # 좌우 20px 여백으로 균등하게, 사전 정의된 width 사용
+                    # range=[{'expr': '- width * 0.12'}, {'expr': 'width + 30'}]  # 좌우 20px 여백으로 균등하게, 사전 정의된 width 사용
+                ),
                 axis=alt.Axis(
                     values=actual_starts,
                     labelExpr=f"datum.value == {actual_starts[0]} ? '{labels[0]}' : datum.value == {actual_starts[1]} ? '{labels[1]}' : datum.value == {actual_starts[2]} ? '{labels[2]}' : datum.value == {actual_starts[3]} ? '{labels[3]}' : datum.value == {actual_starts[4]} ? '{labels[4]}' : datum.value == {actual_starts[5]} ? '{labels[5]}' : datum.value == {actual_starts[6]} ? '{labels[6]}' : ''",
@@ -374,7 +378,12 @@ def create_efficiency_grade_chart(
     ).encode(
         x=alt.X('x_center:Q'),
         y=alt.Y('y_center:Q'),
-        text=alt.Text('grade:N')
+        text=alt.Text('grade:N'),
+        tooltip=[
+            alt.Tooltip('grade:N', title='Grade'),
+            alt.Tooltip('real_start:Q', title='Start'),
+            alt.Tooltip('real_end:Q', title='End')
+        ]
     )
     
     # x축 제목을 별도 텍스트로 추가 (dx 오프셋 적용 가능)
@@ -437,7 +446,7 @@ def create_efficiency_grade_chart(
         # 포인트에서 알파 박스 높이까지의 점선 수직선
         case_lines = alt.Chart(case_df).mark_rule(
             strokeDash=[2, 2],  # 점선
-            strokeWidth=1.5
+            strokeWidth=2.5
         ).encode(
             x=alt.X('efficiency:Q'),
             y=alt.Y('y:Q'),
