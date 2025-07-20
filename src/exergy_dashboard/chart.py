@@ -176,9 +176,11 @@ def create_efficiency_grade_chart(
     top_height=40,
     show_range=False,
     text_rotation=0,
+    text_dx=12,
     text_dy=-12,
     grade_unit=10,
     font_size=16,
+    grade_ranges=None,
 ):
     """
     에너지 효율 등급 시각화 생성
@@ -186,17 +188,28 @@ def create_efficiency_grade_chart(
     Parameters:
     -----------
     cases : list of dict, optional
-        케이스 데이터 [{'name': '가스보일러', 'efficiency': 4.5, 'range': '4-6'}, ...]
+        케이스 데이터 [{'name': '가스보일러', 'efficiency': 4.5}, ...]
     margin : float, default 0.5
         인접한 등급 간 마진
     bottom_height : int, default 20
-        아래쪽 진한색 박스의 높이
+        아래쪽 알파 박스의 높이
     top_height : int, default 40
-        위쪽 연한색 박스의 높이
-    show_range : bool, default True
-        range 텍스트 표시 여부
+        위쪽 진한색 박스의 높이
+    show_range : bool, default False
+        효율값 텍스트 표시 여부 (현재 비활성화됨)
     text_rotation : int, default 0
         텍스트 회전 각도 (0 또는 90)
+    text_dx : int, default 12
+        텍스트 x축 오프셋
+    text_dy : int, default -12
+        텍스트 y축 오프셋
+    grade_unit : int, default 10
+        기본 등급 단위 (grade_ranges가 None일 때만 사용)
+    font_size : int, default 16
+        폰트 크기
+    grade_ranges : list of tuple, optional
+        각 등급의 (start, end) 범위 리스트. 예: [(0,10), (10,20), (20,30), (30,40), (40,50), (50,60)]
+        제공되면 grade_unit은 무시됨
     
     Returns:
     --------
@@ -213,25 +226,46 @@ def create_efficiency_grade_chart(
         '#32CD32',
         '#228B22'
     ]
+    
+    # 텍스트용 진한 색상 (시인성 개선)
+    text_colors = [
+        '#E72D19',
+        '#FF8C00',
+        '#F0CA00',
+        '#00E700',
+        '#25DA25',
+        '#00A752'
+    ]
 
     grades = []
-    for i, label in zip(range(6), ['F', 'D', 'C', 'B', 'A', 'A+']):
-        grades.append({
-            'grade': label,
-            'start': i * grade_unit,
-            'end': (i + 1) * grade_unit,
-            'color': colors[i]
-        })
+    if grade_ranges is not None:
+        # 직접 지정된 범위 사용
+        for i, (label, (start, end)) in enumerate(zip(['E', 'D', 'C', 'B', 'A', 'S'], grade_ranges)):
+            grades.append({
+                'grade': label,
+                'start': start,
+                'end': end,
+                'color': colors[i]
+            })
+    else:
+        # grade_unit을 사용한 기본 범위
+        for i, label in zip(range(6), ['E', 'D', 'C', 'B', 'A', 'S']):
+            grades.append({
+                'grade': label,
+                'start': i * grade_unit,
+                'end': (i + 1) * grade_unit,
+                'color': colors[i]
+            })
     
     # 마진을 적용한 등급 데이터 생성 (박스 이동 방식)
-    grade_data_bottom = []  # 아래쪽 진한색 박스
-    grade_data_top = []     # 위쪽 연한색 박스
+    grade_data_bottom = []  # 아래쪽 알파 박스
+    grade_data_top = []     # 위쪽 진한색 박스
     
     for i, grade in enumerate(grades):
         # 첫 번째 등급은 그대로, 이후 등급들은 마진만큼 이동
         offset = margin * i
         
-        # 아래쪽 진한색 박스 (등급 텍스트용)
+        # 아래쪽 알파 박스
         grade_data_bottom.append({
             'grade': grade['grade'],
             'start': grade['start'] + offset,
@@ -240,11 +274,11 @@ def create_efficiency_grade_chart(
             'real_end': grade['end'],
             'color': grade['color'],
             'y': 0,
-            'height': bottom_height,
+            'height': bottom_height + 1,
             'original_start': grade['start']
         })
         
-        # 위쪽 연한색 박스 (알파 적용)
+        # 위쪽 진한색 박스 (등급 텍스트용)
         grade_data_top.append({
             'grade': grade['grade'],
             'start': grade['start'] + offset,
@@ -252,7 +286,7 @@ def create_efficiency_grade_chart(
             'real_start': grade['start'],
             'real_end': grade['end'],
             'color': grade['color'],
-            'y': bottom_height - 0.5,  # 아래쪽 박스 위에 위치
+            'y': bottom_height,  # 아래쪽 박스 위에 위치
             'height': top_height,
             'original_start': grade['start']
         })
@@ -260,35 +294,29 @@ def create_efficiency_grade_chart(
     grade_df_bottom = pd.DataFrame(grade_data_bottom)
     grade_df_top = pd.DataFrame(grade_data_top)
     
-    # 포인트 위치 계산 (위쪽 박스의 윗면과 정확히 일치)
-    point_y = top_height  # 위쪽 박스의 윗면 위치
+    # 포인트 위치 계산 (y=0 위치)
+    point_y = 0  # y=0 위치
     
-    # 실제 등급 시작점들 (x축 틱 위치용)
-    actual_starts = [grade['start'] for grade in grade_data_bottom]
+    # 실제 등급 시작점들 (x축 틱 위치용) - 마진의 중간에 위치하도록 조정
+    actual_starts = [grade['start'] - 0.5 * margin for grade in grade_data_bottom]
     labels= [grade['real_start'] for grade in grade_data_bottom]
+    
+    # 마지막 박스의 오른쪽 끝 값 추가
+    actual_starts.append(grade_data_bottom[-1]['end'] - 0.5 * margin)
+    labels.append(str(grade_data_bottom[-1]['real_end']))
+    
     print(labels)
 
-    # 전체 차트 높이 계산 (range 텍스트를 위한 여백 추가)
-    chart_height = point_y + 0  # 포인트 위치 + 텍스트 여백 (80에서 30으로 줄임)
+    # 전체 차트 높이 계산
+    chart_height = top_height  # 전체 박스 높이
     
-    # 아래쪽 진한색 박스 차트
+    # 아래쪽 알파 박스 차트
     bottom_chart = alt.Chart(grade_df_bottom).mark_rect(
-        stroke='white',
-        strokeWidth=1
+        # stroke='white',
+        # strokeWidth=1,
+        opacity=0.3  # 알파 적용
     ).encode(
-        x=alt.X('start:Q', 
-                title='엑서지 효율 [%] = 사용된 엑서지 / 투입된 엑서지',
-                axis=alt.Axis(
-                    values=actual_starts,
-                    labelExpr=f"datum.value == {actual_starts[0]} ? '{labels[0]}' : datum.value == {actual_starts[1]} ? '{labels[1]}' : datum.value == {actual_starts[2]} ? '{labels[2]}' : datum.value == {actual_starts[3]} ? '{labels[3]}' : datum.value == {actual_starts[4]} ? '{labels[4]}' : datum.value == {actual_starts[5]} ? '{labels[5]}' : ''",
-                    grid=False,
-                    domain=False,
-                    ticks=False,
-                    labelFontSize=font_size,
-                    labelColor='black',
-                    titleFontSize=font_size,
-                    titleColor='black',
-                )),
+        x=alt.X('start:Q'),
         x2=alt.X2('end:Q'),
         y=alt.Y('y:Q', 
                 scale=alt.Scale(domain=[0, chart_height]),
@@ -305,13 +333,26 @@ def create_efficiency_grade_chart(
         # height=chart_height
     )
     
-    # 위쪽 연한색 박스 차트 (알파 적용)
+    # 위쪽 진한색 박스 차트
     top_chart = alt.Chart(grade_df_top).mark_rect(
-        stroke='white',
-        strokeWidth=1,
-        opacity=0.3  # 알파 적용
+        # stroke='white',
+        # strokeWidth=1
     ).encode(
-        x=alt.X('start:Q'),
+        x=alt.X('start:Q', 
+                title='엑서지 효율 [%] = 사용된 엑서지 / 투입된 엑서지',
+                scale=alt.Scale(domain=[actual_starts[0] - margin/2, actual_starts[-1] + margin/2]),
+                axis=alt.Axis(
+                    values=actual_starts,
+                    labelExpr=f"datum.value == {actual_starts[0]} ? '{labels[0]}' : datum.value == {actual_starts[1]} ? '{labels[1]}' : datum.value == {actual_starts[2]} ? '{labels[2]}' : datum.value == {actual_starts[3]} ? '{labels[3]}' : datum.value == {actual_starts[4]} ? '{labels[4]}' : datum.value == {actual_starts[5]} ? '{labels[5]}' : datum.value == {actual_starts[6]} ? '{labels[6]}' : ''",
+                    grid=False,
+                    domain=False,
+                    ticks=False,
+                    labelFontSize=font_size,
+                    labelColor='black',
+                    titleFontSize=font_size,
+                    titleColor='black',
+                    labelPadding=5,  # 틱 라벨과 축 사이의 거리 줄임
+                )),
         x2=alt.X2('end:Q'),
         y=alt.Y('y:Q'),
         y2=alt.Y2('height:Q'),
@@ -323,10 +364,10 @@ def create_efficiency_grade_chart(
         ]
     )
     
-    # 등급 레이블 추가 (아래쪽 박스에)
-    grade_labels = grade_df_bottom.copy()
+    # 등급 레이블 추가 (위쪽 박스에)
+    grade_labels = grade_df_top.copy()
     grade_labels['x_center'] = (grade_labels['start'] + grade_labels['end']) / 2
-    grade_labels['y_center'] = grade_labels['y'] + grade_labels['height'] / 2
+    grade_labels['y_center'] = (grade_labels['y'] + grade_labels['height']) / 2
     
     label_chart = alt.Chart(grade_labels).mark_text(
         fontSize=font_size * 1.3,
@@ -346,12 +387,18 @@ def create_efficiency_grade_chart(
             efficiency = case['efficiency']
             # 어느 등급에 속하는지 찾기
             grade_index = 0
+            grade_color = colors[0]  # 기본값
+            text_color = text_colors[0]  # 텍스트용 기본값
             for i, grade in enumerate(grades):
                 if grade['start'] <= efficiency < grade['end']:
                     grade_index = i
+                    grade_color = grade['color']
+                    text_color = text_colors[i]
                     break
                 elif efficiency >= grades[-1]['end']:  # A+ 등급 이상
                     grade_index = len(grades) - 1
+                    grade_color = grades[-1]['color']
+                    text_color = text_colors[-1]
                     break
             
             # 해당 등급의 마진 offset 적용
@@ -360,25 +407,44 @@ def create_efficiency_grade_chart(
             adjusted_case['efficiency'] = efficiency + offset
             adjusted_case['real_efficiency'] = efficiency
             adjusted_case['y'] = point_y  # 위쪽 박스의 윗면과 정확히 일치
+            adjusted_case['y2'] = bottom_height
+            adjusted_case['grade_color'] = grade_color  # 등급 색상 추가
+            adjusted_case['text_color'] = text_color  # 텍스트용 진한 색상 추가
             adjusted_cases.append(adjusted_case)
         
         case_df = pd.DataFrame(adjusted_cases)
         
-        # 레이어 순서: point, text, range (y축 낮은 순서대로 추가, 그려질 때는 높은 순서)
+        # 레이어 순서: alpha box (bottom), grade box (top), label (top)
         layers = [bottom_chart, top_chart, label_chart]
-        
-        # 3. 케이스 점 차트 (가장 아래) - 위쪽 박스의 윗면에 정확히 위치
-        case_points = alt.Chart(case_df).mark_circle(
-            size=90,
-            color='black',
-            stroke='white',
-            strokeWidth=2
+        # 포인트에서 알파 박스 높이까지의 점선 수직선
+        case_lines = alt.Chart(case_df).mark_rule(
+            strokeDash=[2, 2],  # 점선
+            strokeWidth=1.5
         ).encode(
             x=alt.X('efficiency:Q'),
             y=alt.Y('y:Q'),
+            y2=alt.Y2('y2:Q'),
+            color=alt.Color('grade_color:N', scale=None),
             tooltip=[
                 alt.Tooltip('name:N', title='Name'),
                 alt.Tooltip('real_efficiency:Q', title='Efficiency')
+            ]
+        )
+        layers.append(case_lines)
+                
+        # 3. 케이스 점 차트 (가장 아래) - 위쪽 박스의 윗면에 정확히 위치
+        case_points = alt.Chart(case_df).mark_circle(
+            size=90,
+            stroke='white',
+            strokeWidth=2,
+            opacity=1,
+        ).encode(
+            x=alt.X('efficiency:Q'),
+            y=alt.Y('y:Q'),
+            color=alt.Color('grade_color:N', scale=None),
+            tooltip=[
+                alt.Tooltip('name:N', title='Name'),
+                alt.Tooltip('real_efficiency:Q', title='Efficiency', format='.1f')
             ]
         )
         layers.append(case_points)
@@ -387,32 +453,39 @@ def create_efficiency_grade_chart(
         text_angle = text_rotation
         case_names = alt.Chart(case_df).mark_text(
             fontSize=font_size,
-            dx=text_dy,  # 회전 시 위치 조정
+            dx=text_dx,  # 회전 시 위치 조정
+            dy=text_dy,
             align='left',
             angle=text_angle
         ).encode(
             x=alt.X('efficiency:Q'),
             y=alt.Y('y:Q'),
-            text=alt.Text('name:N')
+            text=alt.Text('name:N'),
+            color=alt.Color('text_color:N', scale=None),
+            tooltip=[
+                alt.Tooltip('name:N', title='Name'),
+                alt.Tooltip('real_efficiency:Q', title='Efficiency', format='.1f')
+            ]
         )
         layers.append(case_names)
         
+
         # 1. 케이스 range 텍스트 (가장 위에) - show_range가 True일 때만
-        if show_range:
-            case_texts = alt.Chart(case_df).mark_text(
-                fontSize=font_size,
-                fontWeight='normal',
-                color='black',
-                # stroke='white',
-                # strokeWidth=0.5,
-                dy=text_dy + 5,  # 포인트 위로 15px 이동
-                align='center'
-            ).encode(
-                x=alt.X('efficiency:Q'),
-                y=alt.Y('y:Q'),
-                text=alt.Text('real_efficiency:N', format='.1f')
-            )
-            layers.append(case_texts)
+        # if show_range:
+        #     case_texts = alt.Chart(case_df).mark_text(
+        #         fontSize=font_size,
+        #         fontWeight='normal',
+        #         color='black',
+        #         # stroke='white',
+        #         # strokeWidth=0.5,
+        #         dy=text_dy + 5,  # 포인트 위로 15px 이동
+        #         align='center'
+        #     ).encode(
+        #         x=alt.X('efficiency:Q'),
+        #         y=alt.Y('y:Q'),
+        #         text=alt.Text('real_efficiency:N', format='.1f')
+        #     )
+        #     layers.append(case_texts)
         
         # 모든 레이어 결합
         chart = alt.layer(*layers)
