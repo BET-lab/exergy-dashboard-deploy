@@ -345,14 +345,14 @@ def create_efficiency_grade_chart(
         
         # 3. 케이스 점 차트 (가장 아래) - 위쪽 박스의 윗면에 정확히 위치
         case_points = alt.Chart(case_df).mark_circle(
-            size=100,
+            size=90,
             color='black',
             stroke='white',
             strokeWidth=2
         ).encode(
             x=alt.X('efficiency:Q'),
             y=alt.Y('y:Q'),
-            tooltip=['name:N', 'efficiency:Q', 'range:N']
+            tooltip=['name:N', 'efficiency:Q']
         )
         layers.append(case_points)
         
@@ -374,13 +374,16 @@ def create_efficiency_grade_chart(
         if show_range:
             case_texts = alt.Chart(case_df).mark_text(
                 fontSize=10,
-                fontWeight='bold',
-                dy=-15,  # 포인트 위로 15px 이동
+                fontWeight='normal',
+                color='black',
+                # stroke='white',
+                # strokeWidth=0.5,
+                dy=15,  # 포인트 위로 15px 이동
                 align='center'
             ).encode(
                 x=alt.X('efficiency:Q'),
                 y=alt.Y('y:Q'),
-                text=alt.Text('range:N')
+                text=alt.Text('efficiency:N')
             )
             layers.append(case_texts)
         
