@@ -176,6 +176,7 @@ def create_efficiency_grade_chart(
     top_height=40,
     show_range=False,
     text_rotation=0,
+    text_dx=12,
     text_dy=-12,
     grade_unit=10,
     font_size=16,
@@ -393,7 +394,8 @@ def create_efficiency_grade_chart(
         text_angle = text_rotation
         case_names = alt.Chart(case_df).mark_text(
             fontSize=font_size,
-            dx=text_dy,  # 회전 시 위치 조정
+            dx=text_dx,  # 회전 시 위치 조정
+            dy=text_dy,
             align='left',
             angle=text_angle
         ).encode(
