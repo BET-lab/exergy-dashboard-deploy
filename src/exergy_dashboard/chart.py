@@ -353,12 +353,15 @@ def create_efficiency_grade_chart(
             efficiency = case['efficiency']
             # 어느 등급에 속하는지 찾기
             grade_index = 0
+            grade_color = colors[0]  # 기본값
             for i, grade in enumerate(grades):
                 if grade['start'] <= efficiency < grade['end']:
                     grade_index = i
+                    grade_color = grade['color']
                     break
                 elif efficiency >= grades[-1]['end']:  # A+ 등급 이상
                     grade_index = len(grades) - 1
+                    grade_color = grades[-1]['color']
                     break
             
             # 해당 등급의 마진 offset 적용
@@ -368,6 +371,7 @@ def create_efficiency_grade_chart(
             adjusted_case['real_efficiency'] = efficiency
             adjusted_case['y'] = point_y  # 위쪽 박스의 윗면과 정확히 일치
             adjusted_case['y2'] = bottom_height
+            adjusted_case['grade_color'] = grade_color  # 등급 색상 추가
             adjusted_cases.append(adjusted_case)
         
         case_df = pd.DataFrame(adjusted_cases)
@@ -377,12 +381,12 @@ def create_efficiency_grade_chart(
         # 포인트에서 알파 박스 높이까지의 점선 수직선
         case_lines = alt.Chart(case_df).mark_rule(
             strokeDash=[2, 2],  # 점선
-            color='gray',
             strokeWidth=1
         ).encode(
             x=alt.X('efficiency:Q'),
             y=alt.Y('y:Q'),
             y2=alt.Y2('y2:Q'),
+            color=alt.Color('grade_color:N', scale=None),
             tooltip=[
                 alt.Tooltip('name:N', title='Name'),
                 alt.Tooltip('real_efficiency:Q', title='Efficiency')
@@ -393,12 +397,12 @@ def create_efficiency_grade_chart(
         # 3. 케이스 점 차트 (가장 아래) - 위쪽 박스의 윗면에 정확히 위치
         case_points = alt.Chart(case_df).mark_circle(
             size=90,
-            color='black',
             stroke='white',
             strokeWidth=2
         ).encode(
             x=alt.X('efficiency:Q'),
             y=alt.Y('y:Q'),
+            color=alt.Color('grade_color:N', scale=None),
             tooltip=[
                 alt.Tooltip('name:N', title='Name'),
                 alt.Tooltip('real_efficiency:Q', title='Efficiency')
@@ -417,7 +421,8 @@ def create_efficiency_grade_chart(
         ).encode(
             x=alt.X('efficiency:Q'),
             y=alt.Y('y:Q'),
-            text=alt.Text('name:N')
+            text=alt.Text('name:N'),
+            color=alt.Color('grade_color:N', scale=None)
         )
         layers.append(case_names)
         
