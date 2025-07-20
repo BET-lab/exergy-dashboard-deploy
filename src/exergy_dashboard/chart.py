@@ -280,7 +280,11 @@ def create_efficiency_grade_chart(
                 axis=None),
         y2=alt.Y2('height:Q'),
         color=alt.Color('color:N', scale=None),
-        tooltip=['grade:N', 'start:Q', 'end:Q']
+        tooltip=[
+            alt.Tooltip('grade:N', title='Grade'),
+            alt.Tooltip('read_start:Q', title='Start'),
+            alt.Tooltip('read_end:Q', title='End')
+        ]
     ).properties(
         width=600,
         height=chart_height
@@ -297,7 +301,11 @@ def create_efficiency_grade_chart(
         y=alt.Y('y:Q'),
         y2=alt.Y2('height:Q'),
         color=alt.Color('color:N', scale=None),
-        tooltip=['grade:N', 'start:Q', 'end:Q']
+        tooltip=[
+            alt.Tooltip('grade:N', title='Grade'),
+            alt.Tooltip('read_start:Q', title='Start'),
+            alt.Tooltip('read_end:Q', title='End')
+        ]
     )
     
     # 등급 레이블 추가 (아래쪽 박스에)
@@ -352,7 +360,10 @@ def create_efficiency_grade_chart(
         ).encode(
             x=alt.X('efficiency:Q'),
             y=alt.Y('y:Q'),
-            tooltip=['name:N', 'efficiency:Q']
+            tooltip=[
+                alt.Tooltip('name:N', title='Name'),
+                alt.Tooltip('efficiency:Q', title='Efficiency')
+            ]
         )
         layers.append(case_points)
         
