@@ -123,9 +123,9 @@ ELECTRIC_BOILER = {
             'explanation': {'EN': 'Insulation thermal conductivity', 'KR': '단열재 열전도율'},
             'latex': r'$k_{ins}$',
             'default': 0.03,
-            'range': [0.001, 0.1],
+            'range': [0.02, 0.04],
             'unit': 'W/m·K',
-            'step': 0.001,
+            'step': 0.005,
             'category': 'Hot water tank',
         },
     }
@@ -262,9 +262,9 @@ GAS_BOILER = {
             'explanation': {'EN': 'Insulation thermal conductivity', 'KR': '단열재 열전도율'},
             'latex': r'$k_{ins}$',
             'default': 0.03,
-            'range': [0.001, 0.1],
+            'range': [0.02, 0.04],
             'unit': 'W/m·K',
-            'step': 0.001,
+            'step': 0.005,
             'category': 'Hot water tank',
         },
     }
@@ -373,8 +373,8 @@ HEAT_PUMP_BOILER = {
         'r_ext': {
             'explanation': {'EN': 'Fan Radius', 'KR': '실외기 반지름'},
             'latex': r'$r_{ext}$',
-            'default': 0.2,
-            'range': [0.05, 1.0],
+            'default': 0.20,
+            'range': [0.05, 0.4],
             'unit': 'm',
             'step': 0.01,
             'category': 'external unit',
@@ -382,10 +382,10 @@ HEAT_PUMP_BOILER = {
         'dP': {
             'explanation': {'EN': 'Pressure Difference', 'KR': '압력차'},
             'latex': r'$\Delta P$',
-            'default': 200,
-            'range': [50, 1000],
+            'default': 200.0,
+            'range': [50.0, 1000.0],
             'unit': 'Pa',
-            'step': 10,
+            'step': 10.0,
             'category': 'external unit',
         },
         
@@ -448,9 +448,9 @@ HEAT_PUMP_BOILER = {
             'explanation': {'EN': 'Insulation thermal conductivity', 'KR': '단열재 열전도율'},
             'latex': r'$k_{ins}$',
             'default': 0.03,
-            'range': [0.001, 0.1],
+            'range': [0.02, 0.04],
             'unit': 'W/m·K',
-            'step': 0.001,
+            'step': 0.005,
             'category': 'Hot water tank',
         },
     }
@@ -550,10 +550,10 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'explanation': {'EN': 'Insulation thermal conductivity', 'KR': '단열재 열전도율'},
             'latex': r'$k_{ins}$',
             'default': 0.03,
-            'range': [0.001, 0.1],
+            'range': [0.02, 0.04],
             'unit': 'W/m·K',
-            'step': 0.001,
-            'category': 'solar collector',
+            'step': 0.005,
+            'category': 'Hot water tank',
         },
         'alpha': {
             'explanation': {'EN': 'Absorptivity of Collector', 'KR': '집열판 흡수율'},
@@ -623,10 +623,10 @@ GSHP_BOILER = {
         't':{
             'explanation': {'EN': 'Operating time', 'KR': '운전 시간'},
             'latex': r'$t$',
-            'default': 100,
-            'range': [0, 2000],
+            'default': 100.0,
+            'range': [0.0, 2000.0],
             'unit': 'h',
-            'step': 100,
+            'step': 100.0,
             'category': 'Operating condition',
         },
         'T_0': {
@@ -678,20 +678,12 @@ GSHP_BOILER = {
             'explanation': {'EN': 'Overall heat transfer coefficient', 'KR': '종합 열전달계수'},
             'latex': r'$h_o$',
             'default': 15.0,
-            'range': [1, 50],
+            'range': [1.0, 50.0],
             'unit': 'W/m²·K',
             'step': 1.0,
             'category': 'Operating condition',
         },
-        'COP_hp': {
-            'explanation': {'EN': 'Heat Pump COP', 'KR': '히트펌프 COP'},
-            'latex': r'$\mathrm{COP}_{hp}$',
-            'default': 4.0,
-            'range': [1.0, 6.0],
-            'unit': '-',
-            'step': 0.1,
-            'category': 'Operating condition',
-        },
+
         # Hot water tank ------------------------------------------------------------
         'r0': {
             'explanation': {'EN': 'Tank radius', 'KR': '탱크 반지름'},
@@ -742,7 +734,7 @@ GSHP_BOILER = {
             'explanation': {'EN': 'Insulation thermal conductivity', 'KR': '단열재 열전도율'},
             'latex': r'$k_{ins}$',
             'default': 0.03,
-            'range': [0.001, 0.1],
+            'range': [0.02, 0.04],
             'unit': 'W/m·K',
             'step': 0.005,
             'category': 'Hot water tank',
@@ -757,8 +749,8 @@ GSHP_BOILER = {
             'step': 1.0,
             'category': 'Refrigerant',
         },
-        
-        # Ground heat exchanger ----------------------------------------------------------------------------
+
+        # Ground heat exchanger -----------------------------------------------------------------
         'H_b': {
             'explanation': {'EN': 'Borehole Height', 'KR': '보어홀 길이'},
             'latex': r'$H$',
@@ -780,7 +772,7 @@ GSHP_BOILER = {
         'R_b': {
             'explanation': {'EN': 'Borehole thermal resistance', 'KR': '보어홀 유효 열저항'},
             'latex': r'$R_b$',
-            'default': 0.10,
+            'default': 0.1,
             'range': [0.01, 0.50],
             'unit': 'm·K/W',
             'step': 0.01,
@@ -800,9 +792,9 @@ GSHP_BOILER = {
             'explanation': {'EN': 'Ground heat exchanger Pump Power', 'KR': 'GHE 펌프 전력'},
             'latex': r'$E_{pmp}$',
             'default': 200.0,
-            'range': [0, 1000],
+            'range': [150, 250],
             'unit': 'W',
-            'step': 50.0,
+            'step': 10.0,
             'category': 'Ground heat exchanger',
         },
         
@@ -1053,7 +1045,7 @@ def evaluate_electric_boiler(params: Dict[str, float]) -> Dict[str, float]:
     EB.T_w_tank = params['T_w_tank']
     EB.T_w_sup = params['T_w_sup']
     EB.T_w_serv = params['T_w_serv']
-    EB.dV_w_serv = params['dV_w_serv']*enex.L2m3/enex.m2s
+    EB.dV_w_serv = params['dV_w_serv']
     EB.r0 = params['r0']
     EB.H = params['H']
     EB.x_shell = params['x_shell']
@@ -1088,7 +1080,7 @@ def evaluate_gas_boiler(params: Dict[str, float]) -> Dict[str, float]:
     GB.T_w_sup = params['T_w_sup']
     GB.T_w_serv = params['T_w_serv']
     GB.T_exh = params['T_exh']
-    GB.dV_w_serv = params['dV_w_serv']*enex.L2m3/enex.m2s
+    GB.dV_w_serv = params['dV_w_serv']
     GB.r0 = params['r0']
     GB.H = params['H']
     GB.x_shell = params['x_shell']
@@ -1134,7 +1126,7 @@ def evaluate_heat_pump_boiler(params: Dict[str, float]) -> Dict[str, float]:
     HPB.T_w_tank = params['T_w_tank']
     HPB.T_w_serv = params['T_w_serv']
     HPB.T_w_sup = params['T_w_sup']
-    HPB.dV_w_serv = params['dV_w_serv']*enex.L2m3/enex.m2s
+    HPB.dV_w_serv = params['dV_w_serv']
     HPB.r0 = params['r0']
     HPB.H = params['H']
     HPB.x_shell = params['x_shell']
@@ -1182,7 +1174,7 @@ def evaluate_SOLAR_ASSISTED_GAS_BOILER(params: Dict[str, float]) -> Dict[str, fl
     SAGB.T_w_serv = params['T_w_serv']
     SAGB.T_w_sup = params['T_w_sup']
     SAGB.T_exh = params['T_exh']
-    SAGB.dV_w_serv = params['dV_w_serv']*enex.L2m3/enex.m2s
+    SAGB.dV_w_serv = params['dV_w_serv']
     SAGB.h_o = params['h_o']
     SAGB.h_r = params['h_r']
     SAGB.k_ins = params['k_ins']
@@ -1218,8 +1210,7 @@ def evaluate_gshp_boiler(params: Dict[str, float]) -> Dict[str, float]:
     GSHPB.T_w_tank = params['T_w_tank']
     GSHPB.T_w_sup = params['T_w_sup']
     GSHPB.T_w_serv = params['T_w_serv']
-    GSHPB.dV_w_serv = params['dV_w_serv'] * enex.L2m3 / enex.m2s
-    GSHPB.COP_hp = params['COP_hp']
+    GSHPB.dV_w_serv = params['dV_w_serv']
     
     GSHPB.r0 = params['r0']
     GSHPB.H = params['H']
@@ -1231,7 +1222,6 @@ def evaluate_gshp_boiler(params: Dict[str, float]) -> Dict[str, float]:
     
     GSHPB.T_r_tank = params['T_r_tank']
     
-    GSHPB.D_b = params['D_b']
     GSHPB.H_b = params['H_b']
     GSHPB.r_b = params['r_b']
     GSHPB.R_b = params['R_b']
