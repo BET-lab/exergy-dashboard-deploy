@@ -263,9 +263,14 @@ def create_efficiency_grade_chart(
     # 포인트 위치 계산 (위쪽 박스의 윗면과 정확히 일치)
     point_y = top_height  # 위쪽 박스의 윗면 위치
     
-    # 실제 등급 시작점들 (x축 틱 위치용)
-    actual_starts = [grade['start'] for grade in grade_data_bottom]
+    # 실제 등급 시작점들 (x축 틱 위치용) - 마진의 중간에 위치하도록 조정
+    actual_starts = [grade['start'] - 0.5 * margin for grade in grade_data_bottom]
     labels= [grade['real_start'] for grade in grade_data_bottom]
+    
+    # 마지막 박스의 오른쪽 끝 값 추가
+    actual_starts.append(grade_data_bottom[-1]['end'] - 0.5 * margin)
+    labels.append(str(grade_data_bottom[-1]['real_end']))
+    
     print(labels)
 
     # 전체 차트 높이 계산 (range 텍스트를 위한 여백 추가)
@@ -301,9 +306,10 @@ def create_efficiency_grade_chart(
     ).encode(
         x=alt.X('start:Q', 
                 title='엑서지 효율 [%] = 사용된 엑서지 / 투입된 엑서지',
+                scale=alt.Scale(domain=[actual_starts[0] - margin/2, actual_starts[-1] + margin]),
                 axis=alt.Axis(
                     values=actual_starts,
-                    labelExpr=f"datum.value == {actual_starts[0]} ? '{labels[0]}' : datum.value == {actual_starts[1]} ? '{labels[1]}' : datum.value == {actual_starts[2]} ? '{labels[2]}' : datum.value == {actual_starts[3]} ? '{labels[3]}' : datum.value == {actual_starts[4]} ? '{labels[4]}' : datum.value == {actual_starts[5]} ? '{labels[5]}' : ''",
+                    labelExpr=f"datum.value == {actual_starts[0]} ? '{labels[0]}' : datum.value == {actual_starts[1]} ? '{labels[1]}' : datum.value == {actual_starts[2]} ? '{labels[2]}' : datum.value == {actual_starts[3]} ? '{labels[3]}' : datum.value == {actual_starts[4]} ? '{labels[4]}' : datum.value == {actual_starts[5]} ? '{labels[5]}' : datum.value == {actual_starts[6]} ? '{labels[6]}' : ''",
                     grid=False,
                     domain=False,
                     ticks=False,
