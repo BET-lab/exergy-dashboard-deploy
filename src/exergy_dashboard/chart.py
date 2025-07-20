@@ -340,7 +340,11 @@ def create_efficiency_grade_chart(
     ).encode(
         x=alt.X('start:Q', 
                 title='',  # 빈 제목으로 설정
-                scale=alt.Scale(domain=[actual_starts[0] - margin/2, actual_starts[-1] + margin/2]),
+                scale=alt.Scale(
+                    domain=[actual_starts[0] - margin/2, actual_starts[-1] + margin/2],
+                    range=[{'expr': '- width * 0.03'}, {'expr': 'width - 20'}]  # 좌우 20px 여백으로 균등하게, 사전 정의된 width 사용
+                    # range=[{'expr': '- width * 0.12'}, {'expr': 'width + 30'}]  # 좌우 20px 여백으로 균등하게, 사전 정의된 width 사용
+                ),
                 axis=alt.Axis(
                     values=actual_starts,
                     labelExpr=f"datum.value == {actual_starts[0]} ? '{labels[0]}' : datum.value == {actual_starts[1]} ? '{labels[1]}' : datum.value == {actual_starts[2]} ? '{labels[2]}' : datum.value == {actual_starts[3]} ? '{labels[3]}' : datum.value == {actual_starts[4]} ? '{labels[4]}' : datum.value == {actual_starts[5]} ? '{labels[5]}' : datum.value == {actual_starts[6]} ? '{labels[6]}' : ''",
