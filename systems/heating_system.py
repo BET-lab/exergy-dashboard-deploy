@@ -102,8 +102,8 @@ HEATING_GSHP = {
         't':{
             'explanation': {'EN': 'Operating time', 'KR': '운전 시간'},
             'latex': r'$t$',
-            'default': 100,
-            'range': [0, 2000],
+            'default': 100.0,
+            'range': [0.0, 2000.0],
             'unit': 'h',
             'step': 100.0,
             'category': 'Operating condition',
@@ -112,7 +112,7 @@ HEATING_GSHP = {
             'explanation': {'EN': 'Environment Temperature', 'KR': '환경온도'},
             'latex': r'$T_0$',
             'default': 0.0,
-            'range': [-30, 30],
+            'range': [-30.0, 30.0],
             'unit': '℃',
             'step': 1.0,
             'category': 'Operating condition',
@@ -189,7 +189,7 @@ HEATING_GSHP = {
         'R_b': {
             'explanation': {'EN': 'Borehole Thermal Resistance', 'KR': '보어홀 유효 열저항'},
             'latex': r'$R_b$',
-            'default': 0.108,
+            'default': 0.1,
             'range': [0.01, 0.5],
             'unit': 'm·K/W',
             'step': 0.01,
@@ -205,13 +205,13 @@ HEATING_GSHP = {
             'category': 'ground heat exchanger',
         },
         'E_pmp': {
-            'explanation': {'EN': 'Ground Heat Exchanger Pump Power', 'KR': 'GHE 펌프 전력'},
+            'explanation': {'EN': 'Ground heat exchanger Pump Power', 'KR': 'GHE 펌프 전력'},
             'latex': r'$E_{pmp}$',
             'default': 200.0,
-            'range': [50, 1000],
+            'range': [150, 250],
             'unit': 'W',
-            'step': 50.0,
-            'category': 'ground heat exchanger',
+            'step': 10.0,
+            'category': 'Ground heat exchanger',
         },
         
         # Ground ----------------------------------------------------------------------------
