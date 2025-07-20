@@ -379,14 +379,15 @@ def plot_exergy_efficiency_grade(session_state: Any, selected_systems: List[str]
 
     return create_efficiency_grade_chart(
         cases=cases,
-        margin=0.5,
-        bottom_height=30,
-        top_height=90,
+        margin=0.2,
+        bottom_height=60,
+        top_height=75,
         show_range=True,
-        text_rotation=270,
-        text_dy=12,
+        text_rotation=0,
+        text_dx=7,
+        text_dy=-12,
         grade_unit=8,
-    )
+    ).properties(height=230)
 
 
 @eval_registry.register('COOLING', 'Air source heat pump')

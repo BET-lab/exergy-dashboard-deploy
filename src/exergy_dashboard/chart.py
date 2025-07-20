@@ -232,7 +232,7 @@ def create_efficiency_grade_chart(
         '#E72D19',
         '#FF8C00',
         '#F0CA00',
-        '#6BFF6B',
+        '#00E700',
         '#25DA25',
         '#00A752'
     ]
@@ -435,14 +435,15 @@ def create_efficiency_grade_chart(
         case_points = alt.Chart(case_df).mark_circle(
             size=90,
             stroke='white',
-            strokeWidth=2
+            strokeWidth=2,
+            opacity=1,
         ).encode(
             x=alt.X('efficiency:Q'),
             y=alt.Y('y:Q'),
             color=alt.Color('grade_color:N', scale=None),
             tooltip=[
                 alt.Tooltip('name:N', title='Name'),
-                alt.Tooltip('real_efficiency:Q', title='Efficiency')
+                alt.Tooltip('real_efficiency:Q', title='Efficiency', format='.1f')
             ]
         )
         layers.append(case_points)
@@ -462,7 +463,7 @@ def create_efficiency_grade_chart(
             color=alt.Color('text_color:N', scale=None),
             tooltip=[
                 alt.Tooltip('name:N', title='Name'),
-                alt.Tooltip('real_efficiency:Q', title='Efficiency')
+                alt.Tooltip('real_efficiency:Q', title='Efficiency', format='.1f')
             ]
         )
         layers.append(case_names)
