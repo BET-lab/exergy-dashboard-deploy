@@ -374,7 +374,12 @@ def create_efficiency_grade_chart(
     ).encode(
         x=alt.X('x_center:Q'),
         y=alt.Y('y_center:Q'),
-        text=alt.Text('grade:N')
+        text=alt.Text('grade:N'),
+        tooltip=[
+            alt.Tooltip('grade:N', title='Grade'),
+            alt.Tooltip('real_start:Q', title='Start'),
+            alt.Tooltip('real_end:Q', title='End')
+        ]
     )
     
     # x축 제목을 별도 텍스트로 추가 (dx 오프셋 적용 가능)
