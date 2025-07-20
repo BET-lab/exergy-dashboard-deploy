@@ -339,7 +339,7 @@ def create_efficiency_grade_chart(
         # strokeWidth=1
     ).encode(
         x=alt.X('start:Q', 
-                title='엑서지 효율 [%] = 사용된 엑서지 / 투입된 엑서지',
+                title='',  # 빈 제목으로 설정
                 scale=alt.Scale(domain=[actual_starts[0] - margin/2, actual_starts[-1] + margin/2]),
                 axis=alt.Axis(
                     values=actual_starts,
@@ -349,8 +349,6 @@ def create_efficiency_grade_chart(
                     ticks=False,
                     labelFontSize=font_size,
                     labelColor='black',
-                    titleFontSize=font_size,
-                    titleColor='black',
                     labelPadding=5,  # 틱 라벨과 축 사이의 거리 줄임
                 )),
         x2=alt.X2('end:Q'),
@@ -377,6 +375,26 @@ def create_efficiency_grade_chart(
         x=alt.X('x_center:Q'),
         y=alt.Y('y_center:Q'),
         text=alt.Text('grade:N')
+    )
+    
+    # x축 제목을 별도 텍스트로 추가 (dx 오프셋 적용 가능)
+    x_center = (actual_starts[0] + actual_starts[-1]) / 2
+    title_data = pd.DataFrame([{
+        'x': x_center,
+        'y': -15,  # x축 아래쪽에 위치
+        'title': '엑서지 효율 [%] = 사용된 엑서지 / 투입된 엑서지'
+    }])
+    
+    title_chart = alt.Chart(title_data).mark_text(
+        fontSize=font_size,
+        color='black',
+        dx=0,  # 원하는 dx 오프셋
+        dy=10,
+        align='center'
+    ).encode(
+        x=alt.X('x:Q'),
+        y=alt.Y('y:Q'),
+        text=alt.Text('title:N')
     )
     
     # 케이스 데이터가 있으면 점과 텍스트 추가
@@ -414,8 +432,8 @@ def create_efficiency_grade_chart(
         
         case_df = pd.DataFrame(adjusted_cases)
         
-        # 레이어 순서: alpha box (bottom), grade box (top), label (top)
-        layers = [bottom_chart, top_chart, label_chart]
+        # 레이어 순서: alpha box (bottom), grade box (top), label (top), title
+        layers = [bottom_chart, top_chart, label_chart, title_chart]
         # 포인트에서 알파 박스 높이까지의 점선 수직선
         case_lines = alt.Chart(case_df).mark_rule(
             strokeDash=[2, 2],  # 점선
@@ -491,7 +509,7 @@ def create_efficiency_grade_chart(
         chart = alt.layer(*layers)
     else:
         # 케이스 없이 등급만 표시
-        chart = alt.layer(bottom_chart, top_chart, label_chart)
+        chart = alt.layer(bottom_chart, top_chart, label_chart, title_chart)
     
     # view의 외각선 제거
     chart = chart.configure_view(stroke=None).resolve_scale(color='independent')
