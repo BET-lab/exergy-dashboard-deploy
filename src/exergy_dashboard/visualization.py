@@ -9,7 +9,7 @@ Examples
     ```python
     from exergy_dashboard.visualization import registry
     
-    @registry.register('COP Distribution')
+    @registry.register('COOLING', 'COP Distribution')
     def plot_cop_distribution(session_state, selected_systems):
         import altair as alt
         import pandas as pd
