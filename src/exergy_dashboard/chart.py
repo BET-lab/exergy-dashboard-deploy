@@ -226,7 +226,7 @@ def create_efficiency_grade_chart(
     ]
 
     grades = []
-    for i, label in zip(range(6), ['F', 'D', 'C', 'B', 'A', 'A+']):
+    for i, label in zip(range(6), ['E', 'D', 'C', 'B', 'A', 'S']):
         grades.append({
             'grade': label,
             'start': i * grade_unit,
@@ -395,7 +395,7 @@ def create_efficiency_grade_chart(
         # 포인트에서 알파 박스 높이까지의 점선 수직선
         case_lines = alt.Chart(case_df).mark_rule(
             strokeDash=[2, 2],  # 점선
-            strokeWidth=1
+            strokeWidth=1.5
         ).encode(
             x=alt.X('efficiency:Q'),
             y=alt.Y('y:Q'),
@@ -436,7 +436,11 @@ def create_efficiency_grade_chart(
             x=alt.X('efficiency:Q'),
             y=alt.Y('y:Q'),
             text=alt.Text('name:N'),
-            color=alt.Color('text_color:N', scale=None)
+            color=alt.Color('text_color:N', scale=None),
+            tooltip=[
+                alt.Tooltip('name:N', title='Name'),
+                alt.Tooltip('real_efficiency:Q', title='Efficiency')
+            ]
         )
         layers.append(case_names)
         
