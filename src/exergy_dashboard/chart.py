@@ -235,8 +235,8 @@ def create_efficiency_grade_chart(
             'grade': grade['grade'],
             'start': grade['start'] + offset,
             'end': grade['end'] + offset,
-            'read_start': grade['start'],
-            'read_end': grade['end'],
+            'real_start': grade['start'],
+            'real_end': grade['end'],
             'color': grade['color'],
             'y': 0,
             'height': bottom_height,
@@ -248,8 +248,8 @@ def create_efficiency_grade_chart(
             'grade': grade['grade'],
             'start': grade['start'] + offset,
             'end': grade['end'] + offset,
-            'read_start': grade['start'],
-            'read_end': grade['end'],
+            'real_start': grade['start'],
+            'real_end': grade['end'],
             'color': grade['color'],
             'y': bottom_height - 0.5,  # 아래쪽 박스 위에 위치
             'height': top_height,
@@ -264,7 +264,7 @@ def create_efficiency_grade_chart(
     
     # 실제 등급 시작점들 (x축 틱 위치용)
     actual_starts = [grade['start'] for grade in grade_data_bottom]
-    labels= [grade['read_start'] for grade in grade_data_bottom]
+    labels= [grade['real_start'] for grade in grade_data_bottom]
     print(labels)
 
     # 전체 차트 높이 계산 (range 텍스트를 위한 여백 추가)
@@ -292,8 +292,8 @@ def create_efficiency_grade_chart(
         color=alt.Color('color:N', scale=None),
         tooltip=[
             alt.Tooltip('grade:N', title='Grade'),
-            alt.Tooltip('read_start:Q', title='Start'),
-            alt.Tooltip('read_end:Q', title='End')
+            alt.Tooltip('real_start:Q', title='Start'),
+            alt.Tooltip('real_end:Q', title='End')
         ]
     ).properties(
         width=600,
@@ -313,8 +313,8 @@ def create_efficiency_grade_chart(
         color=alt.Color('color:N', scale=None),
         tooltip=[
             alt.Tooltip('grade:N', title='Grade'),
-            alt.Tooltip('read_start:Q', title='Start'),
-            alt.Tooltip('read_end:Q', title='End')
+            alt.Tooltip('real_start:Q', title='Start'),
+            alt.Tooltip('real_end:Q', title='End')
         ]
     )
     
@@ -353,6 +353,7 @@ def create_efficiency_grade_chart(
             offset = margin * grade_index
             adjusted_case = case.copy()
             adjusted_case['efficiency'] = efficiency + offset
+            adjusted_case['real_efficiency'] = efficiency
             adjusted_case['y'] = point_y  # 위쪽 박스의 윗면과 정확히 일치
             adjusted_cases.append(adjusted_case)
         
@@ -372,7 +373,7 @@ def create_efficiency_grade_chart(
             y=alt.Y('y:Q'),
             tooltip=[
                 alt.Tooltip('name:N', title='Name'),
-                alt.Tooltip('efficiency:Q', title='Efficiency')
+                alt.Tooltip('real_efficiency:Q', title='Efficiency')
             ]
         )
         layers.append(case_points)
@@ -404,7 +405,7 @@ def create_efficiency_grade_chart(
             ).encode(
                 x=alt.X('efficiency:Q'),
                 y=alt.Y('y:Q'),
-                text=alt.Text('efficiency:N')
+                text=alt.Text('real_efficiency:N')
             )
             layers.append(case_texts)
         
