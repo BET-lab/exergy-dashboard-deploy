@@ -261,8 +261,8 @@ def create_efficiency_grade_chart(
     grade_df_bottom = pd.DataFrame(grade_data_bottom)
     grade_df_top = pd.DataFrame(grade_data_top)
     
-    # 포인트 위치 계산 (위쪽 박스의 윗면과 정확히 일치)
-    point_y = top_height  # 위쪽 박스의 윗면 위치
+    # 포인트 위치 계산 (y=0 위치)
+    point_y = 0  # y=0 위치
     
     # 실제 등급 시작점들 (x축 틱 위치용) - 마진의 중간에 위치하도록 조정
     actual_starts = [grade['start'] - 0.5 * margin for grade in grade_data_bottom]
@@ -274,8 +274,8 @@ def create_efficiency_grade_chart(
     
     print(labels)
 
-    # 전체 차트 높이 계산 (range 텍스트를 위한 여백 추가)
-    chart_height = point_y + 0  # 포인트 위치 + 텍스트 여백 (80에서 30으로 줄임)
+    # 전체 차트 높이 계산
+    chart_height = bottom_height + top_height  # 전체 박스 높이
     
     # 아래쪽 알파 박스 차트
     bottom_chart = alt.Chart(grade_df_bottom).mark_rect(
@@ -367,13 +367,29 @@ def create_efficiency_grade_chart(
             adjusted_case['efficiency'] = efficiency + offset
             adjusted_case['real_efficiency'] = efficiency
             adjusted_case['y'] = point_y  # 위쪽 박스의 윗면과 정확히 일치
+            adjusted_case['y2'] = bottom_height
             adjusted_cases.append(adjusted_case)
         
         case_df = pd.DataFrame(adjusted_cases)
         
         # 레이어 순서: alpha box (bottom), grade box (top), label (top)
         layers = [bottom_chart, top_chart, label_chart]
-        
+        # 포인트에서 알파 박스 높이까지의 점선 수직선
+        case_lines = alt.Chart(case_df).mark_rule(
+            strokeDash=[3, 3],  # 점선
+            color='gray',
+            strokeWidth=1
+        ).encode(
+            x=alt.X('efficiency:Q'),
+            y=alt.Y('y:Q'),
+            y2=alt.Y2('y2:Q'),
+            tooltip=[
+                alt.Tooltip('name:N', title='Name'),
+                alt.Tooltip('real_efficiency:Q', title='Efficiency')
+            ]
+        )
+        layers.append(case_lines)
+                
         # 3. 케이스 점 차트 (가장 아래) - 위쪽 박스의 윗면에 정확히 위치
         case_points = alt.Chart(case_df).mark_circle(
             size=90,
@@ -405,6 +421,7 @@ def create_efficiency_grade_chart(
         )
         layers.append(case_names)
         
+
         # 1. 케이스 range 텍스트 (가장 위에) - show_range가 True일 때만
         # if show_range:
         #     case_texts = alt.Chart(case_df).mark_text(
