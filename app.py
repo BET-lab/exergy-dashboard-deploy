@@ -139,9 +139,12 @@ def remove_system(name):
     for k in to_be_removed:
         sss.pop(k)
 
+    # selected_options에서 삭제된 시스템의 short name 제거
     if 'selected_options' in sss:
+        # short name 생성 (visualization 부분과 동일한 로직)
+        short_name = ''.join(c[0] for c in name.title().split()[:-1]) + ' ' + name.title().split()[-1]
         sss.selected_options = [
-            option for option in sss.selected_options if option != name
+            option for option in sss.selected_options if option != short_name
         ]
 
 
@@ -307,7 +310,7 @@ with col2:
     options = st.multiselect(
         'Select systems to display',
         short_name_map.values(),
-        default=[opt for opt in (sss.selected_options if 'selected_options' in sss else []) if opt in valid_system_names],
+        default=[opt for opt in (sss.selected_options if 'selected_options' in sss else []) if opt in short_name_map.values()],
         key='selected_options',
     )
 
