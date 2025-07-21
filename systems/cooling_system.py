@@ -372,7 +372,7 @@ def plot_exergy_efficiency_grade(session_state: Any, selected_systems: List[str]
         name = ''.join(c[0] for c in key.title().split()[:-1]) + ' ' + key.title().split()[-1]
         cases.append({
             'name': name,
-            'efficiency': eff.item(),
+            'efficiency': float(eff),
             # No meaning.
             'range': '0-100',
             # No meaning.
