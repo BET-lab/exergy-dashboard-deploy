@@ -4,8 +4,6 @@ services:
   exergy-dashboard:
     build:
       context: .
-      args:
-        - GITHUB_TOKEN=${GITHUB_TOKEN}
     container_name: exergy-dashboard
     ports:
       - "47886:8501"

@@ -1019,14 +1019,14 @@ def plot_exergy_efficiency_grade(session_state: Any, selected_systems: List[str]
         name = ''.join(c[0] for c in key.title().split()[:-1]) + ' ' + key.title().split()[-1]
         cases.append({
             'name': name,
-            'efficiency': eff,
+            'efficiency': eff.item(),
             # No meaning.
             'range': '0-100',
             # No meaning.
             'y': 45,
         })
 
-    return create_efficiency_grade_chart(
+    chart = create_efficiency_grade_chart(
         cases=cases,
         margin=0.2,
         bottom_height=60,
@@ -1037,6 +1037,9 @@ def plot_exergy_efficiency_grade(session_state: Any, selected_systems: List[str]
         text_dy=-12,
         grade_unit=8,
     ).properties(height=230)
+
+    print(cases)
+    return chart
 
 
 

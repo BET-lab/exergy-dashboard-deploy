@@ -1,0 +1,11 @@
+[theme]
+# 테마를 light 모드로 강제 고정
+base = "light"
+primaryColor = "#FF6B6B"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F0F2F6"
+textColor = "#262730"
+
+[server]
+# 사용자가 테마를 변경하지 못하도록 설정
+enableThemeWatchdog = true 
