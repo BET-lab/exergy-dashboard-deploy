@@ -149,7 +149,7 @@ with st.sidebar:
         # index=available_modes.index(sss.mode) if sss.mode in available_modes else 0,
         key="mode_segmented_control",
         label_visibility='collapsed',
-        width="stretch",
+        # width="stretch",
     )
 
     if selected_mode is None:

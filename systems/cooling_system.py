@@ -392,7 +392,6 @@ def plot_exergy_efficiency_grade(session_state: Any, selected_systems: List[str]
         grade_unit=8,
     ).properties(height=230)
 
-    print(cases)
     return chart
 
 

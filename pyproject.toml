@@ -6,13 +6,14 @@ readme = "README.md"
 authors = [
     { name = "Sangwon91", email = "lsw91.main@gmail.com" }
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.11,<3.12"
 dependencies = [
-    "altair>=5.5.0",
+    "altair>=5.5",
     "dartwork-mpl",
     "enex-analysis",
     "pylatexenc>=2.10",
-    "streamlit>=1.47",
+    "rich>=14.0.0",
+    "streamlit==1.43",
     "vl-convert-python>=1.7.0",
 ]
 

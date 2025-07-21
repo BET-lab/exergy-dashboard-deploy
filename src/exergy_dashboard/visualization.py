@@ -170,7 +170,11 @@ class VisualizationManager:
                 st.subheader(tab_name)
                 try:
                     chart = func(session_state, selected_systems)
-                    if chart is not None:  # 차트를 반환하는 경우에만 표시
+                    if isinstance(chart, dict):
+                        st.vega_lite_chart(chart)
+                    elif isinstance(chart, str):
+                        st.components.v1.html(chart)
+                    elif chart is not None:  # 차트를 반환하는 경우에만 표시
                         st.altair_chart(chart, use_container_width=True)
                 except Exception as e:
                     st.error(f"Error rendering visualization: {str(e)}")

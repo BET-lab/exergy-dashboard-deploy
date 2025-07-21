@@ -217,6 +217,7 @@ def create_efficiency_grade_chart(
         Altair 차트 객체
     """
     
+
     # 효율 등급 정의
     colors = [
         '#E74C3C',
@@ -291,21 +292,47 @@ def create_efficiency_grade_chart(
             'original_start': grade['start']
         })
     
-    grade_df_bottom = pd.DataFrame(grade_data_bottom)
-    grade_df_top = pd.DataFrame(grade_data_top)
+    # DataFrame 생성 시 명시적으로 데이터 타입 지정 및 JSON 직렬화 안정성 확보
+    grade_df_bottom = pd.DataFrame(grade_data_bottom).astype({
+        'grade': 'str',
+        'start': 'float64',
+        'end': 'float64',
+        'real_start': 'int',
+        'real_end': 'int',
+        'color': 'str',
+        'y': 'int',
+        'height': 'int',
+        'original_start': 'int'
+    }).copy()  # 명시적 복사로 참조 문제 방지
+    
+    grade_df_top = pd.DataFrame(grade_data_top).astype({
+        'grade': 'str',
+        'start': 'float64',
+        'end': 'float64',
+        'real_start': 'int',
+        'real_end': 'int',
+        'color': 'str',
+        'y': 'int',
+        'height': 'int',
+        'original_start': 'int'
+    }).copy()  # 명시적 복사로 참조 문제 방지
     
     # 포인트 위치 계산 (y=0 위치)
     point_y = 0  # y=0 위치
     
     # 실제 등급 시작점들 (x축 틱 위치용) - 마진의 중간에 위치하도록 조정
     actual_starts = [grade['start'] - 0.5 * margin for grade in grade_data_bottom]
-    labels= [grade['real_start'] for grade in grade_data_bottom]
+    labels = [int(grade['real_start']) for grade in grade_data_bottom]
     
     # 마지막 박스의 오른쪽 끝 값 추가
     actual_starts.append(grade_data_bottom[-1]['end'] - 0.5 * margin)
-    labels.append(grade_data_bottom[-1]['real_end'])
+    labels.append(int(grade_data_bottom[-1]['real_end']))
     
-    print(labels)
+    # labelExpr을 미리 생성하여 안정성 확보
+    label_conditions = []
+    for i, (start_val, label_val) in enumerate(zip(actual_starts, labels)):
+        label_conditions.append(f"datum.value == {start_val} ? '{label_val}'")
+    label_expr = " : ".join(label_conditions) + " : ''"
 
     # 전체 차트 높이 계산
     chart_height = top_height  # 전체 박스 높이
@@ -347,7 +374,7 @@ def create_efficiency_grade_chart(
                 ),
                 axis=alt.Axis(
                     values=actual_starts,
-                    labelExpr=f"datum.value == {actual_starts[0]} ? '{labels[0]}' : datum.value == {actual_starts[1]} ? '{labels[1]}' : datum.value == {actual_starts[2]} ? '{labels[2]}' : datum.value == {actual_starts[3]} ? '{labels[3]}' : datum.value == {actual_starts[4]} ? '{labels[4]}' : datum.value == {actual_starts[5]} ? '{labels[5]}' : datum.value == {actual_starts[6]} ? '{labels[6]}' : ''",
+                    labelExpr=label_expr,
                     grid=False,
                     domain=False,
                     ticks=False,
@@ -366,10 +393,14 @@ def create_efficiency_grade_chart(
         ]
     )
     
-    # 등급 레이블 추가 (위쪽 박스에)
+    # 등급 레이블 추가 (위쪽 박스에) - 데이터 타입 안정성 확보
     grade_labels = grade_df_top.copy()
     grade_labels['x_center'] = (grade_labels['start'] + grade_labels['end']) / 2
     grade_labels['y_center'] = (grade_labels['y'] + grade_labels['height']) / 2
+    grade_labels = grade_labels.astype({
+        'x_center': 'float64',
+        'y_center': 'float64'
+    }).copy()  # 이중 복사로 데이터 안정성 확보
     
     label_chart = alt.Chart(grade_labels).mark_text(
         fontSize=font_size * 1.3,
@@ -386,13 +417,17 @@ def create_efficiency_grade_chart(
         ]
     )
     
-    # x축 제목을 별도 텍스트로 추가 (dx 오프셋 적용 가능)
+    # x축 제목을 별도 텍스트로 추가 (dx 오프셋 적용 가능) - 데이터 타입 지정
     x_center = (actual_starts[0] + actual_starts[-1]) / 2
     title_data = pd.DataFrame([{
         'x': x_center,
         'y': -15,  # x축 아래쪽에 위치
         'title': '엑서지 효율 [%] = 사용된 엑서지 / 투입된 엑서지'
-    }])
+    }]).astype({
+        'x': 'float64',
+        'y': 'int',
+        'title': 'str'
+    })
     
     title_chart = alt.Chart(title_data).mark_text(
         fontSize=font_size,
@@ -437,7 +472,18 @@ def create_efficiency_grade_chart(
         adjusted_case['text_color'] = text_color  # 텍스트용 진한 색상 추가
         adjusted_cases.append(adjusted_case)
     
+    # case_df도 명시적 타입 지정으로 안정성 향상
     case_df = pd.DataFrame(adjusted_cases)
+    if not case_df.empty:
+        case_df = case_df.astype({
+            'name': 'str',
+            'efficiency': 'float64',
+            'real_efficiency': 'float64',
+            'y': 'int',
+            'y2': 'int',
+            'grade_color': 'str',
+            'text_color': 'str'
+        }).copy()  # 명시적 복사로 참조 문제 방지
     
     # 레이어 순서: alpha box (bottom), grade box (top), label (top), title
     layers = [bottom_chart, top_chart, label_chart, title_chart]
@@ -497,8 +543,16 @@ def create_efficiency_grade_chart(
     # 모든 레이어 결합
     chart = alt.layer(*layers)
 
-    # view의 외각선 제거
+    # view의 외각선 제거 및 안정적인 렌더링을 위한 설정
     chart = chart.configure_view(stroke=None).resolve_scale(color='independent')
-    # chart = chart.properties(width='container')
+    
+    # 차트에 고유 이름 설정 (React 키 역할)
+    case_names_str = "_".join([case.get('name', '') for case in cases])
+    chart_name = f"efficiency_grade_{hash(case_names_str) % 10000}"
+    chart = chart.properties(
+        width='container',
+        name=chart_name  # 고유 식별자 추가
+    )
+
 
     return chart
