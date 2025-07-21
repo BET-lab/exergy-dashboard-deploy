@@ -130,6 +130,20 @@ def add_system(type_):
         sss[f"{data['name']}:{k}"] = v['default']
 
 
+def remove_system(name):
+    sss.systems.pop(name)
+    to_be_removed = []
+    for k, v in sss.items():
+        if isinstance(k, str) and k.startswith(name):
+            to_be_removed.append(k)
+    for k in to_be_removed:
+        sss.pop(k)
+
+    if 'selected_options' in sss:
+        sss.selected_options = [
+            option for option in sss.selected_options if option != name
+        ]
+
 
 with st.sidebar:
     st.title('Exergy Analyzer')
@@ -202,6 +216,14 @@ with st.sidebar:
             label_visibility='collapsed',
         )
         st.session_state['selected_system_tab'] = selected_system
+        
+        # Remove selected 버튼 추가
+        st.button(
+            'Remove selected',
+            use_container_width=True,
+            key=f"remove_{selected_system}",
+            on_click=functools.partial(remove_system, name=selected_system),
+        )
     else:
         st.session_state['selected_system_tab'] = None
 
@@ -212,19 +234,7 @@ _, title_col, title_right_col = st.columns([ml, 4 + pad + 5, mr], border=col_bor
 _, title_col1, _, title_col2, _ = st.columns([ml, 2.5, pad, 7.5, mr], border=col_border)
 _, col1, _, col2, _ = st.columns([ml, 2.5, pad, 7.5, mr], border=col_border)
 
-def remove_system(name):
-    sss.systems.pop(name)
-    to_be_removed = []
-    for k, v in sss.items():
-        if isinstance(k, str) and k.startswith(name):
-            to_be_removed.append(k)
-    for k in to_be_removed:
-        sss.pop(k)
 
-    if 'selected_options' in sss:
-        sss.selected_options = [
-            option for option in sss.selected_options if option != name
-        ]
 
 with col1:
     st.subheader('System Inputs :dart:')
@@ -258,12 +268,6 @@ with col1:
                         format=f"%.{max(0, -math.floor(math.log10(v['step'])))}f",
                         key=f"{system['name']}:{k}",
                     )
-        st.button(
-            'Remove system',
-            use_container_width=True,
-            key=system['name'],
-            on_click=functools.partial(remove_system, name=system['name']),
-        )
 
 # 현재 모드에 유효한 시스템만 평가
 mode_upper = sss.mode.upper()
