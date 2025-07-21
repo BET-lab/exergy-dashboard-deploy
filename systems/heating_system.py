@@ -385,7 +385,7 @@ def plot_exergy_efficiency(session_state: Any, selected_systems: List[str]) -> a
             )
             .scale(domain=[0, max_v]),
         color=alt.Color('system:N', sort=None, legend=None),
-        # tooltip=['system', 'efficiency'],
+        tooltip=[],
     ).properties(
         width='container',
         height=len(selected_systems) * 60 + 50,
