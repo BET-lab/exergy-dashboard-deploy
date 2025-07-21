@@ -170,7 +170,7 @@ def plot_waterfall_multi(source):
 
 
 def create_efficiency_grade_chart(
-    cases=None,
+    cases,
     margin=0.5,
     bottom_height=20,
     top_height=40,
@@ -187,7 +187,7 @@ def create_efficiency_grade_chart(
     
     Parameters:
     -----------
-    cases : list of dict, optional
+    cases : list of dict
         케이스 데이터 [{'name': '가스보일러', 'efficiency': 4.5}, ...]
     margin : float, default 0.5
         인접한 등급 간 마진
@@ -303,7 +303,7 @@ def create_efficiency_grade_chart(
     
     # 마지막 박스의 오른쪽 끝 값 추가
     actual_starts.append(grade_data_bottom[-1]['end'] - 0.5 * margin)
-    labels.append(str(grade_data_bottom[-1]['real_end']))
+    labels.append(grade_data_bottom[-1]['real_end'])
     
     print(labels)
 
@@ -406,122 +406,99 @@ def create_efficiency_grade_chart(
         text=alt.Text('title:N')
     )
     
-    # 케이스 데이터가 있으면 점과 텍스트 추가
-    if cases:
-        # 케이스 데이터를 마진을 고려해서 조정
-        adjusted_cases = []
-        for case in cases:
-            efficiency = case['efficiency']
-            # 어느 등급에 속하는지 찾기
-            grade_index = 0
-            grade_color = colors[0]  # 기본값
-            text_color = text_colors[0]  # 텍스트용 기본값
-            for i, grade in enumerate(grades):
-                if grade['start'] <= efficiency < grade['end']:
-                    grade_index = i
-                    grade_color = grade['color']
-                    text_color = text_colors[i]
-                    break
-                elif efficiency >= grades[-1]['end']:  # A+ 등급 이상
-                    grade_index = len(grades) - 1
-                    grade_color = grades[-1]['color']
-                    text_color = text_colors[-1]
-                    break
-            
-            # 해당 등급의 마진 offset 적용
-            offset = margin * grade_index
-            adjusted_case = case.copy()
-            adjusted_case['efficiency'] = efficiency + offset
-            adjusted_case['real_efficiency'] = efficiency
-            adjusted_case['y'] = point_y  # 위쪽 박스의 윗면과 정확히 일치
-            adjusted_case['y2'] = bottom_height
-            adjusted_case['grade_color'] = grade_color  # 등급 색상 추가
-            adjusted_case['text_color'] = text_color  # 텍스트용 진한 색상 추가
-            adjusted_cases.append(adjusted_case)
+    # 케이스 데이터를 마진을 고려해서 조정
+    adjusted_cases = []
+    for case in cases:
+        efficiency = case['efficiency']
+        # 어느 등급에 속하는지 찾기
+        grade_index = 0
+        grade_color = colors[0]  # 기본값
+        text_color = text_colors[0]  # 텍스트용 기본값
+        for i, grade in enumerate(grades):
+            if grade['start'] <= efficiency < grade['end']:
+                grade_index = i
+                grade_color = grade['color']
+                text_color = text_colors[i]
+                break
+            elif efficiency >= grades[-1]['end']:  # A+ 등급 이상
+                grade_index = len(grades) - 1
+                grade_color = grades[-1]['color']
+                text_color = text_colors[-1]
+                break
         
-        case_df = pd.DataFrame(adjusted_cases)
-        
-        # 레이어 순서: alpha box (bottom), grade box (top), label (top), title
-        layers = [bottom_chart, top_chart, label_chart, title_chart]
-        # 포인트에서 알파 박스 높이까지의 점선 수직선
-        case_lines = alt.Chart(case_df).mark_rule(
-            strokeDash=[2, 2],  # 점선
-            strokeWidth=2.5
-        ).encode(
-            x=alt.X('efficiency:Q'),
-            y=alt.Y('y:Q'),
-            y2=alt.Y2('y2:Q'),
-            color=alt.Color('grade_color:N', scale=None),
-            tooltip=[
-                alt.Tooltip('name:N', title='Name'),
-                alt.Tooltip('real_efficiency:Q', title='Efficiency')
-            ]
-        )
-        layers.append(case_lines)
-                
-        # 3. 케이스 점 차트 (가장 아래) - 위쪽 박스의 윗면에 정확히 위치
-        case_points = alt.Chart(case_df).mark_circle(
-            size=90,
-            stroke='white',
-            strokeWidth=2,
-            opacity=1,
-        ).encode(
-            x=alt.X('efficiency:Q'),
-            y=alt.Y('y:Q'),
-            color=alt.Color('grade_color:N', scale=None),
-            tooltip=[
-                alt.Tooltip('name:N', title='Name'),
-                alt.Tooltip('real_efficiency:Q', title='Efficiency', format='.1f')
-            ]
-        )
-        layers.append(case_points)
-        
-        # 2. 케이스 이름 텍스트 (포인트 위) - 회전 옵션 적용
-        text_angle = text_rotation
-        case_names = alt.Chart(case_df).mark_text(
-            fontSize=font_size,
-            dx=text_dx,  # 회전 시 위치 조정
-            dy=text_dy,
-            align='left',
-            angle=text_angle
-        ).encode(
-            x=alt.X('efficiency:Q'),
-            y=alt.Y('y:Q'),
-            text=alt.Text('name:N'),
-            color=alt.Color('text_color:N', scale=None),
-            tooltip=[
-                alt.Tooltip('name:N', title='Name'),
-                alt.Tooltip('real_efficiency:Q', title='Efficiency', format='.1f')
-            ]
-        )
-        layers.append(case_names)
-        
-
-        # 1. 케이스 range 텍스트 (가장 위에) - show_range가 True일 때만
-        # if show_range:
-        #     case_texts = alt.Chart(case_df).mark_text(
-        #         fontSize=font_size,
-        #         fontWeight='normal',
-        #         color='black',
-        #         # stroke='white',
-        #         # strokeWidth=0.5,
-        #         dy=text_dy + 5,  # 포인트 위로 15px 이동
-        #         align='center'
-        #     ).encode(
-        #         x=alt.X('efficiency:Q'),
-        #         y=alt.Y('y:Q'),
-        #         text=alt.Text('real_efficiency:N', format='.1f')
-        #     )
-        #     layers.append(case_texts)
-        
-        # 모든 레이어 결합
-        chart = alt.layer(*layers)
-    else:
-        # 케이스 없이 등급만 표시
-        chart = alt.layer(bottom_chart, top_chart, label_chart, title_chart)
+        # 해당 등급의 마진 offset 적용
+        offset = margin * grade_index
+        adjusted_case = case.copy()
+        adjusted_case['efficiency'] = efficiency + offset
+        adjusted_case['real_efficiency'] = efficiency
+        adjusted_case['y'] = point_y  # 위쪽 박스의 윗면과 정확히 일치
+        adjusted_case['y2'] = bottom_height
+        adjusted_case['grade_color'] = grade_color  # 등급 색상 추가
+        adjusted_case['text_color'] = text_color  # 텍스트용 진한 색상 추가
+        adjusted_cases.append(adjusted_case)
     
+    case_df = pd.DataFrame(adjusted_cases)
+    
+    # 레이어 순서: alpha box (bottom), grade box (top), label (top), title
+    layers = [bottom_chart, top_chart, label_chart, title_chart]
+    # 포인트에서 알파 박스 높이까지의 점선 수직선
+    case_lines = alt.Chart(case_df).mark_rule(
+        strokeDash=[2, 2],  # 점선
+        strokeWidth=2.5
+    ).encode(
+        x=alt.X('efficiency:Q'),
+        y=alt.Y('y:Q'),
+        y2=alt.Y2('y2:Q'),
+        color=alt.Color('grade_color:N', scale=None),
+        tooltip=[
+            alt.Tooltip('name:N', title='Name'),
+            alt.Tooltip('real_efficiency:Q', title='Efficiency')
+        ]
+    )
+    layers.append(case_lines)
+            
+    # 3. 케이스 점 차트 (가장 아래) - 위쪽 박스의 윗면에 정확히 위치
+    case_points = alt.Chart(case_df).mark_circle(
+        size=90,
+        stroke='white',
+        strokeWidth=2,
+        opacity=1,
+    ).encode(
+        x=alt.X('efficiency:Q'),
+        y=alt.Y('y:Q'),
+        color=alt.Color('grade_color:N', scale=None),
+        tooltip=[
+            alt.Tooltip('name:N', title='Name'),
+            alt.Tooltip('real_efficiency:Q', title='Efficiency', format='.1f')
+        ]
+    )
+    layers.append(case_points)
+    
+    # 2. 케이스 이름 텍스트 (포인트 위) - 회전 옵션 적용
+    text_angle = text_rotation
+    case_names = alt.Chart(case_df).mark_text(
+        fontSize=font_size,
+        dx=text_dx,  # 회전 시 위치 조정
+        dy=text_dy,
+        align='left',
+        angle=text_angle
+    ).encode(
+        x=alt.X('efficiency:Q'),
+        y=alt.Y('y:Q'),
+        text=alt.Text('name:N'),
+        color=alt.Color('text_color:N', scale=None),
+        tooltip=[
+            alt.Tooltip('name:N', title='Name'),
+            alt.Tooltip('real_efficiency:Q', title='Efficiency', format='.1f')
+        ]
+    )
+    layers.append(case_names)
+    
+    # 모든 레이어 결합
+    chart = alt.layer(*layers)
+
     # view의 외각선 제거
     chart = chart.configure_view(stroke=None).resolve_scale(color='independent')
-    chart = chart.properties(width='container')
+    # chart = chart.properties(width='container')
 
     return chart
