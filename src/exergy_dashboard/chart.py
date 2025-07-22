@@ -184,7 +184,7 @@ def create_efficiency_grade_chart(
     text_dy=-12,
     grade_unit=10,
     font_size=16,
-    grade_ranges = [(0, 5), (5, 15), (15, 30), (30, 50), (50, 70), (70, 100)],
+    grade_ranges = None,
 ):
     """
     에너지 효율 등급 시각화 생성
