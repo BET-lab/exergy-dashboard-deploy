@@ -184,7 +184,7 @@ def create_efficiency_grade_chart(
     text_dy=-12,
     grade_unit=10,
     font_size=16,
-    grade_ranges=None,
+    grade_ranges = [(0, 5), (5, 15), (15, 30), (30, 50), (50, 70), (70, 100)],
 ):
     """
     에너지 효율 등급 시각화 생성
@@ -245,7 +245,7 @@ def create_efficiency_grade_chart(
     grades = []
     if grade_ranges is not None:
         # 직접 지정된 범위 사용
-        for i, (label, (start, end)) in enumerate(zip(['E', 'D', 'C', 'B', 'A', 'S'], grade_ranges)):
+        for i, (label, (start, end)) in enumerate(zip(['E', 'D', 'C', 'B', 'A', 'A+'], grade_ranges)):
             grades.append({
                 'grade': label,
                 'start': start,
@@ -254,7 +254,7 @@ def create_efficiency_grade_chart(
             })
     else:
         # grade_unit을 사용한 기본 범위
-        for i, label in zip(range(6), ['E', 'D', 'C', 'B', 'A', 'S']):
+        for i, label in zip(range(6), ['E', 'D', 'C', 'B', 'A', 'A+']):
             grades.append({
                 'grade': label,
                 'start': i * grade_unit,
