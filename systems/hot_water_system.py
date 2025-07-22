@@ -1004,6 +1004,14 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
         return plot_waterfall_multi(source)
     return alt.Chart(pd.DataFrame({'x': [0], 'y': [0]})).mark_point()
 
+E = 10
+D = 15
+C = 20
+B = 25
+A = 30
+A_plus = 50
+
+grade_range_heating = [(0,E), (E,D), (D,C), (C,B), (B,A), (A,A_plus)]
 
 # HEATING 모드 시각화 함수들
 @viz_registry.register('HOT WATER', 'Exergy efficiency grade')
@@ -1035,7 +1043,7 @@ def plot_exergy_efficiency_grade(session_state: Any, selected_systems: List[str]
         text_rotation=0,
         text_dx=7,
         text_dy=-12,
-        grade_unit=8,
+        grade_ranges = grade_range_heating,
     ).properties(height=230)
 
     print(cases)

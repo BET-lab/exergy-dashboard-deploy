@@ -379,6 +379,15 @@ def plot_exergy_efficiency_grade(session_state: Any, selected_systems: List[str]
             # No meaning.
             'y': 45,
         })
+    
+    E = 5
+    D = 10
+    C = 15
+    B = 20
+    A = 25
+    A_plus = 50
+
+    grade_range_cooling = [(0,E), (E,D), (D,C), (C,B), (B,A), (A,A_plus)]
 
     chart = create_efficiency_grade_chart(
         cases=cases,
@@ -390,6 +399,7 @@ def plot_exergy_efficiency_grade(session_state: Any, selected_systems: List[str]
         text_dx=7,
         text_dy=-12,
         grade_unit=8,
+        grade_ranges=grade_range_cooling,
     ).properties(height=230)
 
     return chart

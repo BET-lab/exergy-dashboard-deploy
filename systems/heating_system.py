@@ -483,6 +483,15 @@ def plot_exergy_efficiency_grade(session_state: Any, selected_systems: List[str]
             'y': 45,
         })
 
+    E = 15
+    D = 20
+    C = 25
+    B = 30
+    A = 35
+    A_plus = 50
+    
+    grade_range_hot_water = [(0, E), (E, D), (D, C), (C, B), (B, A), (A, A_plus)]
+    
     chart = create_efficiency_grade_chart(
         cases=cases,
         margin=0.2,
@@ -493,6 +502,7 @@ def plot_exergy_efficiency_grade(session_state: Any, selected_systems: List[str]
         text_dx=7,
         text_dy=-12,
         grade_unit=8,
+        grade_ranges=grade_range_hot_water,
     ).properties(height=230)
 
     print(cases)
