@@ -30,7 +30,7 @@ LANG = 'EN'
 print("Available modes in SYSTEM_CASE:", list(systems.keys()))
 
 st.set_page_config(
-    page_title='Exergy Analysis',
+    page_title='Exergy Analyzer',
     page_icon=':fire:',
     layout='wide',
     initial_sidebar_state='expanded'
