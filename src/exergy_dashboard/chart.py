@@ -141,9 +141,13 @@ def plot_waterfall_multi(source):
     ).facet(
         facet=alt.Facet("group").title('').sort([]),
         columns=1,
+        spacing=50  # facet 간 간격 조절 (기본값은 20 정도)
     ).configure_header(
-        labelFontSize=fs*1.2,
+        labelFontSize=fs*1.2+1,
+        labelFontWeight=600,
         labelColor='black',
+        labelAnchor='middle',
+        labelPadding=2,
     ).transform_window(
         window_sum_amount="sum(amount)",
         window_lead_label="lead(label)",
