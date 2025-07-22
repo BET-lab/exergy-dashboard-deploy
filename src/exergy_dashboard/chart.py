@@ -369,8 +369,8 @@ def create_efficiency_grade_chart(
                 title='',  # 빈 제목으로 설정
                 scale=alt.Scale(
                     domain=[actual_starts[0] - margin/2, actual_starts[-1] + margin/2],
-                    range=[{'expr': '- width * 0.03'}, {'expr': 'width - 20'}]  # 좌우 20px 여백으로 균등하게, 사전 정의된 width 사용
-                    # range=[{'expr': '- width * 0.12'}, {'expr': 'width + 30'}]  # 좌우 20px 여백으로 균등하게, 사전 정의된 width 사용
+                    # range=[{'expr': '- width * 0.03'}, {'expr': 'width - 20'}]  # 좌우 20px 여백으로 균등하게, 사전 정의된 width 사용
+                    range=[{'expr': '- width * 0.1'}, {'expr': 'width + 30'}]  # 좌우 20px 여백으로 균등하게, 사전 정의된 width 사용
                 ),
                 axis=alt.Axis(
                     values=actual_starts,
@@ -378,7 +378,7 @@ def create_efficiency_grade_chart(
                     grid=False,
                     domain=False,
                     ticks=False,
-                    labelFontSize=font_size,
+                    labelFontSize=font_size - 2,
                     labelColor='black',
                     labelPadding=5,  # 틱 라벨과 축 사이의 거리 줄임
                 )),

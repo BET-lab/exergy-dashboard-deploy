@@ -234,7 +234,7 @@ with st.sidebar:
         
         # Remove selected 버튼 추가
         st.button(
-            'Remove selected',
+            'Remove Selected',
             use_container_width=True,
             key=f"remove_{selected_system}",
             on_click=functools.partial(remove_system, name=selected_system),
