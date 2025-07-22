@@ -276,13 +276,16 @@ with col1:
             with cat_tab:
                 params = params_by_category[category]
                 for k, v in params:
-                    system['parameters'][k]['value'] = st.number_input(
+                    st.number_input(
                         f"{v['explanation'][LANG].capitalize()}, {v['latex']} [{v['unit']}]",
                         value=v['default'],
                         step=v['step'],
                         format=f"%.{max(0, -math.floor(math.log10(v['step'])))}f",
                         key=f"{system['name']}:{k}",
+                        help=v['explanation'][LANG],
                     )
+
+                    system['parameters'][k]['value'] = sss[f"{system['name']}:{k}"]
 
 # 현재 모드에 유효한 시스템만 평가
 mode_upper = sss.mode.upper()
