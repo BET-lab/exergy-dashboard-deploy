@@ -43,6 +43,18 @@ st.markdown(
     [data-testid="stSidebar"][aria-expanded="true"]{
         width: 350px;
     }
+    
+    /* 탭 폰트 스타일링 */
+    button[data-testid="stTab"] {
+        font-weight: normal !important;
+        font-size: 16px !important;
+    }
+    
+    /* 탭 내부 텍스트 컨테이너 스타일링 */
+    button[data-testid="stTab"] div[data-testid="stMarkdownContainer"] p {
+        font-weight: normal !important;
+        font-size: 16px !important;
+    }
     </style>
     """,
     unsafe_allow_html=True,
