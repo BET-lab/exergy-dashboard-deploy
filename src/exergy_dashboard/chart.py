@@ -490,7 +490,7 @@ def create_efficiency_grade_chart(
     # 포인트에서 알파 박스 높이까지의 점선 수직선
     case_lines = alt.Chart(case_df).mark_rule(
         strokeDash=[2, 2],  # 점선
-        strokeWidth=2.5
+        strokeWidth=3.5
     ).encode(
         x=alt.X('efficiency:Q'),
         y=alt.Y('y:Q'),
@@ -505,7 +505,7 @@ def create_efficiency_grade_chart(
             
     # 3. 케이스 점 차트 (가장 아래) - 위쪽 박스의 윗면에 정확히 위치
     case_points = alt.Chart(case_df).mark_circle(
-        size=90,
+        size=150,
         stroke='white',
         strokeWidth=2,
         opacity=1,
