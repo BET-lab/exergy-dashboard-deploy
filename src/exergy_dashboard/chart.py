@@ -382,7 +382,7 @@ def create_efficiency_grade_chart(
                     grid=False,
                     domain=False,
                     ticks=False,
-                    labelFontSize=font_size - 2,
+                    labelFontSize=font_size - 0.5,
                     labelColor='black',
                     labelPadding=5,  # 틱 라벨과 축 사이의 거리 줄임
                 )),
@@ -426,7 +426,7 @@ def create_efficiency_grade_chart(
     title_data = pd.DataFrame([{
         'x': x_center,
         'y': -15,  # x축 아래쪽에 위치
-        'title': '엑서지 효율 [%] = 사용된 엑서지 / 투입된 엑서지'
+        'title': 'Exergy Efficiency [%] = Exergy Output / Exergy Input'
     }]).astype({
         'x': 'float64',
         'y': 'int',
@@ -442,7 +442,8 @@ def create_efficiency_grade_chart(
     ).encode(
         x=alt.X('x:Q'),
         y=alt.Y('y:Q'),
-        text=alt.Text('title:N')
+        text=alt.Text('title:N'),
+        tooltip=[],
     )
     
     # 케이스 데이터를 마진을 고려해서 조정
