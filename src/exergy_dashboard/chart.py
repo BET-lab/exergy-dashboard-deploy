@@ -502,7 +502,7 @@ def create_efficiency_grade_chart(
         color=alt.Color('grade_color:N', scale=None),
         tooltip=[
             alt.Tooltip('name:N', title='Name'),
-            alt.Tooltip('real_efficiency:Q', title='Efficiency')
+            alt.Tooltip('real_efficiency:Q', title='Efficiency', format='.1f')
         ]
     )
     layers.append(case_lines)
