@@ -434,7 +434,7 @@ def create_efficiency_grade_chart(
     })
     
     title_chart = alt.Chart(title_data).mark_text(
-        fontSize=font_size,
+        fontSize=font_size + 1,
         color='black',
         dx=0,  # 원하는 dx 오프셋
         dy=10,
