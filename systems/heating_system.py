@@ -118,7 +118,7 @@ HEATING_GSHP = {
             'category': 'operating environment',
         },
         'T_g': {
-            'explanation': {'EN': 'undisturbed ground temperature', 'KR': '비교란 토양 온도'},
+            'explanation': {'EN': 'initial ground temperature', 'KR': '초기 지중 온도'},
             'latex': r'$T_g$',
             'default': 15.0,
             'range': [10, 20],
@@ -555,6 +555,7 @@ def evaluate_heating_ashp(params: Dict[str, float]) -> Dict[str, float]:
 def evaluate_heating_gshp(params: Dict[str, float]) -> Dict[str, float]:
     """GSHP 냉방 모드 평가 함수"""
     GSHP_H = enex.GroundSourceHeatPump_heating()
+    GSHP_H.t = params['t']
     GSHP_H.T0 = params['T_0']
     GSHP_H.T_g = params['T_g']
     GSHP_H.T_a_room = params['T_a_room']
