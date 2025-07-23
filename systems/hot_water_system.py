@@ -323,7 +323,7 @@ HEAT_PUMP_BOILER = {
         },
         
         'T_r_tank': {
-            'explanation': {'EN': 'Tank side average refrigerant temperature', 'KR': '탱크 측 냉매 평균 온도'},
+            'explanation': {'EN': 'Mean refrigerant temperature', 'KR': '탱크 측 냉매 평균 온도'},
             'latex': r'$T_{r,tank}$',
             'default': 65.0,
             'range': [0, 100],
@@ -370,7 +370,7 @@ HEAT_PUMP_BOILER = {
             'category': 'external unit',
         },
         'T_r_ext': {
-            'explanation': {'EN': 'External unit side average refrigerant temperature', 'KR': '외부 냉매 온도'},
+            'explanation': {'EN': 'Mean refrigerant temperature', 'KR': '실외기 측 냉매 평균 온도'},
             'latex': r'$T_{r,ext}$',
             'default': -10.0,
             'range': [-30, 40],
@@ -730,7 +730,7 @@ GSHP_BOILER = {
             'category': 'hot water tank',
         },
         'T_r_tank': {
-            'explanation': {'EN': 'hot water tank side Refrigerant Temperature', 'KR': '저탕조 측 냉매 온도'},
+            'explanation': {'EN': 'Mean refrigerant temperature', 'KR': '저탕조 측 냉매 평균 온도'},
             'latex': r'$T_{r,tank}$',
             'default': 65.0,
             'range': ['T_w_tank+1.0', 100.0],
@@ -768,7 +768,7 @@ GSHP_BOILER = {
             'category': 'ground heat exchanger',
         },
         'R_b': {
-            'explanation': {'EN': 'Borehole effective thermal resistance', 'KR': '보어홀 유효 열저항'},
+            'explanation': {'EN': 'effective borehole thermal resistance', 'KR': '보어홀 유효 열저항'},
             'latex': r'$R_b^*$',
             'default': 0.1,
             'range': [0.01, 0.50],
@@ -825,7 +825,7 @@ GSHP_BOILER = {
             'category': 'ground properties',
         },
         'T_g': {
-            'explanation': {'EN': 'Initial Temperature', 'KR': '초기 토양 온도'},
+            'explanation': {'EN': 'initial ground temperature', 'KR': '초기 지중 온도'},
             'latex': r'$T_g$',
             'default': 15.0,
             'range': [10, 20],
