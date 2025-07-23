@@ -382,7 +382,7 @@ def create_efficiency_grade_chart(
                     grid=False,
                     domain=False,
                     ticks=False,
-                    labelFontSize=font_size - 0.5,
+                    labelFontSize=font_size+3.5,
                     labelColor='black',
                     labelPadding=5,  # 틱 라벨과 축 사이의 거리 줄임
                 )),
@@ -425,7 +425,7 @@ def create_efficiency_grade_chart(
     x_center = (actual_starts[0] + actual_starts[-1]) / 2
     title_data = pd.DataFrame([{
         'x': x_center,
-        'y': -15,  # x축 아래쪽에 위치
+        'y': -25,  # x축 아래쪽에 위치
         'title': 'Exergy Efficiency [%] = Exergy Output / Exergy Input'
     }]).astype({
         'x': 'float64',
