@@ -36,7 +36,7 @@ HEATING_ASHP = {
             'category': 'operating environment',
         },
         'T_a_int_out': {
-            'explanation': {'EN': 'Internal Unit outlet air temperatureerature', 'KR': '실내기 공기 토출 온도'},
+            'explanation': {'EN': 'Internal Unit outlet air temperature', 'KR': '실내기 공기 토출 온도'},
             'latex': r'$T_{a,int,out}$',
             'default': 30.0,
             'range': ['T_a_room + 1.0', 60],
@@ -81,7 +81,7 @@ HEATING_ASHP = {
             'category': 'external unit',
         },
         'T_a_ext_out': {
-            'explanation': {'EN': 'External Unit outlet air temperatureerature', 'KR': '실외기 공기 토출 온도'},
+            'explanation': {'EN': 'External Unit outlet air temperature', 'KR': '실외기 공기 토출 온도'},
             'latex': r'$T_{a,ext,out}$',
             'default': -10.0,
             'range': [-30, 'T_0'],
@@ -118,7 +118,7 @@ HEATING_GSHP = {
             'category': 'operating environment',
         },
         'T_g': {
-            'explanation': {'EN': 'initial temperature', 'KR': '초기 토양 온도'},
+            'explanation': {'EN': 'undisturbed ground temperature', 'KR': '비교란 토양 온도'},
             'latex': r'$T_g$',
             'default': 15.0,
             'range': [10, 20],
@@ -252,7 +252,7 @@ ELECTRIC_HEATER = {
         'T_0': {
             'explanation': {'EN': 'environmental temperature', 'KR': '환경온도'},
             'latex': r'$T_0$',
-            'default': 10.0,
+            'default': 0.0,
             'range': [-30, 30],
             'unit': '℃',
             'step': 1.0,
@@ -279,7 +279,7 @@ ELECTRIC_HEATER = {
             
         # Heater material properties ------------------------------------------------------------
         'c_heater': {
-            'explanation': {'EN': 'Heater Specific Heat', 'KR': '히터 비열'},
+            'explanation': {'EN': 'Specific Heat', 'KR': '히터 비열'},
             'latex': r'$c$',
             'default': 500.0,
             'range': [100, 1000],
@@ -288,7 +288,7 @@ ELECTRIC_HEATER = {
             'category': 'heater material properties',
         },
         'rho_heater': {
-            'explanation': {'EN': 'Heater Density', 'KR': '히터 밀도'},
+            'explanation': {'EN': 'Density', 'KR': '히터 밀도'},
             'latex': r'$\rho$',
             'default': 7800.0,
             'range': [1000, 9000],
@@ -297,7 +297,7 @@ ELECTRIC_HEATER = {
             'category': 'heater material properties',
         },
         'k_heater': {
-            'explanation': {'EN': 'Heater Thermal Conductivity', 'KR': '히터 열전도도'},
+            'explanation': {'EN': 'Thermal Conductivity', 'KR': '히터 열전도도'},
             'latex': r'$k$',
             'default': 50.0,
             'range': [10, 100],

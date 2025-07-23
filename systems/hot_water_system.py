@@ -29,7 +29,7 @@ ELECTRIC_BOILER = {
             'category': 'operating environment',
         },
         'dV_w_serv': {
-            'explanation': {'EN': 'final service hot water flow rate', 'KR': '최종 온수 사용 유량'},
+            'explanation': {'EN': 'service hot water flow rate', 'KR': '최종 온수 사용 유량'},
             'latex': r'$\dot{V}_{w,serv}$',
             'default': 1.0,
             'range': [0.5, 5.0],
@@ -63,15 +63,6 @@ ELECTRIC_BOILER = {
             'unit': '℃',
             'step': 1.0,
             'category': 'operating environment',
-        },
-        'h_o': {
-            'explanation': {'EN': 'Overall heat transfer coefficient of external surface', 'KR': '종합 열전달계수'},
-            'latex': r'$h_o$',
-            'default': 15.0,
-            'range': [1, 50],
-            'unit': 'W/m²·K',
-            'step': 1.0,
-            'category': 'hot water tank',
         },
         # hot water tank ------------------------------------------------------------
         'r0': {
@@ -128,6 +119,15 @@ ELECTRIC_BOILER = {
             'step': 0.005,
             'category': 'hot water tank',
         },
+        'h_o': {
+            'explanation': {'EN': 'Overall heat transfer coefficient of external surface', 'KR': '종합 열전달계수'},
+            'latex': r'$h_o$',
+            'default': 15.0,
+            'range': [1, 50],
+            'unit': 'W/m²·K',
+            'step': 1.0,
+            'category': 'hot water tank',
+        },
     }
 }
 GAS_BOILER = {
@@ -147,7 +147,7 @@ GAS_BOILER = {
             'category': 'operating environment',
         },
         'dV_w_serv': {
-            'explanation': {'EN': 'final service hot water flow rate', 'KR': '최종 온수 사용 유량'},
+            'explanation': {'EN': 'service hot water flow rate', 'KR': '최종 온수 사용 유량'},
             'latex': r'$\dot{V}_{w,serv}$',
             'default': 1.0,
             'range': [0.5, 5.0],
@@ -172,15 +172,6 @@ GAS_BOILER = {
             'unit': '℃',
             'step': 1.0,
             'category': 'operating environment',
-        },
-        'h_o': {
-            'explanation': {'EN': 'Overall heat transfer coefficient of external surface', 'KR': '종합 열전달계수'},
-            'latex': r'$h_o$',
-            'default': 15.0,
-            'range': [1, 50],
-            'unit': 'W/m²·K',
-            'step': 1.0,
-            'category': 'hot water tank',
         },
         
         # combustion chamber ------------------------------------------------------------
@@ -267,6 +258,15 @@ GAS_BOILER = {
             'step': 0.005,
             'category': 'hot water tank',
         },
+        'h_o': {
+            'explanation': {'EN': 'Overall heat transfer coefficient of external surface', 'KR': '종합 열전달계수'},
+            'latex': r'$h_o$',
+            'default': 15.0,
+            'range': [1, 50],
+            'unit': 'W/m²·K',
+            'step': 1.0,
+            'category': 'hot water tank',
+        },
     }
 }
 HEAT_PUMP_BOILER = {
@@ -286,7 +286,7 @@ HEAT_PUMP_BOILER = {
             'category': 'operating environment',
         },
         'dV_w_serv': {
-            'explanation': {'EN': 'final service hot water flow rate', 'KR': '최종 온수 사용 유량'},
+            'explanation': {'EN': 'service hot water flow rate', 'KR': '최종 온수 사용 유량'},
             'latex': r'$\dot{V}_{w,serv}$',
             'default': 1.0,
             'range': [0.5, 5.0],
@@ -471,7 +471,7 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'category': 'operating environment',
         },
         'dV_w_serv': {
-            'explanation': {'EN': 'final service hot water flow rate', 'KR': '최종 온수 사용 유량'},
+            'explanation': {'EN': 'service hot water flow rate', 'KR': '최종 온수 사용 유량'},
             'latex': r'$\dot{V}_{w,serv}$',
             'default': 1.0,
             'range': [0.5, 5.0],
@@ -638,7 +638,7 @@ GSHP_BOILER = {
             'category': 'operating environment',
         },
         'dV_w_serv': {
-            'explanation': {'EN': 'final service hot water flow rate', 'KR': '최종 온수 사용 유량'},
+            'explanation': {'EN': 'service hot water flow rate', 'KR': '최종 온수 사용 유량'},
             'latex': r'$\dot{V}_{w,serv}$',
             'default': 1.0,
             'range': [0.5, 5.0],

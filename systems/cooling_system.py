@@ -119,7 +119,7 @@ COOLING_GSHP = {
             'category': 'operating environment',
         },
         'T_g': {
-            'explanation': {'EN': 'initial temperature', 'KR': '초기 토양 온도'},
+            'explanation': {'EN': 'undisturbed ground temperature', 'KR': '비교란 토양 온도'},
             'latex': r'$T_g$',
             'default': 15.0,
             'range': [10, 20],
