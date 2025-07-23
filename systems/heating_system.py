@@ -63,7 +63,7 @@ HEATING_ASHP = {
             'category': 'internal unit',
         },
         'T_r_int': {
-            'explanation': {'EN': 'internal unit refrigerant average temperature', 'KR': '실내기 측 냉매 온도'},
+            'explanation': {'EN': 'Mean refrigerant temperature', 'KR': '실내기 측 냉매 평균 온도'},
             'latex': r'$T_{r,int}$',
             'default': 35.0,
             'range': ['T_a_room + 1.0', 80],
@@ -72,7 +72,7 @@ HEATING_ASHP = {
             'category': 'internal unit',
         },
         'T_r_ext': {
-            'explanation': {'EN': 'external unit refrigerant average temperature', 'KR': '실외기 측 냉매 온도'},
+            'explanation': {'EN': 'Mean refrigerant temperature', 'KR': '실외기 측 냉매 평균 온도'},
             'latex': r'$T_{r,ext}$',
             'default': -15.0,
             'range': [-40 , 'T_a_ext_out - 1.0'],
@@ -156,7 +156,7 @@ HEATING_GSHP = {
             'category': 'internal unit',
         },
         'T_r_int': {
-            'explanation': {'EN': 'internal unit refrigerant average temperature', 'KR': '실내기 측 냉매 온도'},
+            'explanation': {'EN': 'Mean refrigerant temperature', 'KR': '실내기 측 냉매 평균 온도'},
             'latex': r'$T_{r,int}$',
             'default': 35.0,
             'range': ['T_a_room + 1.0', 60],
@@ -185,7 +185,7 @@ HEATING_GSHP = {
             'category': 'ground heat exchanger',
         },
         'R_b': {
-            'explanation': {'EN': 'Borehole effective thermal resistance', 'KR': '보어홀 유효 열저항'},
+            'explanation': {'EN': 'effective borehole thermal resistance', 'KR': '보어홀 유효 열저항'},
             'latex': r'$R_b^*$',
             'default': 0.1,
             'range': [0.01, 0.5],
@@ -555,7 +555,7 @@ def evaluate_heating_ashp(params: Dict[str, float]) -> Dict[str, float]:
 def evaluate_heating_gshp(params: Dict[str, float]) -> Dict[str, float]:
     """GSHP 냉방 모드 평가 함수"""
     GSHP_H = enex.GroundSourceHeatPump_heating()
-    GSHP_H.t = params['t']
+    GSHP_H.time = params['t']
     GSHP_H.T0 = params['T_0']
     GSHP_H.T_g = params['T_g']
     GSHP_H.T_a_room = params['T_a_room']

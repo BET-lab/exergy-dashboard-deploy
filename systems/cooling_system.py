@@ -64,7 +64,7 @@ COOLING_ASHP = {
         },
         
         'T_r_int': {
-            'explanation': {'EN': 'internal unit refrigerant average temperature', 'KR': '실내기 측 냉매 온도'},
+            'explanation': {'EN': 'Mean refrigerant temperature', 'KR': '실내기 측 냉매 평균 온도'},
             'latex': r'$T_{r,int}$',
             'default': 5.0,
             'range': [-30, 'T_a_int_out - 1.0'],
@@ -73,7 +73,7 @@ COOLING_ASHP = {
             'category': 'internal unit',
         },
         'T_r_ext': {
-            'explanation': {'EN': 'external unit refrigerant average temperature', 'KR': '실외기 측 냉매 온도'},
+            'explanation': {'EN': 'Mean refrigerant temperature', 'KR': '실외기 측 냉매 평균 온도'},
             'latex': r'$T_{r,ext}$',
             'default': 45.0,
             'range': ['T_r_int + 5', 100],
@@ -119,7 +119,7 @@ COOLING_GSHP = {
             'category': 'operating environment',
         },
         'T_g': {
-            'explanation': {'EN': 'undisturbed ground temperature', 'KR': '비교란 토양 온도'},
+            'explanation': {'EN': 'initial ground temperature', 'KR': '초기 지중 온도'},
             'latex': r'$T_g$',
             'default': 15.0,
             'range': [10, 20],
@@ -156,7 +156,7 @@ COOLING_GSHP = {
         },
         
         'T_r_int': {
-            'explanation': {'EN': 'internal unit refrigerant average temperature', 'KR': '실내기 측 냉매 온도'},
+            'explanation': {'EN': 'Mean refrigerant temperature', 'KR': '실내기 측 냉매 평균 온도'},
             'latex': r'$T_{r,int}$',
             'default': 5.0,
             'range': [-25, 'T_a_int_out-1.0'],
@@ -183,7 +183,7 @@ COOLING_GSHP = {
             'category': 'ground heat exchanger',
         },
         'R_b': {
-            'explanation': {'EN': 'Borehole effective thermal resistance', 'KR': '보어홀 유효 열저항'},
+            'explanation': {'EN': 'effective borehole thermal resistance', 'KR': '보어홀 유효 열저항'},
             'latex': r'$R_b^*$',
             'default': 0.1,
             'range': [0.01, 0.5],
