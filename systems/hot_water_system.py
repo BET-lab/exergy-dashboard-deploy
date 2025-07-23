@@ -20,68 +20,68 @@ ELECTRIC_BOILER = {
     'parameters': {
         # Condition ------------------------------------------------------------
         'T_0': {
-            'explanation': {'EN': 'environment temperature', 'KR': '기준 온도'},
+            'explanation': {'EN': 'environmental temperature', 'KR': '기준 온도'},
             'latex': r'$T_0$',
             'default': 0.0,
             'range': [-50.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'dV_w_serv': {
-            'explanation': {'EN': 'Tank water use', 'KR': '탱크 온수 사용량'},
+            'explanation': {'EN': 'final service hot water flow rate', 'KR': '최종 온수 사용 유량'},
             'latex': r'$\dot{V}_{w,serv}$',
             'default': 1.0,
-            'range': [0.0, 10.0],
+            'range': [0.5, 5.0],
             'unit': 'L/min',
             'step': 0.1,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'T_w_sup': {
-            'explanation': {'EN': 'Supply water temperature', 'KR': '상수도 온도'},
+            'explanation': {'EN': 'supply cold water temperature', 'KR': '상수도 온도'},
             'latex': r'$T_{w,sup}$',
             'default': 10.0,
             'range': [0.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'T_w_tank': {
-            'explanation': {'EN': 'Tank water temperature', 'KR': '탱크 내 온수 온도'},
+            'explanation': {'EN': 'Tank hot water temperature', 'KR': '탱크 내 온수 온도'},
             'latex': r'$T_{w,tank}$',
             'default': 60.0,
             'range': [0.0, 100.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'T_w_serv': {
-            'explanation': {'EN': 'Service water temperature', 'KR': '공급 온수 온도'},
+            'explanation': {'EN': 'service hot water temperature', 'KR': '공급 온수 온도'},
             'latex': r'$T_{w,serv}$',
             'default': 45.0,
             'range': ['T_w_sup+1.0', 'T_w_tank-1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'h_o': {
-            'explanation': {'EN': 'Overall heat transfer coefficient', 'KR': '종합 열전달계수'},
+            'explanation': {'EN': 'Overall heat transfer coefficient of external surface', 'KR': '종합 열전달계수'},
             'latex': r'$h_o$',
             'default': 15.0,
             'range': [1, 50],
             'unit': 'W/m²·K',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'hot water tank',
         },
-        # Hot water tank ------------------------------------------------------------
+        # hot water tank ------------------------------------------------------------
         'r0': {
-            'explanation': {'EN': 'Tank radius', 'KR': '탱크 반지름'},
+            'explanation': {'EN': 'tank inner radius', 'KR': '탱크 반지름'},
             'latex': r'$r_0$',
             'default': 0.2,
             'range': [0.1, 1.0],
             'unit': 'm',
             'step': 0.01,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'H': {
             'explanation': {'EN': 'Tank height', 'KR': '탱크 높이'},
@@ -90,7 +90,7 @@ ELECTRIC_BOILER = {
             'range': [0.1, 2.0],
             'unit': 'm',
             'step': 0.05,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'x_shell': {
             'explanation': {'EN': 'Tank shell thickness', 'KR': '탱크 외피 두께'},
@@ -99,7 +99,7 @@ ELECTRIC_BOILER = {
             'range': [0.005, 0.05],
             'unit': 'm',
             'step': 0.005,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'x_ins': {
             'explanation': {'EN': 'Tank insulation thickness', 'KR': '탱크 단열 두께'},
@@ -108,16 +108,16 @@ ELECTRIC_BOILER = {
             'range': [0.01, 0.2],
             'unit': 'm',
             'step': 0.01,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'k_shell': {
             'explanation': {'EN': 'Shell thermal conductivity', 'KR': '외피 열전도율'},
             'latex': r'$k_{shell}$',
-            'default': 50.0,
+            'default': 25.0,
             'range': [1, 100],
             'unit': 'W/m·K',
             'step': 1.0,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'k_ins': {
             'explanation': {'EN': 'Insulation thermal conductivity', 'KR': '단열재 열전도율'},
@@ -126,7 +126,7 @@ ELECTRIC_BOILER = {
             'range': [0.02, 0.04],
             'unit': 'W/m·K',
             'step': 0.005,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
     }
 }
@@ -138,49 +138,49 @@ GAS_BOILER = {
     'parameters': {
         # Condition ------------------------------------------------------------
         'T_0': {
-            'explanation': {'EN': 'environment temperature', 'KR': '기준 온도'},
+            'explanation': {'EN': 'environmental temperature', 'KR': '기준 온도'},
             'latex': r'$T_0$',
             'default': 0.0,
             'range': [-50.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'dV_w_serv': {
-            'explanation': {'EN': 'Tank water use', 'KR': '탱크 온수 사용량'},
+            'explanation': {'EN': 'final service hot water flow rate', 'KR': '최종 온수 사용 유량'},
             'latex': r'$\dot{V}_{w,serv}$',
             'default': 1.0,
-            'range': [0.0, 10.0],
+            'range': [0.5, 5.0],
             'unit': 'L/min',
             'step': 0.1,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'T_w_sup': {
-            'explanation': {'EN': 'Supply water temperature', 'KR': '상수도 온도'},
+            'explanation': {'EN': 'supply cold water temperature', 'KR': '상수도 온도'},
             'latex': r'$T_{w,sup}$',
             'default': 10.0,
             'range': [0.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'T_w_serv': {
-            'explanation': {'EN': 'Service water temperature', 'KR': '공급 온수 온도'},
+            'explanation': {'EN': 'service hot water temperature', 'KR': '공급 온수 온도'},
             'latex': r'$T_{w,serv}$',
             'default': 45.0,
             'range': ['T_w_sup + 1.0', 'T_w_tank - 1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'h_o': {
-            'explanation': {'EN': 'Overall heat transfer coefficient', 'KR': '종합 열전달계수'},
+            'explanation': {'EN': 'Overall heat transfer coefficient of external surface', 'KR': '종합 열전달계수'},
             'latex': r'$h_o$',
             'default': 15.0,
             'range': [1, 50],
             'unit': 'W/m²·K',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'hot water tank',
         },
         
         # combustion chamber ------------------------------------------------------------
@@ -203,24 +203,24 @@ GAS_BOILER = {
             'category': 'combustion chamber',
         },
         
-        # Hot water tank ------------------------------------------------------------
+        # hot water tank ------------------------------------------------------------
         'T_w_tank': {
-            'explanation': {'EN': 'Tank water temperature', 'KR': '탱크 내 온수 온도'},
+            'explanation': {'EN': 'Tank hot water temperature', 'KR': '탱크 내 온수 온도'},
             'latex': r'$T_{w,tank}$',
             'default': 60.0,
             'range': [0.0, 100.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'r0': {
-            'explanation': {'EN': 'Tank radius', 'KR': '탱크 반지름'},
+            'explanation': {'EN': 'tank inner radius', 'KR': '탱크 반지름'},
             'latex': r'$r_0$',
             'default': 0.2,
             'range': [0.1, 1.0],
             'unit': 'm',
             'step': 0.01,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'H': {
             'explanation': {'EN': 'Tank height', 'KR': '탱크 높이'},
@@ -229,7 +229,7 @@ GAS_BOILER = {
             'range': [0.1, 2.0],
             'unit': 'm',
             'step': 0.05,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'x_shell': {
             'explanation': {'EN': 'Tank shell thickness', 'KR': '탱크 외피 두께'},
@@ -238,7 +238,7 @@ GAS_BOILER = {
             'range': [0.005, 0.05],
             'unit': 'm',
             'step': 0.005,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'x_ins': {
             'explanation': {'EN': 'Tank insulation thickness', 'KR': '탱크 단열 두께'},
@@ -247,16 +247,16 @@ GAS_BOILER = {
             'range': [0.01, 0.2],
             'unit': 'm',
             'step': 0.01,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'k_shell': {
             'explanation': {'EN': 'Shell thermal conductivity', 'KR': '외피 열전도율'},
             'latex': r'$k_{shell}$',
-            'default': 50.0,
+            'default': 25.0,
             'range': [1, 100],
             'unit': 'W/m·K',
             'step': 1.0,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'k_ins': {
             'explanation': {'EN': 'Insulation thermal conductivity', 'KR': '단열재 열전도율'},
@@ -265,7 +265,7 @@ GAS_BOILER = {
             'range': [0.02, 0.04],
             'unit': 'W/m·K',
             'step': 0.005,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
     }
 }
@@ -276,84 +276,65 @@ HEAT_PUMP_BOILER = {
     },
     'parameters': {
         # Condition ------------------------------------------------------------
-            'T_0': {
-            'explanation': {'EN': 'environment temperature', 'KR': '기준 온도'},
+        'T_0': {
+            'explanation': {'EN': 'environmental temperature', 'KR': '기준 온도'},
             'latex': r'$T_0$',
             'default': 0.0,
             'range': [-50.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'dV_w_serv': {
-            'explanation': {'EN': 'Tank water use', 'KR': '탱크 온수 사용량'},
+            'explanation': {'EN': 'final service hot water flow rate', 'KR': '최종 온수 사용 유량'},
             'latex': r'$\dot{V}_{w,serv}$',
             'default': 1.0,
-            'range': [0.0, 10.0],
+            'range': [0.5, 5.0],
             'unit': 'L/min',
             'step': 0.1,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'T_w_sup': {
-            'explanation': {'EN': 'Supply water temperature', 'KR': '상수도 온도'},
+            'explanation': {'EN': 'supply cold water temperature', 'KR': '상수도 온도'},
             'latex': r'$T_{w,sup}$',
             'default': 10.0,
             'range': [0.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'T_w_serv': {
-            'explanation': {'EN': 'Service water temperature', 'KR': '공급 온수 온도'},
+            'explanation': {'EN': 'service hot water temperature', 'KR': '공급 온수 온도'},
             'latex': r'$T_{w,serv}$',
             'default': 45.0,
             'range': ['T_w_sup + 1.0', 'T_w_tank - 1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
-        },
-        'h_o': {
-            'explanation': {'EN': 'Overall heat transfer coefficient', 'KR': '종합 열전달계수'},
-            'latex': r'$h_o$',
-            'default': 15.0,
-            'range': [1, 50],
-            'unit': 'W/m²·K',
-            'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'COP_hp': {
-            'explanation': {'EN': 'Heat Pump COP', 'KR': '히트펌프 COP'},
+            'explanation': {'EN': 'coefficient of performance', 'KR': '히트펌프 COP'},
             'latex': r'$\mathrm{COP}_{hp}$',
             'default': 2.5,
             'range': [1.0, 6.0],
             'unit': '-',
             'step': 0.1,
-            'category': 'efficiency',
+            'category': 'operating environment',
         },
         
-        # refrigerant -------------------------------------------------------------
-        'T_r_ext': {
-            'explanation': {'EN': 'Outdoor Refrigerant Temp', 'KR': '외부 냉매 온도'},
-            'latex': r'$T_{r,ext}$',
-            'default': -10.0,
-            'range': [-30, 40],
-            'unit': '℃',
-            'step': 1.0,
-            'category': 'external unit',
-        },
         'T_r_tank': {
-            'explanation': {'EN': 'Tank Refrigerant Temp', 'KR': '탱크 냉매 온도'},
+            'explanation': {'EN': 'Tank side average refrigerant temperature', 'KR': '탱크 측 냉매 평균 온도'},
             'latex': r'$T_{r,tank}$',
             'default': 65.0,
             'range': [0, 100],
             'unit': '℃',
-            'step': 5.0,
-            'category': 'Hot water tank',
+            'step': 1.0,
+            'category': 'hot water tank',
         },
         
         # external unit -------------------------------------------------------------
         'T_a_ext_out': {
-            'explanation': {'EN': 'Outdoor Air Outlet Temp', 'KR': '외기 출구 온도'},
+            'explanation': {'EN': 'external unit outlet air temperature', 'KR': '외기 출구 온도'},
             'latex': r'$T_{a,ext,out}$',
             'default': -5.0,
             'range': [-30, 40],
@@ -388,25 +369,34 @@ HEAT_PUMP_BOILER = {
             'step': 10.0,
             'category': 'external unit',
         },
+        'T_r_ext': {
+            'explanation': {'EN': 'External unit side average refrigerant temperature', 'KR': '외부 냉매 온도'},
+            'latex': r'$T_{r,ext}$',
+            'default': -10.0,
+            'range': [-30, 40],
+            'unit': '℃',
+            'step': 1.0,
+            'category': 'external unit',
+        },
         
-        # Hot water tank ------------------------------------------------------------
+        # hot water tank ------------------------------------------------------------
         'T_w_tank': {
-            'explanation': {'EN': 'Tank water temperature', 'KR': '탱크 내 온수 온도'},
+            'explanation': {'EN': 'Tank hot water temperature', 'KR': '탱크 내 온수 온도'},
             'latex': r'$T_{w,tank}$',
             'default': 60.0,
             'range': [0.0, 100.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'r0': {
-            'explanation': {'EN': 'Tank radius', 'KR': '탱크 반지름'},
+            'explanation': {'EN': 'tank inner radius', 'KR': '탱크 반지름'},
             'latex': r'$r_0$',
             'default': 0.2,
             'range': [0.1, 1.0],
             'unit': 'm',
             'step': 0.01,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'H': {
             'explanation': {'EN': 'Tank height', 'KR': '탱크 높이'},
@@ -415,7 +405,7 @@ HEAT_PUMP_BOILER = {
             'range': [0.1, 2.0],
             'unit': 'm',
             'step': 0.05,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'x_shell': {
             'explanation': {'EN': 'Tank shell thickness', 'KR': '탱크 외피 두께'},
@@ -424,7 +414,7 @@ HEAT_PUMP_BOILER = {
             'range': [0.005, 0.05],
             'unit': 'm',
             'step': 0.005,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'x_ins': {
             'explanation': {'EN': 'Tank insulation thickness', 'KR': '탱크 단열 두께'},
@@ -433,16 +423,16 @@ HEAT_PUMP_BOILER = {
             'range': [0.01, 0.2],
             'unit': 'm',
             'step': 0.01,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'k_shell': {
             'explanation': {'EN': 'Shell thermal conductivity', 'KR': '외피 열전도율'},
             'latex': r'$k_{shell}$',
-            'default': 50.0,
+            'default': 25.0,
             'range': [1, 100],
             'unit': 'W/m·K',
             'step': 1.0,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'k_ins': {
             'explanation': {'EN': 'Insulation thermal conductivity', 'KR': '단열재 열전도율'},
@@ -451,67 +441,67 @@ HEAT_PUMP_BOILER = {
             'range': [0.02, 0.04],
             'unit': 'W/m·K',
             'step': 0.005,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
+        },
+        'h_o': {
+            'explanation': {'EN': 'Overall heat transfer coefficient of external surface', 'KR': '종합 열전달계수'},
+            'latex': r'$h_o$',
+            'default': 15.0,
+            'range': [1, 50],
+            'unit': 'W/m²·K',
+            'step': 1.0,
+            'category': 'hot water tank',
         },
     }
 }
 SOLAR_ASSISTED_GAS_BOILER = {
     'display': {
         'title': 'Solar assisted gas boiler',
-        'icon': ':sun:',
+        'icon': ':sunny:',
     },
     'parameters': {
         # Condition ------------------------------------------------------------
         'T_0': {
-            'explanation': {'EN': 'environment temperature', 'KR': '기준 온도'},
+            'explanation': {'EN': 'environmental temperature', 'KR': '기준 온도'},
             'latex': r'$T_0$',
             'default': 0.0,
             'range': [-50.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'dV_w_serv': {
-            'explanation': {'EN': 'Tank water use', 'KR': '탱크 온수 사용량'},
+            'explanation': {'EN': 'final service hot water flow rate', 'KR': '최종 온수 사용 유량'},
             'latex': r'$\dot{V}_{w,serv}$',
             'default': 1.0,
-            'range': [0.0, 10.0],
+            'range': [0.5, 5.0],
             'unit': 'L/min',
             'step': 0.1,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'T_w_sup': {
-            'explanation': {'EN': 'Supply water temperature', 'KR': '상수도 온도'},
+            'explanation': {'EN': 'supply cold water temperature', 'KR': '상수도 온도'},
             'latex': r'$T_{w,sup}$',
             'default': 10.0,
             'range': [0.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'T_w_serv': {
-            'explanation': {'EN': 'Service water temperature', 'KR': '공급 온수 온도'},
+            'explanation': {'EN': 'service hot water temperature', 'KR': '공급 온수 온도'},
             'latex': r'$T_{w,serv}$',
             'default': 45.0,
             'range': ['T_w_sup + 1.0', 'T_w_tank - 1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
-        },
-        'h_o': {
-            'explanation': {'EN': 'Overall heat transfer coefficient', 'KR': '종합 열전달계수'},
-            'latex': r'$h_o$',
-            'default': 15.0,
-            'range': [1, 50],
-            'unit': 'W/m²·K',
-            'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         
         
         # solar collector ------------------------------------------------------------
         'A_stp': {
-            'explanation': {'EN': 'Solar thermal panel area', 'KR': '태양열 패널 면적'},
+            'explanation': {'EN': 'Solar thermal collector area', 'KR': '태양열 패널 면적'},
             'latex': r'$A_{stp}$',
             'default': 2.0,
             'range': [0.5, 10.0],
@@ -529,7 +519,7 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'category': 'solar collector',
         },
         'x_air': {
-            'explanation': {'EN': 'Air layer thickness', 'KR': '공기층 두께'},
+            'explanation': {'EN': 'Solar collector air layer thickness', 'KR': '태양열 집열판 공기층 두께'},
             'latex': r'$x_{air}$',
             'default': 0.01,
             'range': [0.01, 0.05],
@@ -553,7 +543,7 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'range': [0.02, 0.04],
             'unit': 'W/m·K',
             'step': 0.005,
-            'category': 'Hot water tank',
+            'category': 'solar collector',
         },
         'alpha': {
             'explanation': {'EN': 'Absorptivity of Collector', 'KR': '집열판 흡수율'},
@@ -582,6 +572,15 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'step': 10.0,
             'category': 'solar collector',
         },
+        'h_o': {
+            'explanation': {'EN': 'Overall heat transfer coefficient of external surface', 'KR': '종합 열전달계수'},
+            'latex': r'$h_o$',
+            'default': 15.0,
+            'range': [1, 50],
+            'unit': 'W/m²·K',
+            'step': 1.0,
+            'category': 'solar collector',
+        },
         
         # combustion chamber ------------------------------------------------------------
         'eta_comb': {
@@ -594,7 +593,7 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'category': 'combustion chamber',
         },
         'T_w_comb': {
-            'explanation': {'EN': 'Tank water temperature', 'KR': '탱크 내 온수 온도'},
+            'explanation': {'EN': 'Tank hot water temperature', 'KR': '탱크 내 온수 온도'},
             'latex': r'$T_{w,comb}$',
             'default': 60.0,
             'range': [0, 100],
@@ -609,14 +608,14 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'range': ['T_w_sup + 1.0', 200.0],
             'unit': '℃',
             'step': 5.0,
-            'category': 'Operating condition',
+            'category': 'combustion chamber',
         },
     }
 }
 GSHP_BOILER = {
     'display': {
         'title': 'Ground source heat pump boiler',
-        'icon': ':ground:',  # 흙/땅 느낌의 아이콘으로 변경
+        'icon': ':earth_americas:',  # 흙/땅 느낌의 아이콘으로 변경
     },
     'parameters': {
         # Condition ----------------------------------------------------------------------------
@@ -627,72 +626,63 @@ GSHP_BOILER = {
             'range': [0.0, 2000.0],
             'unit': 'h',
             'step': 100.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'T_0': {
-            'explanation': {'EN': 'environment temperature', 'KR': '기준 온도'},
+            'explanation': {'EN': 'environmental temperature', 'KR': '기준 온도'},
             'latex': r'$T_0$',
             'default': 0.0,
             'range': [-50.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'dV_w_serv': {
-            'explanation': {'EN': 'Tank water use', 'KR': '탱크 온수 사용량'},
+            'explanation': {'EN': 'final service hot water flow rate', 'KR': '최종 온수 사용 유량'},
             'latex': r'$\dot{V}_{w,serv}$',
             'default': 1.0,
-            'range': [0.0, 10.0],
+            'range': [0.5, 5.0],
             'unit': 'L/min',
             'step': 0.1,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'T_w_sup': {
-            'explanation': {'EN': 'Supply water temperature', 'KR': '상수도 온도'},
+            'explanation': {'EN': 'supply cold water temperature', 'KR': '상수도 온도'},
             'latex': r'$T_{w,sup}$',
             'default': 10.0,
             'range': [0.0, 50.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'T_w_tank': {
-            'explanation': {'EN': 'Tank water temperature', 'KR': '탱크 내 온수 온도'},
+            'explanation': {'EN': 'Tank hot water temperature', 'KR': '탱크 내 온수 온도'},
             'latex': r'$T_{w,tank}$',
             'default': 60.0,
             'range': [0.0, 100.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'T_w_serv': {
-            'explanation': {'EN': 'Service water temperature', 'KR': '공급 온수 온도'},
+            'explanation': {'EN': 'service hot water temperature', 'KR': '공급 온수 온도'},
             'latex': r'$T_{w,serv}$',
             'default': 45.0,
             'range': ['T_w_sup+1.0', 'T_w_tank-1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
-        },
-        'h_o': {
-            'explanation': {'EN': 'Overall heat transfer coefficient', 'KR': '종합 열전달계수'},
-            'latex': r'$h_o$',
-            'default': 15.0,
-            'range': [1.0, 50.0],
-            'unit': 'W/m²·K',
-            'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
 
-        # Hot water tank ------------------------------------------------------------
+        # hot water tank ------------------------------------------------------------
         'r0': {
-            'explanation': {'EN': 'Tank radius', 'KR': '탱크 반지름'},
+            'explanation': {'EN': 'tank inner radius', 'KR': '탱크 반지름'},
             'latex': r'$r_0$',
             'default': 0.2,
             'range': [0.1, 1.0],
             'unit': 'm',
             'step': 0.01,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'H': {
             'explanation': {'EN': 'Tank height', 'KR': '탱크 높이'},
@@ -701,7 +691,7 @@ GSHP_BOILER = {
             'range': [0.1, 2.0],
             'unit': 'm',
             'step': 0.05,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'x_shell': {
             'explanation': {'EN': 'Tank shell thickness', 'KR': '탱크 외피 두께'},
@@ -710,7 +700,7 @@ GSHP_BOILER = {
             'range': [0.005, 0.05],
             'unit': 'm',
             'step': 0.005,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'x_ins': {
             'explanation': {'EN': 'Tank insulation thickness', 'KR': '탱크 단열 두께'},
@@ -719,16 +709,16 @@ GSHP_BOILER = {
             'range': [0.01, 0.2],
             'unit': 'm',
             'step': 0.01,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'k_shell': {
             'explanation': {'EN': 'Shell thermal conductivity', 'KR': '외피 열전도율'},
             'latex': r'$k_{shell}$',
-            'default': 50.0,
+            'default': 25.0,
             'range': [1, 100],
             'unit': 'W/m·K',
             'step': 1.0,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
         'k_ins': {
             'explanation': {'EN': 'Insulation thermal conductivity', 'KR': '단열재 열전도율'},
@@ -737,22 +727,30 @@ GSHP_BOILER = {
             'range': [0.02, 0.04],
             'unit': 'W/m·K',
             'step': 0.005,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
         },
-        # Refrigerant ----------------------------------------------------------------------------
         'T_r_tank': {
-            'explanation': {'EN': 'Hot water tank side Refrigerant Temperature', 'KR': '저탕조 측 냉매 온도'},
+            'explanation': {'EN': 'hot water tank side Refrigerant Temperature', 'KR': '저탕조 측 냉매 온도'},
             'latex': r'$T_{r,tank}$',
             'default': 65.0,
             'range': ['T_w_tank+1.0', 100.0],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Hot water tank',
+            'category': 'hot water tank',
+        },
+        'h_o': {
+            'explanation': {'EN': 'Overall heat transfer coefficient of external surface', 'KR': '종합 열전달계수'},
+            'latex': r'$h_o$',
+            'default': 15.0,
+            'range': [1.0, 50.0],
+            'unit': 'W/m²·K',
+            'step': 1.0,
+            'category': 'hot water tank',
         },
 
         # Ground heat exchanger -----------------------------------------------------------------
         'H_b': {
-            'explanation': {'EN': 'Borehole Height', 'KR': '보어홀 길이'},
+            'explanation': {'EN': 'borehole length', 'KR': '보어홀 길이'},
             'latex': r'$H$',
             'default': 200.0,
             'range': [100, 300],
@@ -770,8 +768,8 @@ GSHP_BOILER = {
             'category': 'ground heat exchanger',
         },
         'R_b': {
-            'explanation': {'EN': 'Borehole thermal resistance', 'KR': '보어홀 유효 열저항'},
-            'latex': r'$R_b$',
+            'explanation': {'EN': 'Borehole effective thermal resistance', 'KR': '보어홀 유효 열저항'},
+            'latex': r'$R_b^*$',
             'default': 0.1,
             'range': [0.01, 0.50],
             'unit': 'm·K/W',
@@ -781,7 +779,7 @@ GSHP_BOILER = {
         
         'V_f': {
             'explanation': {'EN': 'Fluid volumetric flow rate', 'KR': '유체 체적 유량'},
-            'latex': r'$V_f$',
+            'latex': r'$\dot{V}_f$',
             'default': 24.0,
             'range': [1.0, 50.0],
             'unit': 'L/min',
@@ -789,7 +787,7 @@ GSHP_BOILER = {
             'category': 'ground heat exchanger',
         },
         'E_pmp': {
-            'explanation': {'EN': 'Ground heat exchanger Pump Power', 'KR': 'GHE 펌프 전력'},
+            'explanation': {'EN': 'circulating pump power', 'KR': '지중 열교환기 펌프 전력'},
             'latex': r'$E_{pmp}$',
             'default': 200.0,
             'range': [150, 250],
@@ -800,40 +798,40 @@ GSHP_BOILER = {
         
         # Ground ----------------------------------------------------------------------------
         'k_g': {
-            'explanation': {'EN': 'Ground Thermal Conductivity', 'KR': '토양 열전도도'},
+            'explanation': {'EN': 'Thermal Conductivity', 'KR': '토양 열전도도'},
             'latex': r'$k_g$',
             'default': 2.0,
             'range': [0.5, 5.0],
             'unit': 'W/m·K',
             'step': 0.1,
-            'category': 'Ground',
+            'category': 'ground properties',
         },
         'c_g': {
-            'explanation': {'EN': 'Ground Specific Heat', 'KR': '토양 비열'},
+            'explanation': {'EN': 'Specific Heat', 'KR': '토양 비열'},
             'latex': r'$c_g$',
             'default': 800.0,
             'range': [500, 2000],
             'unit': 'J/kg·K',
             'step': 100.0,
-            'category': 'Ground',
+            'category': 'ground properties',
         },
         'rho_g': {
-            'explanation': {'EN': 'Ground Density', 'KR': '토양 밀도'},
+            'explanation': {'EN': 'Density', 'KR': '토양 밀도'},
             'latex': r'$\rho_g$',
             'default': 2000.0,
             'range': [500, 5000],
             'unit': 'kg/m³',
             'step': 100.0,
-            'category': 'Ground',
+            'category': 'ground properties',
         },
         'T_g': {
-            'explanation': {'EN': 'Ground Temperature', 'KR': '토양온도'},
+            'explanation': {'EN': 'Initial Temperature', 'KR': '초기 토양 온도'},
             'latex': r'$T_g$',
             'default': 15.0,
             'range': [10, 20],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
     }
 }
@@ -965,7 +963,7 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
             items = [
             {'label': 'X_w_sup', 'amount': sv['X_w_sup'], 'desc': 'Exergy supplied to tank'},
             {'label': 'X_sol', 'amount': sv['X_sol'], 'desc': 'Exergy input by solar'},
-            {'label': 'X_c_stp', 'amount': -sv['X_c_stp'], 'desc': 'Exergy loss (solar panel)'},
+            {'label': 'X_c_stp', 'amount': -sv['X_c_stp'], 'desc': 'Exergy loss (solar collector)'},
             {'label': 'X_l', 'amount': -sv['X_l'], 'desc': 'Exergy loss (system leakage)'},
             {'label': 'X_NG', 'amount': sv['X_NG'], 'desc': 'Exergy input by natural gas'},
             {'label': 'X_c_comb', 'amount': -sv['X_c_comb'], 'desc': 'Exergy loss (combustion)'},
@@ -979,7 +977,7 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
             items = [
             {'label': 'Xin_g', 'amount': sv['Xin_g'], 'desc': 'Exergy input from ground'},
             {'label': 'Xc_g', 'amount': -sv['Xc_g'], 'desc': 'Exergy loss (ground)'},
-            {'label': 'E_pmp', 'amount': sv['E_pmp'], 'desc': 'Pump power'},
+            {'label': 'E_pmp', 'amount': sv['E_pmp'], 'desc': 'circulating pump power'},
             {'label': 'Xc_GHE', 'amount': -sv['Xc_GHE'], 'desc': 'Exergy loss (GHE)'},
             {'label': 'X_r_exch(from refrigerant)', 'amount': abs(sv['X_r_exch']), 'desc': 'Cool exergy supplied by refrigerant' if sv['X_r_exch'] >= 0 else 'Warm exergy supplied by refrigerant'},
             {'label': 'Xc_exch', 'amount': -sv['Xc_exch'], 'desc': 'Exergy loss (external)'},
@@ -1004,14 +1002,9 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
         return plot_waterfall_multi(source)
     return alt.Chart(pd.DataFrame({'x': [0], 'y': [0]})).mark_point()
 
-E = 10
-D = 15
-C = 20
-B = 25
-A = 30
-A_plus = 50
-
-grade_range_heating = [(0,E), (E,D), (D,C), (C,B), (B,A), (A,A_plus)]
+# hot water system 엑서지 효율 등급 정의
+E = 10; D = 15; C = 20; B = 25; A = 30; A_plus = 50;
+grade_range_hot_water = [(0,E), (E,D), (D,C), (C,B), (B,A), (A,A_plus)]
 
 # HEATING 모드 시각화 함수들
 @viz_registry.register('HOT WATER', 'Exergy efficiency grade')
@@ -1043,7 +1036,7 @@ def plot_exergy_efficiency_grade(session_state: Any, selected_systems: List[str]
         text_rotation=0,
         text_dx=7,
         text_dy=-12,
-        grade_ranges = grade_range_heating,
+        grade_ranges = grade_range_hot_water,
     ).properties(height=230)
 
     print(cases)

@@ -18,30 +18,30 @@ COOLING_ASHP = {
     },
     'parameters':{
         'T_0': {
-            'explanation': {'EN': 'Environment Temperature', 'KR': '환경온도'},
+            'explanation': {'EN': 'environmental temperature', 'KR': '환경온도'},
             'latex': r'$T_0$',
-            'default': 30.0,
+            'default': 32.0,
             'range': [-50, 50],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'T_a_room': {
-            'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
+            'explanation': {'EN': 'Room air temperature', 'KR': '실내 공기 온도'},
             'latex': r'$T_{a,room}$',
             'default': 20.0,
             'range': [-50, 'T_0 - 1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'T_a_int_out': {
-            'explanation': {'EN': 'Internal Unit Air Outlet Temperature', 'KR': '실내기 공기 토출 온도'},
+            'explanation': {'EN': 'Internal unit outlet air temperature', 'KR': '실내기 공기 토출 온도'},
             'latex': r'$T_{a,int,out}$',
             'default': 10.0,
             'range': [-60, 'T_a_room - 1.0'],
             'unit': '℃',
-            'step': 0.5,
+            'step': 1.0,
             'category': 'internal unit',
         },
         'Q_r_int': {
@@ -64,7 +64,7 @@ COOLING_ASHP = {
         },
         
         'T_r_int': {
-            'explanation': {'EN': 'Internal Unit Refrigerant Temperature', 'KR': '실내기 측 냉매 온도'},
+            'explanation': {'EN': 'internal unit refrigerant average temperature', 'KR': '실내기 측 냉매 온도'},
             'latex': r'$T_{r,int}$',
             'default': 5.0,
             'range': [-30, 'T_a_int_out - 1.0'],
@@ -73,7 +73,7 @@ COOLING_ASHP = {
             'category': 'internal unit',
         },
         'T_r_ext': {
-            'explanation': {'EN': 'External Unit Refrigerant Temperature', 'KR': '실외기 측 냉매 온도'},
+            'explanation': {'EN': 'external unit refrigerant average temperature', 'KR': '실외기 측 냉매 온도'},
             'latex': r'$T_{r,ext}$',
             'default': 45.0,
             'range': ['T_r_int + 5', 100],
@@ -83,7 +83,7 @@ COOLING_ASHP = {
         },
         
         'T_a_ext_out': {
-            'explanation': {'EN': 'External Unit Air Outlet Temperature', 'KR': '실외기 공기 토출 온도'},
+            'explanation': {'EN': 'External Unit outlet air temperature', 'KR': '실외기 공기 토출 온도'},
             'latex': r'$T_{a,ext,out}$',
             'default': 40.0,
             'range': ['T_0', 80],
@@ -107,25 +107,25 @@ COOLING_GSHP = {
             'range': [0, 2000],
             'unit': 'h',
             'step': 100.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'T_0': {
-            'explanation': {'EN': 'Environment Temperature', 'KR': '환경온도'},
+            'explanation': {'EN': 'environmental temperature', 'KR': '환경온도'},
             'latex': r'$T_0$',
-            'default': 30.0,
+            'default': 32.0,
             'range': [-50, 50],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'T_g': {
-            'explanation': {'EN': 'Ground Temperature', 'KR': '토양온도'},
+            'explanation': {'EN': 'initial temperature', 'KR': '초기 토양 온도'},
             'latex': r'$T_g$',
             'default': 15.0,
             'range': [10, 20],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'T_a_room': {
             'explanation': {'EN': 'Room Air Temperature', 'KR': '실내 공기 온도'},
@@ -134,7 +134,7 @@ COOLING_GSHP = {
             'range': [0, 'T_0-1.0'],
             'unit': '℃',
             'step': 1.0,
-            'category': 'Operating condition',
+            'category': 'operating environment',
         },
         'T_a_int_out': {
             'explanation': {'EN': 'Internal Unit Outlet Air Temperature', 'KR': '실내기 토출 공기 온도'},
@@ -156,7 +156,7 @@ COOLING_GSHP = {
         },
         
         'T_r_int': {
-            'explanation': {'EN': 'Internal Unit Refrigerant Temperature', 'KR': '실내기 측 냉매 온도'},
+            'explanation': {'EN': 'internal unit refrigerant average temperature', 'KR': '실내기 측 냉매 온도'},
             'latex': r'$T_{r,int}$',
             'default': 5.0,
             'range': [-25, 'T_a_int_out-1.0'],
@@ -165,7 +165,7 @@ COOLING_GSHP = {
             'category': 'internal unit',
         },
         'H': {
-            'explanation': {'EN': 'Borehole Height', 'KR': '보어홀 길이'},
+            'explanation': {'EN': 'borehole length', 'KR': '보어홀 길이'},
             'latex': r'$H$',
             'default': 200.0,
             'range': [100, 300],
@@ -183,8 +183,8 @@ COOLING_GSHP = {
             'category': 'ground heat exchanger',
         },
         'R_b': {
-            'explanation': {'EN': 'Borehole Thermal Resistance', 'KR': '보어홀 유효 열저항'},
-            'latex': r'$R_b$',
+            'explanation': {'EN': 'Borehole effective thermal resistance', 'KR': '보어홀 유효 열저항'},
+            'latex': r'$R_b^*$',
             'default': 0.1,
             'range': [0.01, 0.5],
             'unit': 'm·K/W',
@@ -192,8 +192,8 @@ COOLING_GSHP = {
             'category': 'ground heat exchanger',
         },
         'V_f': {
-            'explanation': {'EN': 'Fluid Velocity', 'KR': '유체 속도'},
-            'latex': r'$V_f$',
+            'explanation': {'EN': 'Fluid flow rate', 'KR': '유체 속도'},
+            'latex': r'$\dot{V}_f$',
             'default': 24.0,
             'range': [5.0, 30.0],
             'unit': 'L/min',
@@ -201,7 +201,7 @@ COOLING_GSHP = {
             'category': 'ground heat exchanger',
         },
         'E_pmp': {
-            'explanation': {'EN': 'Ground heat exchanger Pump Power', 'KR': 'GHE 펌프 전력'},
+            'explanation': {'EN': 'circulating pump power', 'KR': '지중 열교환기 펌프 전력'},
             'latex': r'$E_{pmp}$',
             'default': 200.0,
             'range': [150, 250],
@@ -211,31 +211,31 @@ COOLING_GSHP = {
         },
         
         'k_g': {
-            'explanation': {'EN': 'Ground Thermal Conductivity', 'KR': '토양 열전도도'},
+            'explanation': {'EN': 'Thermal Conductivity', 'KR': '토양 열전도도'},
             'latex': r'$k_g$',
             'default': 2.0,
             'range': [0.5, 5.0],
             'unit': 'W/m·K',
             'step': 0.1,
-            'category': 'ground',
+            'category': 'ground properties',
         },
         'c_g': {
-            'explanation': {'EN': 'Ground Specific Heat', 'KR': '토양 비열'},
+            'explanation': {'EN': 'Specific Heat', 'KR': '토양 비열'},
             'latex': r'$c_g$',
             'default': 800.0,
             'range': [500, 2000],
             'unit': 'J/kg·K',
             'step': 100.0,
-            'category': 'ground',
+            'category': 'ground properties',
         },
         'rho_g': {
-            'explanation': {'EN': 'Ground Density', 'KR': '토양 밀도'},
+            'explanation': {'EN': 'Density', 'KR': '토양 밀도'},
             'latex': r'$\rho_g$',
             'default': 2000.0,
             'range': [1000, 3000],
             'unit': 'kg/m³',
             'step': 100.0,
-            'category': 'ground',
+            'category': 'ground properties',
         },
     }
 }
@@ -358,6 +358,9 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
         return plot_waterfall_multi(source)
     return alt.Chart(pd.DataFrame({'x': [0], 'y': [0]})).mark_point()
 
+# COOLING 모드 엑서지 효율 등급
+E = 5; D = 10; C = 15; B = 20; A = 25; A_plus = 50;
+grade_range_cooling = [(0,E), (E,D), (D,C), (C,B), (B,A), (A,A_plus)]
 
 # COOLING 모드 시각화 함수들
 @viz_registry.register('COOLING', 'Exergy efficiency grade')
@@ -380,15 +383,6 @@ def plot_exergy_efficiency_grade(session_state: Any, selected_systems: List[str]
             'y': 45,
         })
     
-    E = 5
-    D = 10
-    C = 15
-    B = 20
-    A = 25
-    A_plus = 50
-
-    grade_range_cooling = [(0,E), (E,D), (D,C), (C,B), (B,A), (A,A_plus)]
-
     chart = create_efficiency_grade_chart(
         cases=cases,
         margin=0.2,
