@@ -483,8 +483,7 @@ def evaluate_cooling_gshp(params: Dict[str, float]) -> Dict[str, float]:
     GSHP_C.height = params['H']
     GSHP_C.r_b = params['r_b']
     GSHP_C.R_b = params['R_b']
-    m3s_to_Lmin = 1 / 60000 # 1 m³/s = 60000 L/min
-    GSHP_C.V_f = params['V_f'] * m3s_to_Lmin # Convert L/min to m³/s
+    GSHP_C.V_f = params['V_f']
     
     GSHP_C.k_g = params['k_g']
     GSHP_C.c_g = params['c_g']

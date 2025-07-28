@@ -351,15 +351,6 @@ HEAT_PUMP_BOILER = {
             'step': 0.01,
             'category': 'external unit',
         },
-        'r_ext': {
-            'explanation': {'EN': 'Fan Radius', 'KR': '실외기 반지름'},
-            'latex': r'$r_{ext}$',
-            'default': 0.20,
-            'range': [0.05, 0.4],
-            'unit': 'm',
-            'step': 0.01,
-            'category': 'external unit',
-        },
         'dP': {
             'explanation': {'EN': 'Pressure Difference', 'KR': '압력차'},
             'latex': r'$\Delta P$',
@@ -1145,7 +1136,6 @@ def evaluate_heat_pump_boiler(params: Dict[str, float]) -> Dict[str, float]:
     HPB = enex.HeatPumpBoiler()
     HPB.eta_fan = params['eta_fan']
     HPB.COP_hp = params['COP_hp']
-    HPB.r_ext = params['r_ext']
     HPB.dP = params['dP']
     HPB.T0 = params['T_0']
     HPB.T_a_ext_out = params['T_a_ext_out']
@@ -1155,7 +1145,6 @@ def evaluate_heat_pump_boiler(params: Dict[str, float]) -> Dict[str, float]:
     HPB.T_w_serv = params['T_w_serv']
     HPB.T_w_sup = params['T_w_sup']
     HPB.dV_w_serv = params['dV_w_serv']
-    HPB.r0 = params['r0']
     HPB.H = params['H']
     HPB.x_shell = params['x_shell']
     HPB.x_ins = params['x_ins']
@@ -1253,7 +1242,7 @@ def evaluate_gshp_boiler(params: Dict[str, float]) -> Dict[str, float]:
     GSHPB.H_b = params['H_b']
     GSHPB.r_b = params['r_b']
     GSHPB.R_b = params['R_b']
-    GSHPB.V_f = params['V_f']* enex.L2m3 / enex.m2s  # Convert L/min to m³/s
+    GSHPB.V_f = params['V_f']
     GSHPB.E_pmp = params['E_pmp']
     
     GSHPB.k_g = params['k_g']
