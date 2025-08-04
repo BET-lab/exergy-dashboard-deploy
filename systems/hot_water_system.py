@@ -312,9 +312,9 @@ HEAT_PUMP_BOILER = {
             'step': 1.0,
             'category': 'operating environment',
         },
-        'COP_hp': {
+        'COP': {
             'explanation': {'EN': 'coefficient of performance', 'KR': '히트펌프 COP'},
-            'latex': r'$\mathrm{COP}_{hp}$',
+            'latex': r'$\mathrm{COP}$',
             'default': 2.5,
             'range': [1.0, 6.0],
             'unit': '-',
@@ -348,7 +348,7 @@ HEAT_PUMP_BOILER = {
             'default': 0.6,
             'range': [0.3, 1.0],
             'unit': '-',
-            'step': 0.01,
+            'step': 0.05,
             'category': 'external unit',
         },
         'dP': {
@@ -490,15 +490,15 @@ SOLAR_ASSISTED_GAS_BOILER = {
         },
         
         
-        # solar collector ------------------------------------------------------------
-        'A_stp': {
+        # solar thermal collector ------------------------------------------------------------
+        'A_stc': {
             'explanation': {'EN': 'Solar thermal collector area', 'KR': '태양열 패널 면적'},
-            'latex': r'$A_{stp}$',
+            'latex': r'$A_{stc}$',
             'default': 2.0,
             'range': [0.5, 10.0],
             'unit': 'm²',
             'step': 0.1,
-            'category': 'solar collector',
+            'category': 'solar thermal collector',
         },
         'h_r': {
             'explanation': {'EN': 'Radiative heat transfer coefficient', 'KR': '복사 열전달계수'},
@@ -507,16 +507,16 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'range': [0.5, 10.0],
             'unit': 'W/m²K',
             'step': 0.1,
-            'category': 'solar collector',
+            'category': 'solar thermal collector',
         },
         'x_air': {
-            'explanation': {'EN': 'Solar collector air layer thickness', 'KR': '태양열 집열판 공기층 두께'},
+            'explanation': {'EN': 'Solar thermal collector air layer thickness', 'KR': '태양열 집열판 공기층 두께'},
             'latex': r'$x_{air}$',
             'default': 0.01,
             'range': [0.01, 0.05],
             'unit': 'm',
             'step': 0.01,
-            'category': 'solar collector',
+            'category': 'solar thermal collector',
         },
         'x_ins': {
             'explanation': {'EN': 'Insulation thickness', 'KR': '단열재 두께'},
@@ -525,7 +525,7 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'range': [0.01, 0.2],
             'unit': 'm',
             'step': 0.01,
-            'category': 'solar collector',
+            'category': 'solar thermal collector',
         },
         'k_ins': {
             'explanation': {'EN': 'Insulation thermal conductivity', 'KR': '단열재 열전도율'},
@@ -534,7 +534,7 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'range': [0.02, 0.04],
             'unit': 'W/m·K',
             'step': 0.005,
-            'category': 'solar collector',
+            'category': 'solar thermal collector',
         },
         'alpha': {
             'explanation': {'EN': 'Absorptivity of Collector', 'KR': '집열판 흡수율'},
@@ -543,7 +543,7 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'range': [0.7, 1.0],
             'unit': '-',
             'step': 0.05,
-            'category': 'solar collector',
+            'category': 'solar thermal collector',
         },
         'I_DN': {
             'explanation': {'EN': 'Direct Normal Irradiance', 'KR': '직달일사량'},
@@ -552,7 +552,7 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'range': [0.0, 1200.0],
             'unit': 'W/m²',
             'step': 50.0,
-            'category': 'solar collector',
+            'category': 'solar thermal collector',
         },
         'I_dH': {
             'explanation': {'EN': 'Diffuse Horizontal Irradiance', 'KR': '확산수평일사량'},
@@ -561,7 +561,7 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'range': [0.0, 500.0],
             'unit': 'W/m²',
             'step': 10.0,
-            'category': 'solar collector',
+            'category': 'solar thermal collector',
         },
         'h_o': {
             'explanation': {'EN': 'Overall heat transfer coefficient of external surface', 'KR': '종합 열전달계수'},
@@ -570,7 +570,7 @@ SOLAR_ASSISTED_GAS_BOILER = {
             'range': [1, 50],
             'unit': 'W/m²·K',
             'step': 1.0,
-            'category': 'solar collector',
+            'category': 'solar thermal collector',
         },
         
         # combustion chamber ------------------------------------------------------------
@@ -768,7 +768,7 @@ GSHP_BOILER = {
             'category': 'ground heat exchanger',
         },
         
-        'V_f': {
+        'dV_f': {
             'explanation': {'EN': 'Fluid volumetric flow rate', 'KR': '유체 체적 유량'},
             'latex': r'$\dot{V}_f$',
             'default': 24.0,
@@ -973,10 +973,10 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
 
         if sys_type == 'Solar assisted gas boiler':
             items = [
-            {'label': 'X_w_sup', 'amount': sv['X_w_sup'], 'desc': 'Exergy of the supply water entering the solar collector.'},
+            {'label': 'X_w_sup', 'amount': sv['X_w_sup'], 'desc': 'Exergy of the supply water entering the solar thermal collector.'},
             {'label': 'X_sol', 'amount': sv['X_sol'], 'desc': 'Supplied exergy coming from solar irradiation before being absorbed by the collector.'},
-            {'label': 'X_c_stp', 'amount': -sv['X_c_stp'], 'desc': 'Exergy consumed during the heat transfer process in the solar collector.'},
-            {'label': 'X_l', 'amount': -sv['X_l'], 'desc': 'Exergy lost due to heat loss from the solar collector system.'},
+            {'label': 'X_c_stc', 'amount': -sv['X_c_stc'], 'desc': 'Exergy consumed during the heat transfer process in the solar thermal collector.'},
+            {'label': 'X_l', 'amount': -sv['X_l'], 'desc': 'Exergy lost due to heat loss from the solar thermal collector system.'},
             {'label': 'X_NG', 'amount': sv['X_NG'], 'desc': 'Exergy input from the chemical potential of the natural gas fuel.'},
             {'label': 'X_c_comb', 'amount': -sv['X_c_comb'], 'desc': 'Exergy consumed during the combustion process in the gas boiler.'},
             {'label': 'X_exh', 'amount': -sv['X_exh'], 'desc': 'Exergy carried away by the exhaust gases, which is ultimately lost to the environment.'},
@@ -1135,7 +1135,7 @@ def evaluate_heat_pump_boiler(params: Dict[str, float]) -> Dict[str, float]:
     """ASHP 냉방 모드 평가 함수"""
     HPB = enex.HeatPumpBoiler()
     HPB.eta_fan = params['eta_fan']
-    HPB.COP_hp = params['COP_hp']
+    HPB.COP = params['COP']
     HPB.dP = params['dP']
     HPB.T0 = params['T_0']
     HPB.T_a_ext_out = params['T_a_ext_out']
@@ -1185,7 +1185,7 @@ def evaluate_SOLAR_ASSISTED_GAS_BOILER(params: Dict[str, float]) -> Dict[str, fl
     SAGB.eta_comb = params['eta_comb']
     SAGB.I_DN = params['I_DN']
     SAGB.I_dH = params['I_dH']
-    SAGB.A_stp = params['A_stp']
+    SAGB.A_stc = params['A_stc']
     SAGB.T0 = params['T_0']
     SAGB.T_w_comb = params['T_w_comb']
     SAGB.T_w_serv = params['T_w_serv']
@@ -1201,9 +1201,9 @@ def evaluate_SOLAR_ASSISTED_GAS_BOILER(params: Dict[str, float]) -> Dict[str, fl
 
     X_w_sup = SAGB.X_w_sup
     X_sol = SAGB.X_sol
-    X_w_stp_out = SAGB.X_w_stp_out
+    X_w_stc_out = SAGB.X_w_stc_out
     X_l = SAGB.X_l
-    X_c_stp = SAGB.X_c_stp
+    X_c_stc = SAGB.X_c_stc
 
     X_NG = SAGB.X_NG
     X_exh = SAGB.X_exh
@@ -1242,7 +1242,7 @@ def evaluate_gshp_boiler(params: Dict[str, float]) -> Dict[str, float]:
     GSHPB.H_b = params['H_b']
     GSHPB.r_b = params['r_b']
     GSHPB.R_b = params['R_b']
-    GSHPB.V_f = params['V_f']
+    GSHPB.dV_f = params['dV_f']
     GSHPB.E_pmp = params['E_pmp']
     
     GSHPB.k_g = params['k_g']

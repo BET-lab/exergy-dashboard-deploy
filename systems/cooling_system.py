@@ -191,7 +191,7 @@ COOLING_GSHP = {
             'step': 0.01,
             'category': 'ground heat exchanger',
         },
-        'V_f': {
+        'dV_f': {
             'explanation': {'EN': 'Fluid flow rate', 'KR': '유체 속도'},
             'latex': r'$\dot{V}_f$',
             'default': 24.0,
@@ -483,7 +483,7 @@ def evaluate_cooling_gshp(params: Dict[str, float]) -> Dict[str, float]:
     GSHP_C.height = params['H']
     GSHP_C.r_b = params['r_b']
     GSHP_C.R_b = params['R_b']
-    GSHP_C.V_f = params['V_f']
+    GSHP_C.dV_f = params['dV_f']
     
     GSHP_C.k_g = params['k_g']
     GSHP_C.c_g = params['c_g']
