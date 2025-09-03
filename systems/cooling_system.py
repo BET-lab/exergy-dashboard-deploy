@@ -338,8 +338,8 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
                 'desc': 'Exergy contained in the room air entering the internal unit.'},
             {'label': 'X_c_int', 'amount': -sv['X_c_int'],
                 'desc': 'Exergy consumed during the heat exchange process in the internal unit.'},
-            {'label': 'Output', 'amount': 0,
-                'desc': 'Transferred cool exergy to the room air.'},
+            {'label': 'X_out', 'amount': 0,
+                'desc': 'Transferred cool exergy to the room air. (X_a_int_out - X_a_int_in)'},
             ]
         
         if sys_type == 'Ground source heat pump':
@@ -367,7 +367,7 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
              'desc': 'Exergy contained in the room air entering the internal unit.'},
             {'label': 'X_c_int', 'amount': -sv['X_c_int'], 
              'desc': 'Exergy consumed in the internal unit during heat exchange.'},
-            {'label': 'X_out_int', 'amount': 0, 'desc': 'Transferred cool exergy to the room air.'},
+            {'label': 'X_out', 'amount': 0, 'desc': 'Transferred cool exergy to the room air. (X_a_int_out - X_a_int_in)'},
             ]
             
         for item in items:

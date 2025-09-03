@@ -434,8 +434,8 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
              'desc': 'Exergy contained in the room air entering the internal unit.'},
             {'label': 'X_c_int', 'amount': -sv['X_c_int'],
              'desc': 'Exergy consumed during the heat exchange process in the internal unit.'},
-            {'label': 'X_out_int', 'amount': 0,
-             'desc': 'Transferred thermal exergy to the room air.'},
+            {'label': 'X_out', 'amount': 0,
+             'desc': 'Transferred thermal exergy to the room air (X_a_int_out - X_a_int_in).'},
             ]
 
         if sys_type == 'Ground source heat pump':
@@ -464,8 +464,8 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
              'desc': 'Exergy contained in the room air entering the internal unit.'},
             {'label': 'X_c_int', 'amount': -sv['X_c_int'],
              'desc': 'Exergy consumed in the internal unit during heat exchange.'},
-            {'label': 'X_out_int', 'amount': 0,
-             'desc': 'Transferred thermal exergy to the room air.'},
+            {'label': 'X_out', 'amount': 0,
+             'desc': 'Transferred thermal exergy to the room air (X_a_int_out - X_a_int_in).'},
             ]
 
         if sys_type == 'Electric heater':
@@ -473,7 +473,7 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
                 {'label': 'X_heater', 'amount': sv['X_heater'], 'desc': 'Electricity exergy input to the heater.'},
                 {'label': 'X_c_hb', 'amount': -sv['X_c_hb'], 'desc': 'Exergy consumption in heater body due to energy conversion process from electricity to thermal energy.'},
                 {'label': 'X_c_hs', 'amount': -sv['X_c_hs'], 'desc': 'Exergy consumption due to heater transfer process from the heater surface to surrounding.'},
-                {'label': 'Output', 'amount': 0, 'desc': 'Thermal exergy transferred to the room environment by convection and radiation.'},
+                {'label': 'X_out', 'amount': 0, 'desc': 'Thermal exergy transferred to the room environment by convection (X_conv) and radiation (X_rad_hs). (X_conv + X_rad_hs)'},
             ]
             
         for item in items:
@@ -569,7 +569,7 @@ def evaluate_heating_ashp(params: Dict[str, float]) -> Dict[str, float]:
 
     X_in  = ASHP_H.X_in
     X_out = ASHP_H.X_out
-    Xc   = ASHP_H.Xc
+    X_c   = ASHP_H.X_c
 
     X_eff = ASHP_H.X_eff
 
