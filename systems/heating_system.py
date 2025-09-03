@@ -418,13 +418,13 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
              'desc': 'Exergy input required to operate the fan in the external unit.'},
             {'label': 'X_r_ext(ext side)', 'amount': sv['X_r_ext'],
              'desc': 'Thermal exergy transferred to the external unit refrigerant.'},
-            {'label': 'Xc_ext', 'amount': -sv['Xc_ext'],
+            {'label': 'X_c_ext', 'amount': -sv['X_c_ext'],
              'desc': 'Exergy consumed during the heat exchange process in the external unit.'},
             {'label': 'X_a_ext_out', 'amount': -sv['X_a_ext_out'],
              'desc': 'Exergy contained in the outlet air of the external unit, which is ultimately consumed.'},
             {'label': 'E_cmp', 'amount': sv['E_cmp'],
              'desc': 'Exergy input as electrical work to power the compressor.'},
-            {'label': 'Xc_r', 'amount': -sv['Xc_r'],
+            {'label': 'X_c_r', 'amount': -sv['X_c_r'],
              'desc': 'Exergy consumed within the refrigerant cycle, which uses electrical exergy to transfer thermal exergy between the refrigerant of internal and external units.'},
             {'label': 'X_r_ext(ref side)', 'amount': -sv['X_r_ext'],
              'desc': 'Thermal exergy transferred from the external unit refrigerant to the internal unit refrigerant.' if sv['X_r_ext'] >= 0 else 'Thermal exergy transferred from the internal unit refrigerant to the external unit refrigerant.'},
@@ -432,29 +432,29 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
              'desc': 'Exergy input required to operate the fan in the internal unit.'},
             {'label': 'X_a_int_in', 'amount': sv['X_a_int_in'],
              'desc': 'Exergy contained in the room air entering the internal unit.'},
-            {'label': 'Xc_int', 'amount': -sv['Xc_int'],
+            {'label': 'X_c_int', 'amount': -sv['X_c_int'],
              'desc': 'Exergy consumed during the heat exchange process in the internal unit.'},
-            {'label': 'Output', 'amount': 0,
+            {'label': 'X_out_int', 'amount': 0,
              'desc': 'Transferred thermal exergy to the room air.'},
             ]
 
         if sys_type == 'Ground source heat pump':
             items = [
-            {'label': 'Xin_g', 'amount': sv['Xin_g'],
+            {'label': 'X_in_g', 'amount': sv['X_in_g'],
              'desc': 'Exergy input coming from the ground.'},
-            {'label': 'Xc_g', 'amount': -sv['Xc_g'],
+            {'label': 'X_c_g', 'amount': -sv['X_c_g'],
              'desc': 'Exergy consumed during heat extraction from ground to borehole wall surface.'},
             {'label': 'E_pmp', 'amount': sv['E_pmp'],
              'desc': 'Exergy input required to operate the circulating pump in the ground heat exchanger.'},
-            {'label': 'Xc_GHE', 'amount': -sv['Xc_GHE'],
+            {'label': 'X_c_GHE', 'amount': -sv['X_c_GHE'],
              'desc': 'Exergy consumed in the ground heat exchanger.'},
             {'label': 'X_r_exch(GHE side)', 'amount': abs(sv['X_r_exch']),
              'desc': f"{'Thermal' if sv['X_r_exch'] >= 0 else 'Thermal'} exergy supplied by refrigerant from the ground heat exchanger."},
-            {'label': 'Xc_exch', 'amount': -sv['Xc_exch'],
+            {'label': 'X_c_exch', 'amount': -sv['X_c_exch'],
              'desc': 'Exergy consumed in the heat exchanger.'},
             {'label': 'E_cmp', 'amount': sv['E_cmp'],
              'desc': 'Exergy input as electrical work to power the compressor.'},
-            {'label': 'Xc_r', 'amount': -sv['Xc_r'],
+            {'label': 'X_c_r', 'amount': -sv['X_c_r'],
              'desc': 'Exergy consumed within the refrigerant loop.'},
             {'label': 'X_r_exch(ref side)', 'amount': -abs(sv['X_r_exch']),
              'desc': f"{'Thermal' if sv['X_r_exch'] >= 0 else 'Thermal'} exergy supplied to the heat exchanger by the refrigerant."},
@@ -462,9 +462,9 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
              'desc': 'Exergy input as electrical work to operate the internal unit fan.'},
             {'label': 'X_a_int_in', 'amount': sv['X_a_int_in'],
              'desc': 'Exergy contained in the room air entering the internal unit.'},
-            {'label': 'Xc_int', 'amount': -sv['Xc_int'],
+            {'label': 'X_c_int', 'amount': -sv['X_c_int'],
              'desc': 'Exergy consumed in the internal unit during heat exchange.'},
-            {'label': 'Xout_int', 'amount': 0,
+            {'label': 'X_out_int', 'amount': 0,
              'desc': 'Transferred thermal exergy to the room air.'},
             ]
 
@@ -555,20 +555,20 @@ def evaluate_heating_ashp(params: Dict[str, float]) -> Dict[str, float]:
     X_r_int   = ASHP_H.X_r_int
     X_r_ext   = ASHP_H.X_r_ext
 
-    Xin_int  = ASHP_H.Xin_int
-    Xout_int = ASHP_H.Xout_int
-    Xc_int   = ASHP_H.Xc_int
+    X_in_int  = ASHP_H.X_in_int
+    X_out_int = ASHP_H.X_out_int
+    X_c_int   = ASHP_H.X_c_int
 
-    Xin_r  = ASHP_H.Xin_r
-    Xout_r = ASHP_H.Xout_r
-    Xc_r   = ASHP_H.Xc_r
+    X_in_r  = ASHP_H.X_in_r
+    X_out_r = ASHP_H.X_out_r
+    X_c_r   = ASHP_H.X_c_r
 
-    Xin_ext  = ASHP_H.Xin_ext
-    Xout_ext = ASHP_H.Xout_ext
-    Xc_ext   = ASHP_H.Xc_ext
+    X_in_ext  = ASHP_H.X_in_ext
+    X_out_ext = ASHP_H.X_out_ext
+    X_c_ext   = ASHP_H.X_c_ext
 
-    Xin  = ASHP_H.Xin
-    Xout = ASHP_H.Xout
+    X_in  = ASHP_H.X_in
+    X_out = ASHP_H.X_out
     Xc   = ASHP_H.Xc
 
     X_eff = ASHP_H.X_eff
@@ -601,34 +601,34 @@ def evaluate_heating_gshp(params: Dict[str, float]) -> Dict[str, float]:
     GSHP_H.system_update()
 
     # Ground
-    Xin_g = GSHP_H.Xin_g
-    Xout_g = GSHP_H.X_b
-    Xc_g = GSHP_H.Xc_g
+    X_in_g = GSHP_H.X_in_g
+    X_out_g = GSHP_H.X_b
+    X_c_g = GSHP_H.X_c_g
 
     # Ground heat exchanger
     X_r_exch = GSHP_H.X_r_exch
     E_pmp = GSHP_H.E_pmp
-    Xin_GHE = GSHP_H.Xin_GHE
-    Xout_GHE = GSHP_H.Xout_GHE
-    Xc_GHE = GSHP_H.Xc_GHE
+    X_in_GHE = GSHP_H.X_in_GHE
+    X_out_GHE = GSHP_H.X_out_GHE
+    X_c_GHE = GSHP_H.X_c_GHE
 
     # Heat exchanger
-    Xin_exch = GSHP_H.Xin_exch
-    Xout_exch = GSHP_H.Xout_exch
-    Xc_exch = GSHP_H.Xc_exch
+    X_in_exch = GSHP_H.X_in_exch
+    X_out_exch = GSHP_H.X_out_exch
+    X_c_exch = GSHP_H.X_c_exch
 
     # Closed refrigerant loop system
     E_cmp = GSHP_H.E_cmp
-    Xin_r = GSHP_H.Xin_r
-    Xout_r = GSHP_H.Xout_r
-    Xc_r = GSHP_H.Xc_r
+    X_in_r = GSHP_H.X_in_r
+    X_out_r = GSHP_H.X_out_r
+    X_c_r = GSHP_H.X_c_r
 
     # Internal unit
     X_a_int_in = GSHP_H.X_a_int_in
     E_fan_int = GSHP_H.E_fan_int
-    Xin_int = GSHP_H.Xin_int
-    Xout_int = GSHP_H.Xout_int
-    Xc_int = GSHP_H.Xc_int
+    X_in_int = GSHP_H.X_in_int
+    X_out_int = GSHP_H.X_out_int
+    X_c_int = GSHP_H.X_c_int
 
     # Exergy efficiency
     X_eff = GSHP_H.X_eff
