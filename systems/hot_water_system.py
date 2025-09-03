@@ -945,7 +945,7 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
             items = [
                 {'label': 'X_fan', 'amount': sv['X_fan'],
                     'desc': 'Exergy input required to operate the fan in the external unit.'},
-                {'label': 'X_r_ext', 'amount': sv['X_r_ext'],
+                {'label': 'X_r_ext(ext side)', 'amount': sv['X_r_ext'],
                     'desc': 'Cool exergy transferred from the external unit side refrigerant to the outdoor air.'},
                 {'label': 'X_a_ext_in', 'amount': sv['X_a_ext_in'],
                     'desc': 'Exergy contained in the outdoor air entering the external unit.'},
@@ -957,6 +957,8 @@ def plot_exergy_consumption(session_state: Any, selected_systems: List[str]) -> 
                     'desc': 'Exergy input as electrical work to power the compressor.'},
                 {'label': 'X_c_r', 'amount': -sv['X_c_r'],
                     'desc': 'Exergy consumed within the refrigerant cycle, which uses electrical exergy to transfer thermal exergy between the refrigerant in hot water tank and external units.'},
+                {'label': 'X_r_ext(ref side)', 'amount': -sv['X_r_ext'],
+                    'desc': 'Cool exergy transferred from the external unit side refrigerant to the outdoor air.'},
                 {'label': 'X_l_tank', 'amount': -sv['X_l_tank'],
                     'desc': 'Exergy lost due to heat loss through the tank envelope, which is ultimately consumed.'},
                 {'label': 'X_c_tank', 'amount': -sv['X_c_tank'],
